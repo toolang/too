@@ -3,7 +3,7 @@
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/toolang/too">
 </p>
 
-Colang是一种编程语言，旨在创造一种非常简单的语言，已屏蔽了基于c/c++实现的compiler、asmer、linker，目前正在自举中...
+Toolang是一种编程语言，旨在创造一种非常简单的语言，已屏蔽了基于c/c++实现的compiler、asmer、linker，目前正在自举中...
 ```asciidoc
 too      [options] file.to        
     -s    file  ast -> asm       编译.to代码 生成.s汇编文件
