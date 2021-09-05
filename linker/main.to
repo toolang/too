@@ -1,0 +1,44 @@
+package main
+
+import fmt
+import link
+
+func print_help(){
+    fmt.println("usage: ./cld [options|file.o...]" +
+                "  -p       指定扫描目录下所有.0文件进行链接生成可执行程序" +
+                "  file.o   ... 手动指定多个file.o进行链接"
+    )
+}
+
+func link(argc,argv){
+    linker  = new link.linker()
+    outfile = "a.out"
+    for(i = 1; i < argc ; i ++){
+        obj = argv[i]
+        # 添加目标文件
+        linker.addElf(obj)
+        i += 1
+    }
+    # 开始链接
+    linker.link(outfile)
+}
+
+func scan(argc,argv){
+    linker  = new link.linker()
+    outfile = "a.out" 
+    for(i = 2 ; i < argc ; i ++)
+}
+
+
+func main(argc,argv) {
+    if  argc < 3 {
+        return print_help()
+    }
+
+    //scan
+    if argv[1] != "-p" {
+        return scan(argc,argv)
+    }
+    return link(argc,argv)
+
+}

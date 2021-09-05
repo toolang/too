@@ -1,0 +1,196 @@
+package runtime
+
+import fmt
+import os
+extern void printf()
+extern int stringlen(void)
+extern int newobject(void,void)
+extern int gc_malloc(void)
+extern void memcpy(void,void,void)
+extern void gc_free(void)
+
+mem array {
+    u64*     addr
+    u32   	 used
+    u64   	 size
+    u32      total
+}
+mem array_iter {
+	u64* addr
+	u64* cur
+}
+func arr_get(varr<value>,index<value>){
+    if  varr.type != Array {
+        fmt.println("[arr_get] not array type")
+        os.exit(-1)
+    }
+
+    if  varr == null || varr.data == null || index == null {
+        fmt.println("[arr_get] arr or index is null ,probably something wrong\n")
+        os.exit(-1)
+    }
+
+    arr<array> = varr.data
+    // 计算索引
+    i<i64> = 0
+    match index.type {
+        Int : i = index.data
+        String : i = _.stringlen(index.data)
+        _   : os.die("[arr_get] invalid type" + type_string(index.type))
+    }
+    if  i >= arr.used {
+        return newobject(Null,Null)
+    }
+
+    var<u64*> = arr.addr
+    offset<i64> = i * 8
+    var += offset
+
+    return *var
+
+}
+
+
+func arr_pushone(varr<value>,var<value>){
+    if  varr == null || varr.data == null || var == null {
+        fmt.println("[arr_pushone] arr or var is null ,probably something wrong\n")
+        return Null
+    }
+    arr<array> = varr.data
+    //FIXME: insert<u8*>= ... (>= 连起来解析错误)
+    insert<u64*> = array_push(arr)
+    *insert    = var
+}
+func arr_updateone(varr<value>,index<value>,var<value>){
+    if  varr == null || varr.data == null || index == null || var == null {
+        fmt.println("[arr_updateone] arr or var or index is null ,probably something wrong\n")
+        return Null
+    }
+    arr<array> = varr.data
+    i<i64> = 0
+
+    match index.type {
+        Int : i = index.data
+        String : i = _.stringlen(index.data)
+        # FIXME: _ : os.die("[arr_update]" invalid type" + type_string(index.type))
+        _ : os.die("[arr_update] invalid type" + type_string(index.type))
+    }
+    // TODO:如果索引超出了 当前array的范围则需要扩充
+    if  i >= arr.used {
+        fmt.println("[arr_updateone] index is over the max size\n")
+        return Null
+    }
+    // pp[i] = var
+    pp<u64*> = arr.addr
+    pp += i * 8
+    *pp = var
+}
+func array_init(arr<array>,n<u32>,size<u64>){
+    arr.used = 0
+    arr.size = size
+    arr.total = n
+
+    memsize<u64> = n * size
+    arr.addr = new memsize
+
+    if  arr.addr == null {
+        return False
+    }
+    return True
+}
+func array_create(n<u32>,size<u64>){
+
+    a<array> = new array
+    if  a == null {
+        fmt.println("[arr_create] failed to create\n")
+        return Null
+    }
+    if   array_init(a,n,size)  != True {
+        fmt.println("[arr_init] failed to init\n")
+        return Null
+    }
+    return a
+}
+func array_destroy(a<array>){
+    _.gc_free(a)
+}
+func array_push(a<array>){
+    size<u64> =  0
+    newp<u64*> = null
+    elt<u64*> = null
+    if  a.used == a.total {
+        // 数组满了
+        size = a.size * a.total
+        // 直接扩充2倍
+        newp = _.gc_malloc(size * 2)
+        if  newp == null {
+            fmt.println("[arr_pushn] failed to expand memeory")
+            return Null
+        }
+        _.memcpy(newp,a.addr,size)
+        //手动释放之前绝对不会用到的数组,降低gc压力
+        _.gc_free(a.addr)
+        a.addr = newp
+        //扩充2倍
+        a.total *= 2
+    }
+    elt = a.addr + a.size * a.used
+    a.used += 1
+    return elt
+}
+
+func array_push_n(a<array>,n<u32>)
+{
+    elt<u64*>  = null
+    newp<u64*> = null
+    size<u64>  = 0
+    total<u32> = 0
+
+    size = n * a.size
+
+    if  a.used + n > a.total  {
+        //数组满了
+        if  n >= a.total  total = 2 * n
+        else total = 2 * a.total
+
+        newp = _.gc_malloc(total * a.size)
+        if  newp == null  {
+            fmt.println("[arr_pushn] failed to expand memeory")
+            return Null
+        }
+        _.memcpy(newp, a.addr, a.used * a.size)
+        //手动释放拷贝前的数组降低gc压力
+        _.gc_free(a.addr)
+        a.addr = newp
+        a.total = total
+    }
+    elt = a.addr + a.size * a.used
+    a.used += n
+
+    return elt
+}
+extern void stringcat()
+extern void stringcatfmt()
+func arr_tostring(varr<value>)
+{
+    ret<i8*>   = _.stringempty()
+    arr<array> = varr.data
+    orr<u64*>  = arr.addr
+
+    ret = _.stringcat(ret,*"[")
+
+    for (i<i32> = 0 ; i < arr.used ; i += 1) {
+        p<u64*>  = orr + i * PointerSize
+        v<value> = *p
+        //String
+        if v.type == String {
+            ret = _.stringcat(ret,v.data)
+            ret = _.stringcat(ret,*",")
+        //Int,Float,Bool,Char
+        }else {
+            ret = _.stringcatfmt(ret,*"%I,",v.data)
+        }
+    }
+    ret = _.stringcat(ret,*"]")
+    return ret
+}

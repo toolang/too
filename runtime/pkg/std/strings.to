@@ -1,0 +1,22 @@
+package std
+
+OP_T_THERS<i8> = 16
+
+OPSIZE<i8> = 8
+
+func byte_copy(dst<u8*>,src<u8*>,bytes<u64>){
+	
+    while ( bytes > 0 )
+	{								      
+		x<u8> = *src
+		# mov pointer
+		src   += 1
+		bytes -= 1
+		*dst = x
+		# mov pointer
+		dst += 1
+	}
+}
+func memcpy(dst<u8*>,src<u8*>,bytes<u64>){
+	byte_copy(dst,src,bytes)
+}

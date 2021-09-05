@@ -1,0 +1,44 @@
+package runtime
+
+import fmt
+
+// 解析字符串
+func len_string(v<u8*>){
+	fmt.println("len_string",v)
+	p = int(*v)
+	len = 0
+	while(p != 0){
+		fmt.println(p)
+		v += 1
+		p = int(*v)
+		len += 1
+	}
+	return len
+}
+
+mem array_t {
+	u8* 	 addr
+	u8		 used		
+    i64      size
+	u8		 total
+}
+func len_array(arr<array_t>){
+	return int(arr.used)
+}
+func cap_array(arr<array_t>){
+	return int(arr.total)
+}
+func len(v<value>){
+	type<i8> = v.type
+	data<i8> = v.data
+	match type {
+		Null : return 0
+		Int  : return data
+		Bool : return data
+		Array : return len_array(v.data)
+		String : os.die("unsupport len(string)")
+		Map   : os.die("unsupport len(map)")
+		_     : fmt.println("[warn] len(unknow type)")
+	}
+	return 0
+}

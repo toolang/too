@@ -1,0 +1,53 @@
+package runtime
+
+// +
+func value_int_plus(lhs<value>,rhs<value>){
+    return lhs.data + rhs.data
+}
+// -
+func value_int_minus(lhs<value>,rhs<value>){
+    return lhs.data - rhs.data
+}
+// *
+func value_int_mul(lhs<value>,rhs<value>){
+    return lhs.data * rhs.data
+}
+// /
+func value_int_div(lhs<value>,rhs<value>){
+    return lhs.data / rhs.data
+}
+// &
+func value_int_bitand(lhs<value>,rhs<value>){
+    return lhs.data & rhs.data
+}
+// |
+func value_int_bitor(lhs<value>,rhs<value>){
+    return lhs.data | rhs.data
+}
+// <<
+func value_int_shift_left(lhs<value>,rhs<value>){
+    return lhs.data << rhs.data
+}
+// >>
+func value_int_shift_right(lhs<value>,rhs<value>){
+    return lhs.data >> rhs.data
+}
+// ==
+func value_int_equal(lhs<value>,rhs<value>,equal<i32>){
+    if equal	return lhs.data == rhs.data
+    else		return lhs.data != rhs.data
+}
+// !=
+func value_int_notequal(lhs<value>,rhs<value>){
+    return lhs.data != rhs.data
+}
+// <
+func value_int_lowerthan(lhs<value>,rhs<value>,equal<i32>){
+    if equal	return lhs.data <= rhs.data
+    else		return lhs.data < rhs.data
+}
+// >
+func value_int_greaterthan(lhs<value>,rhs<value>,equal<i32>){
+    if equal	return lhs.data >= rhs.data
+    else		return lhs.data > rhs.data
+}

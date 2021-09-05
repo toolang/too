@@ -1,0 +1,14 @@
+package os
+
+extern void exit(int)
+
+import fmt
+
+func die(str){
+    fmt.println(str)
+    code<i8> = -1
+    _.exit(code)
+}
+func exit(code){
+    _.exit(*code)
+}

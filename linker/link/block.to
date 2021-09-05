@@ -1,0 +1,12 @@
+package link
+
+class block {
+	data
+	offset
+	size
+	func init(d,off,s){
+		data = d
+		offset = off
+		size = s
+	}
+}

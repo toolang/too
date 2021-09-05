@@ -1,0 +1,123 @@
+package runtime
+
+extern string stringempty()
+extern string stringdup()
+extern string stringcatfmt()
+extern string stringcat()
+extern string stringcmp()
+extern string stringlen()
+extern string arr_tostring()
+
+func value_string_plus(lhs<value>,rhs<value>)
+{
+    tmstr<i8*> = _.stringempty()
+    match lhs.type 
+	{
+		Int   : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+		Bool  : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+        Float : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+        String: {
+            tmstr = _.stringdup(lhs.data)
+            if rhs.type == Int        tmstr = _.stringcatfmt(tmstr,*"%I",rhs.data)
+            else if rhs.type == Array tmstr = _.stringcat(tmstr,arr_tostring(rhs))
+            else                      tmstr = _.stringcat(tmstr,rhs.data)
+        }
+    }
+    return tmstr
+}
+
+func value_string_minus(lhs<value>,rhs<value>)
+{
+    //字符串的所有相加减直接返回原字符串
+    match lhs.type {
+        String : return lhs.data
+        _      : return rhs.data
+    }
+}
+
+func value_string_mul(lhs<value>,rhs<value>)
+{
+    //如果两个都是字母则返回相加的那部分
+    if lhs.type == String && rhs.type == String {
+        tmstr<i8*> = _.stringdup(lhs.data)
+        tmstr = _.stringcat(tmstr,rhs.data)
+        return tmstr
+    }
+
+    //说明其中有一个数字 那就多次相加
+    count<i64> = null
+    match lhs.type {
+        Int : count = lhs.data 
+        _   : count = rhs.data
+    }
+
+    srcv<value> = null
+    if lhs.type == String srcv = lhs
+    else srcv = rhs
+
+    // 在字符串运算中都是从新生成一份内存来进行存储结果
+    tmstr<i8*> = _.stringdup(srcv.data)
+    //例如: a = "abc" * 1  需要去除乘以1
+    count -= 1
+    for (i<i64> = 0 ; i < count ; i += 1) {
+        tmstr = _.stringcat(tmstr,srcv.data)
+    }
+    return tmstr
+}
+func value_string_div(lhs<value>,rhs<value>){
+    return Null
+}
+func value_string_bitand(lhs<value>,rhs<value>){
+    return Null
+}
+func value_string_bitor(lhs<value>,rhs<value>){
+    return Null
+}
+func value_string_shift_left(lhs<value>,rhs<value>){
+    return Null
+}
+func value_string_shift_right(lhs<value>,rhs<value>){
+    return Null
+}
+func value_string_equal(lhs<value>,rhs<value>,equal<i32>){
+    //必须为两个string 才能比较
+    if lhs.type != String || rhs.type != String {
+        // == 就返回false
+        // != 就返回true
+        if equal return False
+        else return True
+    }
+    //TODO: c函数调用自动判断为mem运算 if _stringcmp(..) == 0 {}
+    ret<i8> = _.stringcmp(lhs.data,rhs.data)
+    if ret == 0 {
+        // == 返回true
+        // != 返回false
+        if equal return True
+        else return False
+    }
+    if equal return False
+    else return True
+
+}
+//< <=
+func value_string_lowerthan(lhs<value>,rhs<value>,equal<i32>){
+    //必须为两个string 才能比较
+    if lhs.type != String || rhs.type != String {
+        return False
+    }
+    eq<i32> = _.stringcmp(lhs.data,rhs.data) 
+    if equal {
+        return eq <= 0
+    }
+    return eq < 0
+}
+//> >=
+func value_string_greaterthan(lhs<value>,rhs<value>,equal<i32>){
+    //必须为两个string 才能比较
+    if lhs.type != String || rhs.type != String {
+        return False
+    }
+    eq<i32> = _.stringcmp(lhs.data,rhs.data) 
+    if equal return eq >= 0
+    return eq > 0
+}

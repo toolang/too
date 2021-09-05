@@ -1,0 +1,209 @@
+package link
+
+Linker::buildExe()
+{
+	ehdr<Elf64_Ehdr> = exe.ehdr
+	#  获取变量的地址
+	pid<i> = &ehdr.e_ident
+	*pid  = 0x464c457f
+	pid += 1
+	*pid = 0x010102
+	pid += 1
+	*pid = 0
+	pid += 1
+	*pid = 0
+
+	ehdr.e_type = ET_EXEC
+	ehdr.e_machine = EM_X86_64
+	ehdr.e_version = EV_CURRENT
+	ehdr.e_flags = 0
+	ehdr.e_ehsize = sizeof(Elf64_Ehdr)
+
+	curOff = sizeof(Elf64_Ehdr) + sizeof(Elf64_Phdr) *len(segNames)
+	# 空段表
+	exe.addShdr("",0,0,0,0,0,0,0,0,0)
+
+	shstrtabSize = 26
+	for(seg : segNames){
+		# 每个字符串末尾自动加上结束符号 \0
+		shstrtabSize += len(seg) + 1
+
+		flags = PF_W | PF_R
+		filesz = segLists[seg].sizeof
+		if  seg == ".text" {
+			flags = PF_X | PF_R
+		}
+		if  seg == ".bss"  {
+			filesz = 0
+		}
+		# 添加程序头表
+		exe.addPhdr(PT_LOAD,
+			segLists[seg].offset,
+			segLists[seg].baseAddr,
+			filesz,
+			segLists[seg].size,
+			flags,
+			MEM_ALIGN
+		)
+		# 计算有效数据段的大小和偏移
+		curOff = segLists[seg].offset
+		#生成段表项
+		sh_type = SHT_PROGBITS
+		sh_flags = SHF_ALLOC | SHF_WRITE
+		sh_align = 4
+		if  seg == ".bss" {
+			sh_type = SHT_NOBITS
+		}
+		if  seg == ".text" {
+			sh_flags = SHF_ALLOC |SHF_EXECINSTR
+			sh_align = 16
+		}
+		# 添加一个段表项，暂时按照4字节对齐
+		exe.addShdr(seg,sh_type,sh_flags,segLists[seg].baseAddr,segLists[seg].offset,
+			segLists[seg].size,SHN_UNDEF,0,sh_align,0)
+	}
+	ehdr.e_phoff = sizeof(Elf64_Ehdr)
+	ehdr.e_phentsize = sizeof(Elf64_Phdr)
+	ehdr.e_Phnum = segNames.size()
+	# 初始化一段内存
+	exe.shstrtab = new shstrtabSize
+	str = exe.shstrtab
+	exe.shstrtabSize = shstrtabSize
+
+	index = 0
+	# 段表船名于索引映射
+	shstrIndex = {}
+	shstrIndex[".shstrtab"] = index
+	 str += ".shstrtab\0"
+	 index += 10
+	shstrIndex[".symtab"] = index
+	str += ".symtab\0"
+	index += 8
+	shstrIndex[".strtab"] = index
+	str += ".strtab\0"
+	index += 8
+	shstrIndex[""] = index-1
+
+	for(i : segNames){
+		shstrIndex[i] = index
+		str += i + "\0"
+		index += len(i) + 1
+	}
+
+	exe.addShdr(".shstrtab",SHT_STRTAB,0,0,curOff,shstrtabSize,SHN_UNDEF,0,1,0)
+	ehdr.e_shstrndx = exe.getSegIndex(".shstrtab")
+
+	# 段表偏移
+	curOff += shstrtabSize
+	ehdr.e_shoff = curOff
+	ehdr.e_shentsize = sizeof(ELF64_Shdr)
+	ehdr.e_shnum = 4 + len(segNames)
+	curOff  += sizeof(Elf64_Shdr) * (4 + len(segNames))
+
+	exe.addShdr("symtab",SHT_SYMTAB,0,0,curOff,(1+len(symDef)*sizeof(Elf64_Sym),0,0,1,sizeof(Elf64_Sym))
+	symtab<Elf64_Sym> = exe.shdrTab[".symtab"]
+	symtab.sh_link = exe.getSegIndex(".symtab") + 1
+	strtabSize = 0
+	exe.addSym("",0)
+
+	#遍历所有符号
+	for(def : symDef){
+		name = def.name
+		strtabSize += len(name) + 1
+		sym<Elf64_Sym> = def.prov.symTab[name]
+		if  sym.st_shndx == SHN_COMMON {
+			sym.st_shndx = exe.getSegIndex(".bss")
+		}else{
+			sym.st_shndx = exe.getSegIndex(def.prov.shdrNames[sym.st_shndx])
+		}
+		exe.addSym(name,sym)
+
+		#记录程序入口
+		start<Elf64_Sym> = exe.symTab[START]
+		ehdr.e_entry = start.st_value
+		curOff += (1 + len(symDef))*sizeof(Elf64_Sym)
+		exe.addShdr(".strtab",SHT_STRTAB,0,0,curOff,strtabSize,SHU_UNDEF,0,1,0)
+		
+		exe.strtabSize = strtabSize
+		index =0
+		strIndex = {}
+		strIndex[""] = strtabSize - 1
+		for(sym : symDef){
+			strIndex[sym.name] = index
+			exe.strtab += sym.name + "\0"
+			index += len(sym.name) + 1
+		}
+		for(name,sym<Elf64_Sym> : exe.symTab){
+			sym.st_name = strIndex[name]
+		}
+		#更新段表name
+		for(name,sh<ELF64_Shdr> : exe.shdrTab){
+			sh.sh_name = shstrIndex[name]
+		}
+
+	}
+}
+
+Linker::writeExe(out)
+{
+	offset = exe.writeHeader(out)
+	if   offset != (sizeof(Elf64_Ehdr  + len(exe.phdrTab) * sizeof(Elf64_Phdr)) {
+		fmt.println("offset")
+		os.exit(-1)
+	}
+	fp = io.fopen(out,"a+")
+	pad = 0
+	for(seg : segNames){
+		sl = segLists[seg]
+		padnum = sl.offset - sl.begin
+		offset += padnum
+		while(padnum){
+			padnum -= 1
+			io.fwrite(pad,1,1,fp)
+		}
+		#输出
+		if  seg != ".bss" {
+			old = null
+			instPad = 0x90
+			for(b : sl.blocks){
+				if  old != null {
+					padnum = b.offset - (old.offset + old.size)
+					offset += padnum
+					while(padnum){
+						padnum -= 1
+						io.fwrite(instPad,1,1,fp)
+					}
+				}
+				old = b
+				offset += b.size
+				io.fwrite(b.data,b.size,1,fp)
+			}
+		}
+	}
+	io.fclose(fp)
+	sts<Elf64_Shdr> = exe.shdrTab[".shstrtab"]
+	if  offset != sts.sh_offset {
+		fmt.println("ofsset")
+		os.exit(-1)
+	}
+	offset += exe.shstrtabSize
+	if  offset != ehdr.e_shoff {
+		fmt.println("ofsset")
+		os.exit(-1)
+	}
+	exe.writeSecSym(out)
+}
+
+Linker::link(out)
+{
+	collectInfo()
+	if   !symValid() {
+		return false
+	}
+	allocAddr()
+	symParser()
+	relocate()
+	buildExe()
+	writeExe(out)
+	return true
+}

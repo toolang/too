@@ -1,0 +1,195 @@
+package link
+
+class Linker
+{
+	# map[string]SegList
+	seglists
+	# arr[SymLink*]
+	symLinks
+	# arr[SymLink*]
+	symDef
+	# arr[elf,elf,elf]
+	elfs
+	# 链接关心的段
+	segNames
+	# File* 最后输出的文件
+	exe
+	# 拥有全局符号start _start的文件
+	startOwner
+	bssaddr
+	bytes
+}
+# 初始化
+Linker::Linker()
+{
+	segNames[] = ".text"
+	segNames[] = ".data"
+	segNames[] = ".roadata"
+	segNames[] = ".data.rel.local"
+	segNames[] = ".bss"
+	for(name : segNames){
+		seglists[name] = new SegList()
+	}
+}
+# 1. 解析elf文件
+# 2. 追加到待链接数组中等待链接
+Linker::addElf(obj)
+{
+	# TODO: new elf.File()
+	elf = new elf.File()
+	# 解析elf文件
+	elf->readElf(obj)
+	this.elfs[] = elf
+}
+
+# 开始扫描文件搜集所有信息
+Linker::collectInfo()
+{
+	for(elf : elfs){
+		# 记录段表信息
+		for(seg : segNames){
+			if  elf.shdrTab[seg] {
+				segLists[seg].ownerList[] = elf
+			}
+		}
+		# 记录符号引用信息
+		for(name,sym<Elf64_Sym> : elf.symTab){
+			symLink<SymLink> = new SymLink
+			symLink.name = name
+			if  sym.st_shndx == STN_UNDEF {
+				symLink.recv = elf
+				symLink.prov = null
+				symLinks[] = symLink
+			}
+			if  sym.st_shndx != SHN_ABS {
+				symLink.prov = elf
+				symLink.recv = null
+				symDef[] = symLink
+			}
+
+		}
+	}
+
+}
+
+Linker::symValid()
+{
+	flag = true
+	startOwner = null
+	#TODO: 支持 k,v 通过参数引用的方式来获迭代数据
+	for(i,def : symDef){
+		sym<ELF64_Sym> = def.prov.symTab[def.name]
+		# 只支持全局符号
+		if   ELF64_ST_BIND(sym.st_info  != STB_GLOBAL {
+			continue
+		}
+		if  def.name == "mini_crt_entry" {
+			startOwner = def.prov
+		}
+		for(j = i + 1 ; j < len(symDef); j += 1){
+			sym = symDef[j].prov.symTab[symDef[j].name]
+			if   ELF64_ST_BIND(sym.st_info  != STB_GLOBAL {
+				continue
+			}
+			# 同名符号 有冲突
+			if  def.name == symDef[j].name {
+				fmt.printf("符号名:%s在文件%s和文件%三种功能发生定义冲突\n",def.name,def.prov.elf_dir,
+				symDef[j].prov.elf_dir)
+				flag = false
+			}
+		}
+	}
+	if  startOwner == null {
+		fmt.println("链接器找不到入口:mini_crt_entry")
+		falg = false
+	}
+	# 遍历未定义的符号
+	for(link : symLinks){
+		for(def : symDef){
+			# 同名符号
+			if  link.name == def.name {
+				link.prov = def.prov
+				def.recv = def.prov
+			}
+		}
+		if  link.prov == null {
+			msym<ELF64_Sym> = link.recv.symTab[link.name]
+			info<ui8> = msym.st_info
+			type = ""
+			if   ELF64_ST_TYPE(info  == STT_OBJECT {
+				type = "变量"
+			}
+			if   ELF64_ST_TYPE(info  == STT_FUNC {
+				type = "函数"
+			}
+			if  type == "" {
+				type = "符号"
+			}
+			fmt.println("文件%s的%s名%s为定义",link.recv.elf_dir,
+			type,link.name)
+			if  flag {
+				flag = false
+			}
+		}
+	}
+	return flag
+}
+
+# 分配地址空间
+Linker::allocAddr()
+{
+	curAddr = BASE_ADDR
+	curOff = sizeof(Elf64_Ehdr) + sizeof(Elf64_Phdr) * len(segNames)
+
+	for(seg : segNames){
+		segLists[seg].allocAddr(seg,curAddr,curOff)
+	}
+	bssaddr = curAddr
+}
+
+Linker::symParser()
+{
+	for(def : symDef){
+		sym<Elf64_Sym> = def.prov.symTab[def.name]
+		segName = ""
+		if  sym.st_shndx == SHN_COMMON {
+			segName = ".bss"
+		}else{
+			segName = def.prov.shdrNames[sym.st_shndx]
+		}
+		if  segName == ".bss" && def.name != ".bss" {
+			bssaddr += sym.st_size
+			sym.st_value = bssaddr
+		}else{
+			sh<Elf32_Shdr> = def.prov.shdrTab[segName]
+			sym.st_value = sym.st_value + sh.sh_addr
+		}
+	}
+	for(sym : symLinks){
+		provsym<Elf64_Sym> = sym.prov.symTab[sym.name]
+		recvsym<Elf64_Sym> = sym.recv.symTab[sym.name]
+		recvsym.st_value = provsym.st_value
+	}
+}
+
+# 重定位
+Linker::relocate()
+{
+	for(elf : elfs){
+		tab = elf.relTab
+		for(t : tab){
+			if  t.relname == "" {
+				continue
+			}
+			symname = t.relname
+			sym<Elf64_Sym> = elf.symTab[symname]
+			rel<Elf64_Rela> = t.rel
+			sh<Elf64_Shdr> = elf.shdrTab[t.segname]
+			file = elf.elf_dir
+			symAddr = sym.st_value + rel.r_addend
+			relAddr = sh.sh_addr + rel.r_offset
+			# 开始重定位操作
+			segLists[t.segname].relocaAddr(relAddr,ELF64_R_TYPE(rel.r_info),symAddrrel.r_addend)
+		}
+	}
+}

@@ -1,0 +1,172 @@
+package runtime
+
+import fmt
+import os
+extern size stringlen(string)
+extern size stringnew(string)
+func newobject(type<i32> , data<u64*>)
+{
+    ret<value> = new value
+    ret.type   = type
+    match type {
+        Int:    ret.data = data
+        Float:  ret.data = data
+        String: ret.data = _.stringnew(data)
+        Bool:   ret.data = data
+        Char:   ret.data = data
+        Null:   ret.data = 0
+        Array:  ret.data = array_create(ARRAY_SIZE, PointerSize)
+        Map:    ret.data = map_create()
+        Object: ret.data = object_create(data)
+        _ : {
+            fmt.println("[new obj] unknown type")
+            ret.type = Null
+        }
+    } 
+    return ret
+}
+
+func get_object_value(obj<value>){
+    if obj == null {
+        fmt.println("[get obj] null")
+        return Null
+    }
+    return obj.data
+}
+
+func member_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtree_node>)
+{
+	// rbtree_node **
+	p<u64*> = null
+
+	while(true)
+	{
+        if  node.key == temp.key {
+            temp.v = node.v
+        }
+		if  node.key < temp.key {
+			p = &temp.left
+		}else{
+			p = &temp.right
+		}
+
+        if *p == sentinel {
+            break
+        }
+
+        temp = *p
+    }
+
+    *p = node
+    node.parent = temp
+    node.left = sentinel
+    node.right = sentinel
+    red(node)
+}
+func member_find(tree<rbtree>,key<value>){
+
+	node<rbtree_node> = null
+	sentinel<rbtree_node> = null
+
+    hk<u64> = get_hash_key(key)
+
+    node = tree.root
+    sentinel = tree.sentinel
+
+    while (node != sentinel) {
+
+        if hk != node.key {
+			if  hk < node.key  {
+				node = node.left
+			}else{
+				node = node.right
+			}
+            continue
+        }
+        if  node.k.type == key.type {
+            return node.v
+        }
+    }
+    return Null
+}
+func member_insert(tree<rbtree>, k<value>,v<value>)
+{
+
+	node<rbtree_node> = new rbtree_node
+	hk<u64> = get_hash_key(k)
+    node.key   = hk
+    node.k     = k
+    node.v     = v
+    rbtree_insert(tree,node)
+}
+// return object
+func object_create(size<i32>){
+    c<object> = new object
+    if  c == null  {
+        fmt.println("[object_create] failed to create")
+        return Null
+    }
+    members<rbtree> = new rbtree
+    members_sentinel<rbtree_node> = new rbtree_node
+    rbtree_init(members,members_sentinel,member_insert_or_update)
+
+    funcs<rbtree> = new rbtree
+    funcs_sentinel<rbtree_node> = new rbtree_node
+    rbtree_init(funcs,funcs_sentinel,member_insert_or_update)
+
+    c.members = members
+    c.funcs   = funcs
+
+    return c
+}
+// return value
+func object_member_update(obj<value>,k<u32>,v<value>){
+    key<value> = int(k)
+    if  obj.type != Object {
+        fmt.println("[object_membe_update] invalid obj type")
+        os.exit(-1)
+    }
+    c<object> = obj.data
+    member_insert(c.members,key,v)
+}
+// return value
+func object_member_get(obj<value>, k<u32>){
+    key<value> = int(k)
+    if  obj.type != Object {
+        fmt.println("[object_membe_get] invalid obj type")
+        os.exit(-1)
+    }
+    c<object> = obj.data 
+    v<value> = member_find(c.members,key)
+    if  v == null {
+        fmt.sprintf("object_get] not find the memeber:%d value\n",key)
+        return null
+    }
+    return v
+}
+func object_unary_operator(opt<i32>,obj<value>,k<u32>,v<value>){
+    if   obj == null || v == null  {
+        fmt.sprintf(" [object-uop] probably wrong at there! object:%p rhs:%p\n",obj,int(v))
+        return Null
+    }
+    key<value> = object_member_get(obj,k)
+    ret<value> = operator_switch(opt,key,v)
+    object_member_update(obj,k,ret)
+}
+func object_func_add(obj<value>,k<i32>,addr<u64*>){
+
+    key<value> = int(k)
+    c<object> = obj.data
+    member_insert(c.funcs,key,addr)
+}
+func object_func_addr(obj<value>,k<i32>){
+    key<value> = int(k)
+    c<object>   = obj.data
+    funcaddr<u64*> = member_find(c.funcs,key)
+    if  funcaddr == null {
+        fmt.println("[object-func] func not exist")
+    }
+    return funcaddr
+}
+
+

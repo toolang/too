@@ -1,0 +1,24 @@
+package fmt
+
+import os
+
+extern int printf(string)
+extern int println(string)
+extern int print(string)
+
+func fatal(size,args...){
+   _.println(args)
+   os.exit(-1)
+}
+//format
+func sprintf(args...){
+   __.printf(args)
+}
+// each elements with the \n
+func println(size,args...){
+   _.println(args)
+}
+// without \n
+func print(size,args...){
+   _.print(args)
+}

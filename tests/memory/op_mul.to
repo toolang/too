@@ -1,0 +1,42 @@
+package  main
+
+import fmt
+
+mem test{
+	i8 a,b,c,d,e,f,g,h
+}
+mem pointer{
+	i8* up
+}
+// i8测试
+func i8_test(){
+	p<test> = new test
+	member = func(p<test>){
+		pp<pointer> = new pointer
+		pp.up = p
+		for(i = 1 ; i <= 8 ; i += 1 ){
+			t<i8> = *i
+			t = t * t
+			fmt.assert(int(*pp.up),int(t))
+			pp.up += 1
+		}
+		fmt.println("test member pointer + success")
+	}
+	// 测试 变量指针 +
+	var = func(p<test>){
+		p.a = 1 p.b = 4 p.c = 9 p.d = 16 p.e = 25 p.f = 36 p.g = 49 p.h = 64
+		pp<i8*> = p
+		for(i = 1 ; i <= 8 ; i += 1 ){
+			t<i8> = *i
+			t *= t
+			fmt.assert(int(*pp),int(t))
+			pp += 1
+		}
+		fmt.println("test var pointer + success")
+	}
+	var(p)
+	member(p)
+}
+func main(){
+	i8_test()
+}

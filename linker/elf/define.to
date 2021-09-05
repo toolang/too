@@ -1,0 +1,40 @@
+package elf
+
+# 全局变量定义
+ET_NONE = 0
+ET_REL  = 1 
+ET_EXEC = 2 
+ET_DYN  = 3
+ET_CORE = 4
+ET_NUM  = 5
+ET_LOOS = 0xfe00
+ET_HIOS = 0xfeff
+ET_LOPROC = 0xff00
+ET_HIPROC = 0xffff
+
+SHN_UNDEF = 0
+
+R_X86_64_PC32 = 2
+R_X86_64_PLT32 = 4
+R_X86_64_64 = 1
+
+STB_LOCAL  = 0
+STB_GLOBAL = 1
+STT_OBJECT = 1
+STT_FUNC   = 2
+
+func ELF64_R_SYM(i<ui64>)	{
+	return i >> 32
+}
+func ELF32_ST_BIND(val<ui8>){
+	return val >> 4
+}
+func ELF64_ST_BIND(val){
+	return ELF32_ST_BIND(val)
+}
+func ELF64_ST_TYPE(val){
+	return val & 0xf
+}
+func ELF64_ST_TYPE(val){
+	return ELF32_ST_TYPE(val)
+}

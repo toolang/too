@@ -1,0 +1,23 @@
+package runtime
+
+import os
+
+extern string stringnew(init) 
+
+func args_init(argc<u64> argv<u64*>){
+	c = int(argc)
+
+	arr = []
+	while(argc > 0){
+		str<value> = new value
+		str.type = String
+		str.data = _.stringnew(*argv)
+		arr_pushone(arr,str)
+		// 8字节指针
+		argv += PointerSize
+		argc -= 1
+	}
+	os.argc = c
+	os.argv = arr
+
+}

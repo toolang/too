@@ -1,0 +1,71 @@
+package runtime
+
+import os
+import fmt
+
+func for_first(data<value>){
+	match data.type 
+	{
+		Map : {
+			tree<rbtree> = data.data
+			if tree.root == tree.sentinel { return }
+			return rbtree_min(tree.root,tree.sentinel)
+		}
+		Array : {
+			arr<array> = data.data
+			if  arr.used <= 0 { return }
+			iter<array_iter> = new array_iter
+			iter.addr = arr.addr
+			init_index = 0
+			iter.cur  = init_index
+			return iter
+		}
+		_     : os.die("[for range]: unsupport type:" + type_string(data.type))
+	}
+}
+func for_get_key(data<value>,node){
+	match data.type {
+		Map : {
+			map_node<rbtree_node> = node
+			return map_node.k
+		}
+		Array : {
+			iter<array_iter> = node
+			return iter.cur
+		}
+		_  : os.die("[for range]: unsupport type:" + type_string(data.type))
+	}
+}
+func for_get_value(data<value>,node){
+	match data.type  {
+		Map : {
+			map_node<rbtree_node> = node
+			return map_node.v
+		}
+		Array : {
+			iter<array_iter> = node
+			rv<u64*> = iter.addr
+			return *rv
+		}
+		_ : os.die("[for range]: unsupport type:" + type_string(data.type))
+	}
+}
+func for_get_next(data<value>,node){
+	match data.type {
+		Map : return rbtree_next(data.data,node)
+		Array : {
+			arr<array> = data.data
+			arr_node<array_iter> = node
+			// ++i
+			index<value> = arr_node.cur
+			index.data += 1
+			if index.data >= arr.used { 
+				return Null
+			}
+			// ++pointer
+			arr_node.addr += 8
+			return arr_node
+		}
+		_ : os.die("[for range]: unsupport type:" + type_string(data.type))
+	}
+}
