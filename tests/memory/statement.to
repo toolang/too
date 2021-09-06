@@ -34,7 +34,7 @@ func test_while(){
 	a<i8> = 10
 	b<i8> = 9
 
-	while(a != b){
+	while a != b {
 		fmt.println(int(a),int(b))
 		b += 1
 	}

@@ -157,7 +157,7 @@ Linker::writeExe(out)
 		sl = segLists[seg]
 		padnum = sl.offset - sl.begin
 		offset += padnum
-		while(padnum){
+		while padnum {
 			padnum -= 1
 			io.fwrite(pad,1,1,fp)
 		}
@@ -169,7 +169,7 @@ Linker::writeExe(out)
 				if  old != null {
 					padnum = b.offset - (old.offset + old.size)
 					offset += padnum
-					while(padnum){
+					while padnum {
 						padnum -= 1
 						io.fwrite(instPad,1,1,fp)
 					}

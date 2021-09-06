@@ -6,8 +6,7 @@ OPSIZE<i8> = 8
 
 func byte_copy(dst<u8*>,src<u8*>,bytes<u64>){
 	
-    while ( bytes > 0 )
-	{								      
+    while  bytes > 0 {								      
 		x<u8> = *src
 		# mov pointer
 		src   += 1

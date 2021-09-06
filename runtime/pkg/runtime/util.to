@@ -23,3 +23,7 @@ func get_hash_key(key<value>){
     fmt.println("[hash_key] unsupport type:" + type_string(key))
     os.exit(-1)
 }
+func assert(ret<i8>,str){
+    if ret return True
+    os.die(str)
+}

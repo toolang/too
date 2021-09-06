@@ -39,8 +39,7 @@ func member_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtre
 	// rbtree_node **
 	p<u64*> = null
 
-	while(true)
-	{
+	while True {
         if  node.key == temp.key {
             temp.v = node.v
         }
@@ -73,7 +72,7 @@ func member_find(tree<rbtree>,key<value>){
     node = tree.root
     sentinel = tree.sentinel
 
-    while (node != sentinel) {
+    while node != sentinel {
 
         if hk != node.key {
 			if  hk < node.key  {

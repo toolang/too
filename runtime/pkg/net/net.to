@@ -34,7 +34,7 @@ func event(){
     //检查是是否发生错误
     check = true
     i = 1
-    while(check){
+    while check {
         fmt.println("event time:" + i)
         if   _.net_process_events(global_net  == -1 {
             fmt.println("something wrong")

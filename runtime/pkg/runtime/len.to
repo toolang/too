@@ -7,7 +7,7 @@ func len_string(v<u8*>){
 	fmt.println("len_string",v)
 	p = int(*v)
 	len = 0
-	while(p != 0){
+	while p != 0 {
 		fmt.println(p)
 		v += 1
 		p = int(*v)

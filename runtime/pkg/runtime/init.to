@@ -8,7 +8,7 @@ func args_init(argc<u64> argv<u64*>){
 	c = int(argc)
 
 	arr = []
-	while(argc > 0){
+	while argc > 0 {
 		str<value> = new value
 		str.type = String
 		str.data = _.stringnew(*argv)

@@ -19,7 +19,7 @@ mem rbtree_node {
 }
 
 func rbtree_min(node<rbtree_node>,sentinel<rbtree_node>){
-    while(node.left != sentinel){
+    while node.left != sentinel {
         node = node.left
     }
     return node
@@ -34,8 +34,7 @@ func rbtree_next(tree<rbtree>,node<rbtree_node>){
 
     root<rbtree_node> = tree.root
     parent<rbtree_node> = 0
-    while(true)
-    {
+    while true {
         parent = node.parent
         if  node == root  
             return Null
@@ -60,7 +59,7 @@ func map_find(map<value>, key<value>){
     node = tree.root
     sentinel = tree.sentinel
 
-    while (node != sentinel) 
+    while node != sentinel 
     {
         if  hk != node.key  {
             if  hk < node.key {
@@ -83,7 +82,7 @@ func map_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtree_n
     // FIXME: p<rebtree_node*> parser报错
     p<u64*> = null
 
-    while(true){
+    while True {
         if  node.key == temp.key {
             if  temp.v.type == node.v.type {
                 temp.v = node.v
@@ -212,8 +211,8 @@ func rbtree_insert(tree<rbtree>, node<rbtree_node>)
     // re-balance tree 
     //TODO: condition可以判断返回值是否是memtype决定是否需要isTrue
     //FIXME: 最左原则，如果第一个表达式失败，则后续不需要再继续判断了
-    //while (node != *root && node.parent.color == 1) {
-    while (node != *root) {
+    //while node != *root && node.parent.color == 1 {
+    while node != *root {
         if  node.parent.color != 1  {break}
 
         if  node.parent == node.parent.parent.left  {
