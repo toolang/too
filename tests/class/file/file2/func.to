@@ -1,5 +1,3 @@
-package file2
-
 import fmt
 
 File::init(){

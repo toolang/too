@@ -1,4 +1,3 @@
-package os
 
 extern void exit(int)
 

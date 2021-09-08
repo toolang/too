@@ -1,5 +1,3 @@
-package file2
-
 class File
 {
 	var1

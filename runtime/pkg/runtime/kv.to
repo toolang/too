@@ -1,4 +1,3 @@
-package runtime
 
 extern void map_insert(void,void,void)
 

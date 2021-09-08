@@ -1,4 +1,3 @@
-package main
 
 import pkg1
 import pkg1.pkg2

@@ -1,4 +1,3 @@
-package elf
 
 class File {
 	# char *buf,Elf64_Off offset,Elf64_Word size)

@@ -1,4 +1,3 @@
-package elf
 
 
 # uint16 Elf32_Half;

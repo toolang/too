@@ -1,4 +1,3 @@
-package link
 
 MEM_ALIGN = 4096
 BASE_ADDR = 0x08040000

@@ -1,4 +1,3 @@
-package runtime
 
 // +
 func value_int_plus(lhs<value>,rhs<value>){

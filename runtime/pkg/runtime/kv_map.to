@@ -1,4 +1,3 @@
-package runtime
 
 mem rbtree {
     rbtree_node* root

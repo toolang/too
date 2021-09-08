@@ -1,4 +1,3 @@
-package runtime
 
 
 enum 
@@ -17,7 +16,7 @@ enum
 	RBRACKET	DOT			COLON		SEMICOLON
     VAR			IF			ELSE		BOOL		WHILE			FOR			
 	EMPTY		FUNC		RETURN		BREAK		CONTINUE		NEW
-    EXTERN		IMPORT		CO			CLASS		PACKAGE			DELREF		
+    EXTERN		IMPORT		CO			CLASS		DELREF		
 	EXTRA		MEM			MATCH		ENUM		BUILTIN
 }
 
@@ -97,7 +96,6 @@ func token_string(tk<i32>){
         IMPORT:	return "import"
         CO:	return "co"
         CLASS:	return "class"
-        PACKAGE:	return "package"
         DELREF:	return "(*)var"
         MATCH:  return "match"
         //i8-u64

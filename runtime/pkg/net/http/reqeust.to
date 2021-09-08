@@ -1,4 +1,3 @@
-package http
 
 class request{
     //init req

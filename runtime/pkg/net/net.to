@@ -1,4 +1,3 @@
-package net
 //:link -lcore -levent -lhttp
 
 extern void cnet_init()

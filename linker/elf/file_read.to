@@ -1,4 +1,3 @@
-package elf
 
 import os
 import fmt

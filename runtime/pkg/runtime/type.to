@@ -1,4 +1,3 @@
-package runtime
 
 # array
 ARRAY_SIZE<i8>  = 8

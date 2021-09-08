@@ -1,4 +1,3 @@
-package http
 
 extern mixed http_init(int)
 

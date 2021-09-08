@@ -1,5 +1,3 @@
-package link
-
 Linker::buildExe()
 {
 	ehdr<Elf64_Ehdr> = exe.ehdr

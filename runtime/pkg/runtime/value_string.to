@@ -1,4 +1,3 @@
-package runtime
 
 extern string stringempty()
 extern string stringdup()

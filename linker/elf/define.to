@@ -1,4 +1,3 @@
-package elf
 
 # 全局变量定义
 ET_NONE = 0

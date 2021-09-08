@@ -1,4 +1,3 @@
-package net
 mem data {
 	i8 a,b,c,d
 }

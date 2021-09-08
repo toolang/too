@@ -1,4 +1,3 @@
-package runtime
 
 
 func rbtree_sentinel_init(node){

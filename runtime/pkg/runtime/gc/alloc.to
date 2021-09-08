@@ -1,0 +1,369 @@
+
+hugmem<u64*>
+extern void malloc()
+extern void memset()
+
+func newarena(){
+	arenaobj<arena> = null
+	excess<u32> = null
+	if unused_arena_objects == null 
+	{
+		i<u32> = 0
+		numarenas<u32> = 0
+		nbytes<u64> = 0
+
+		//double expand		
+		if maxarenas numarenas = maxarenas << 1
+		else numarenas = INITIAL_ARENA_OBJECTS
+
+		if  numarenas <= maxarenas 
+			return Null	/* overflow */
+
+		nbytes = numarenas * sizeof(arena)
+
+		arenaobj = _.realloc(arenas, nbytes)
+		if  arenaobj == Null return Null
+		arenas = arenaobj
+		if usable_arenas != Null || unused_arena_objects != Null{
+			os.die("usable_arenas and unused_arena_objects should be null")
+		}
+
+		for (i = maxarenas ; i < numarenas ; i += 1) 
+		{
+			areobj<arena> = arenas + i * sizeof(arena)
+			areobj.address = 0
+			if i < numarenas - 1 {
+				ii<i32> = i + 1
+				areobj.nextarena = arenas + ii * sizeof(arena)
+			} else {
+				areobj.nextarena = Null
+			}
+		}
+		unused_arena_objects = arenas + maxarenas * sizeof(arena)
+		maxarenas = numarenas
+	}
+	if unused_arena_objects == Null {
+		os.die("unused_arena_objects should not be null")
+	}
+	arenaobj = unused_arena_objects
+	unused_arena_objects = arenaobj.nextarena
+
+	if arenaobj.address != 0 {
+		os.die("arenaobj.address should be 0")	
+	}	
+
+	arenaobj.address = _.malloc(ARENA_SIZE)
+	if  arenaobj.address == 0 {
+		arenaobj.nextarena = unused_arena_objects
+		unused_arena_objects = arenaobj
+		return Null
+	}
+
+	narenas_currently_allocated += 1
+
+	arenaobj.freepools = Null
+	arenaobj.pool_address = arenaobj.address
+	arenaobj.nfreepools = ARENA_SIZE / POOL_SIZE
+	if POOL_SIZE * arenaobj.nfreepools != ARENA_SIZE {
+		os.die("should be arena_size")
+	}
+	excess = arenaobj.address & POOL_SIZE_MASK
+	if  excess != 0 {
+		arenaobj.nfreepools -= 1
+		arenaobj.pool_address += POOL_SIZE - excess
+	}
+	arenaobj.first_address = arenaobj.pool_address
+
+	arenaobj.ntotalpools = arenaobj.nfreepools
+
+	return arenaobj
+}
+
+func malloc(nbytes<u64>)
+{
+	bp<block>  = null
+	po<pool>   = null
+	next<pool> = null
+	size<u32>  = null
+
+	if nbytes > I32_MAX {
+		return Null
+	}
+	if nbytes - 1  < SMALL_THRESHOLD  {
+		size = nbytes - 1 >> ALIGNMENT_SHIFT
+		po = getpool(size + size)
+		if po != po.nextpool {
+			# refcount ++
+			po.ref += 1
+
+			bp = po.freeblock
+			if bp == null {
+				next = po.nextpool
+				po = po.prevpool
+				next.prevpool = po
+				po.nextpool = next
+				
+				goto expend_pool
+			}
+			if bp == null os.die("bp == null")
+
+			po.freeblock = bp.addr
+			if po.freeblock != null 
+				return bp
+
+			if po.nextoffset <= po.maxnextoffset {
+				po.freeblock = po + po.nextoffset
+
+				po.nextoffset += index2size(size)
+				po.freeblock.addr = null
+				return bp
+			}
+			gc()
+			return bp
+		}
+expend_pool:
+		if usable_arenas == null {
+			usable_arenas = newarena()
+			if usable_arenas == null {
+				goto redirect
+			}
+			usable_arenas.nextarena = null
+			usable_arenas.prevarena = null
+		}
+		if usable_arenas.address == null {
+			os.die("usable_arenas.address == null")
+		}
+
+		po = usable_arenas.freepools
+		if po != null {
+			usable_arenas.freepools = po.nextpool
+			usable_arenas.nfreepools -= 1
+			if usable_arenas.nfreepools == 0 {
+				if usable_arenas.freepools != null os.die("usable_arenas.freepools == null")
+				if usable_arenas.nextarena != null && usable_arenas.nextarena.prevarena != usable_arenas {
+					os.die("usable_arenas.nextarena == null,prevarena == usable_arenas")
+				}
+				usable_arenas = usable_arenas.nextarena
+				if usable_arenas != null {
+					usable_arenas.prevarena = null
+					if usable_arenas.address == null {
+						os.die("usable_arenas.address == null")
+					}
+				}
+			}else {
+				if usable_arenas.freepools != null || usable_arenas.pool_address <= usable_arenas.address + ARENA_SIZE - POOL_SIZE {
+				}else{
+					os.die("usable_arenas.freepools == null")
+				}
+			}
+		init_pool:
+			next = getpool(size + size)
+			po.nextpool = next
+			po.prevpool = next
+			next.nextpool = po
+			next.prevpool = po
+			po.ref = 1
+			if po.szidx == size {
+
+				bp = po.freeblock
+				po.freeblock = bp.addr
+				return bp
+			}
+			po.szidx = size
+			size = index2size(size)
+			bp = po + POOL_OVERHEAD
+			po.nextoffset = POOL_OVERHEAD + size << 1
+			po.maxnextoffset = POOL_SIZE - size
+			po.freeblock = bp + size
+			po.freeblock.addr = null
+			return bp
+		}
+		if usable_arenas.nfreepools <= 0 {
+			os.die("usable_arenas.nfreepools <= 0")
+		}
+		if usable_arenas.freepools != null {
+			os.die("usable_arenas.freepools == null")
+		}
+		po = usable_arenas.pool_address
+		if po <= usable_arenas.address + ARENA_SIZE - POOL_SIZE {
+		}else {
+			os.die("po <= usable_arenas.address + ARENA_SIZE - POOL_ADDR")
+		}
+							   
+		po.arenaindex = usable_arenas - arenas
+
+		if getarena(po.arenaindex) != usable_arenas {
+			os.die("getarena != usable_arenas")
+		}	
+		po.szidx = DUMMY_SIZE_IDX
+		usable_arenas.pool_address += POOL_SIZE
+		usable_arenas.nfreepools -= 1
+
+		if usable_arenas.nfreepools == 0 {
+			if usable_arenas.nextarena == null ||
+			       usable_arenas.nextarena.prevarena ==
+			       	   usable_arenas {
+			}else{
+				os.die("207: usable_arenas.nfreepools == 0")
+			}
+			usable_arenas = usable_arenas.nextarena
+			if usable_arenas != null {
+				usable_arenas.prevarena = null
+				if usable_arenas.address == null {
+					os.die("213: usable_arenas.address == null")
+				}
+			}
+		}
+		goto init_pool
+	}
+
+redirect:
+	if nbytes == 0
+		nbytes = 1
+	ret<block> = _.malloc(nbytes)
+	_.push(hugmem,&ret.addr,nbytes)
+	return ret
+}
+
+func free(p<block>)
+{
+
+	po<pool> = null
+	lastfree<block> = null
+	next<pool> = null
+	prev<pool> = null
+	size<u32> = null
+
+	if p == null	
+		return Null
+	po = pool_addr(p)
+	if in_heap(p,po) {
+
+		 if po.ref <= 0 {
+			 return True
+		 }
+		 if po.ref <= 0 {
+			 os.die("po.ref <= 0")
+		 }
+		_.memset(p,0,index2size(po.szidx))
+		lastfree = po.freeblock
+		p.addr = lastfree
+		po.freeblock = p
+		if lastfree {
+			ao<arena> = null
+			nf<u32>   = null
+			po.ref -= 1
+			if po.ref != 0 {
+				return True
+			}
+			next = po.nextpool
+			prev = po.prevpool
+			next.prevpool = prev
+			prev.nextpool = next
+			ao = getarena(po.arenaindex)
+			po.nextpool = ao.freepools
+			ao.freepools = po
+			ao.nfreepools += 1
+			nf = ao.nfreepools
+
+			if ao.nextarena == null ||
+				     nf <= ao.nextarena.nfreepools {
+				return True
+			}
+
+			if ao.prevarena != null {
+				if ao.prevarena.nextarena != ao {
+					#FIXME: miss " lead dead while
+					os.die("ao.prevarena.nextarena != ao")
+				}	
+				ao.prevarena.nextarena = ao.nextarena
+			}else {
+				if usable_arenas != ao {
+					os.die("281: usable_arenas != ao")
+				}
+				usable_arenas = ao.nextarena
+			}
+			ao.nextarena.prevarena = ao.prevarena
+
+			while ao.nextarena != null &&
+					nf > ao.nextarena.nfreepools {
+				ao.prevarena = ao.nextarena
+				ao.nextarena = ao.nextarena.nextarena
+			}
+
+			assert(ao.nextarena == null ||
+				ao.prevarena == ao.nextarena.prevarena,"293")
+			assert(ao.prevarena.nextarena == ao.nextarena,"295")
+
+			ao.prevarena.nextarena = ao
+			if ao.nextarena != null
+				ao.nextarena.prevarena = ao
+
+			assert(ao.nextarena == null ||
+				  nf <= ao.nextarena.nfreepools,"302")
+			assert(ao.prevarena == null ||
+				  nf > ao.prevarena.nfreepools,"303")
+			assert(ao.nextarena == null ||
+				ao.nextarena.prevarena == ao,"306")
+			assert((usable_arenas == ao &&
+				ao.prevarena == null) ||
+				ao.prevarena.nextarena == ao,"309")
+
+			return True
+		}
+		po.ref -= 1
+		assert(po.ref > 0,"314")	
+		size = po.szidx
+		next = getpool(size + size)
+		prev = next.prevpool
+		po.nextpool = next
+		po.prevpool = prev
+		next.prevpool = po
+		prev.nextpool = po
+		return True
+	}
+
+	del(hugmem,&p.addr)
+	_.free(p)
+}
+
+func gc_malloc(nbytes<u64>)
+{
+	hdr<block> = malloc(nbytes + 8)
+	_.memset(hdr,0,nbytes+8)
+	hdr.mask = BLOCK_MASK
+	flag_set(hdr,FLAG_ALLOC)
+	return &hdr.addr
+
+}
+func gc_init(){
+	spstart = _.get_bp()
+	//init hug mem
+	hugmem = _.malloc(sizeof(List))
+	for (i<i32> = 0 ; i < 32 ; i += 1) {
+		p<u64*> = pools + 2 * i * 8
+		*p = pta(i)
+		p += 8
+		*p = pta(i)
+	}
+}
+func gc_realloc(p<u64*>, nbytes<u64>){
+	if !p {
+        if nbytes < 0 {
+			os.die("[gc] realloc failed")
+        }
+        return gc_malloc(nbytes)
+    }
+    if nbytes < 0 {
+        gc_free(p)
+        return Null
+    }
+    newp<u64*> = gc_malloc(nbytes)
+    _.memcpy(newp,p,nbytes)
+    gc_free(p)
+    return newp
+}
+func gc_free(p<u64*>){
+	free(p - 8)
+}
+

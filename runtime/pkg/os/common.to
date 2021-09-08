@@ -1,4 +1,3 @@
-package os
 //:link -los
 extern void daemonize()
 

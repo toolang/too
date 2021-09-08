@@ -50,7 +50,6 @@ tol      [options|file.o...]
 - [x] closure
 - [ ] float
 ```
-package main
 import fmt
 class http{
     # member
@@ -84,13 +83,12 @@ func main(){
 ## @keywords
 - [x] func
 - [x] return
-- [x] package,import
+- [x] import
 - [x] if 
 - [x] while,for|range for
 - [x] continue,break,match
 
 ```
-package main
 import fmt
 import os
 func main(){
