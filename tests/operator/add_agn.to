@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 // 测试 int +=
 func test_int2_add()

@@ -1,5 +1,5 @@
 
-import os
+use os
 
 func assert(a,b,str){
 	check<u8> = str

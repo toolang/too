@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 mem info {
 	i8  a

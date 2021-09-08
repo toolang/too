@@ -1,5 +1,5 @@
-import fmt
-import os
+use fmt
+use os
 
 func equal_not(){
 	fmt.println("equal =  or  equal not != test")

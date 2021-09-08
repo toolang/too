@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 mem header{
 	i8*  a

@@ -1,5 +1,5 @@
 
-import fmt
+use fmt
 
 // 解析字符串
 func len_string(v<u8*>){

@@ -1,6 +1,6 @@
 
-import fmt
-import time
+use fmt
+use time
 
 
 func main(){

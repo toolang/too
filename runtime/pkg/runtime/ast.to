@@ -16,7 +16,7 @@ enum
 	RBRACKET	DOT			COLON		SEMICOLON
     VAR			IF			ELSE		BOOL		WHILE			FOR			
 	EMPTY		FUNC		RETURN		BREAK		CONTINUE		NEW
-    EXTERN		IMPORT		CO			CLASS		DELREF		
+    EXTERN		USE		    CO			CLASS		DELREF		
 	EXTRA		MEM			MATCH		ENUM		BUILTIN
 }
 
@@ -93,7 +93,7 @@ func token_string(tk<i32>){
         CONTINUE:	return "continue"
         NEW:	return "new"
         EXTERN:	return "extern"
-        IMPORT:	return "import"
+        USE:	return "use"
         CO:	return "co"
         CLASS:	return "class"
         DELREF:	return "(*)var"

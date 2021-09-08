@@ -1,5 +1,5 @@
 
-import os
+use os
 
 extern string stringnew(init) 
 

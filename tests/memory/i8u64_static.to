@@ -1,5 +1,5 @@
 
-import fmt
+use fmt
 
 //定义一些 limits 限制值
 I8_MAX<i8>   I8_MIN<i8>   U8_MAX<u8>   U8_MIN<u8>

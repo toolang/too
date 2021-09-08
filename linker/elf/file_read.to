@@ -1,7 +1,7 @@
 
-import os
-import fmt
-import io
+use os
+use fmt
+use io
 
 # 开始解析elf文件
 File::readElf(file)

@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 func test_int_lowereqthan(){
     fmt.sprintf("test int lower-eq-than...\n")

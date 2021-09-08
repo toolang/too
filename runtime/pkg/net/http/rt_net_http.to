@@ -1,6 +1,6 @@
 
-import net.http
-import fmt
+use net.http
+use fmt
 
 func request(req,rsp){
     if  req.type == "POST" {

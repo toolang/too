@@ -1,7 +1,7 @@
 
-import fmt
-import time
-import os
+use fmt
+use time
+use os
 
 func test_while(){
     a = 4

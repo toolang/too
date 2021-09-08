@@ -2,10 +2,10 @@
 // this is a global variable
 global_a
 
-import fmt
-import os
+use fmt
+use os
 
-import pkg1
+use pkg1
 
 func current_pkg()
 {

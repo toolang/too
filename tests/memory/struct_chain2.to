@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 extern void printf(void)
 
 mem info {

@@ -1,7 +1,7 @@
 
-import fmt
-import os
-import pkg2
+use fmt
+use os
+use pkg2
 
 func array_test()
 {

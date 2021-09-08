@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 // 测试 int + 
 // 测试 int +=

@@ -1,7 +1,7 @@
 
-import pkg1
-import pkg1.pkg2
-import os
+use pkg1
+use pkg1.pkg2
+use os
 
 func main(){
     pkg1.test()

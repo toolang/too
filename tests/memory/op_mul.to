@@ -1,4 +1,4 @@
-import fmt
+use fmt
 
 mem test{
 	i8 a,b,c,d,e,f,g,h

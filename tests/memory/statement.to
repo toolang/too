@@ -1,7 +1,7 @@
 
-import fmt
-import runtime
-import os
+use fmt
+use runtime
+use os
 
 func test_map(){
 	fmt.println("range for: test map")

@@ -1,6 +1,6 @@
 
-import fmt
-import link
+use fmt
+use link
 
 func print_help(){
     fmt.println("usage: ./cld [options|file.o...]" +

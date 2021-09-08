@@ -1,6 +1,6 @@
 
-import os
-import fmt
+use os
+use fmt
 
 func string_test(){
     fmt.println("[gc] string_test")

@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 // 测试两个int 类型数据的比较
 func test_int_greater_equal_than()

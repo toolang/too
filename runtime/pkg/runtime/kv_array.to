@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 extern void printf()
 extern int stringlen(void)
 extern int newobject(void,void)

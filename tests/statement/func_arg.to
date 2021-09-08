@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 func equal_6(a,b,c,d,e,f){
     fmt.sprintf("equal_6:\n")

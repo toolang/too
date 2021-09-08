@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 extern size stringlen(string)
 extern size stringnew(string)
 func newobject(type<i32> , data<u64*>)

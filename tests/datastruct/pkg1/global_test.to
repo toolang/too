@@ -1,7 +1,7 @@
 //pkg1.global_a
 global_a
 
-import fmt
+use fmt
 
 func change_global(){
     fmt.print("test global1: ",global_a," \n")

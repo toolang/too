@@ -1,6 +1,6 @@
 
-import fmt
-import runtime
+use fmt
+use runtime
 
 // 测试数组的长度和容量
 func test_array(){

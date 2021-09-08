@@ -1,6 +1,6 @@
 
-import os
-import fmt
+use os
+use fmt
 
 func for_first(data<value>){
 	match data.type 

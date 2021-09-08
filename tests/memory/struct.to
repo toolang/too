@@ -1,7 +1,7 @@
 
-import net
-import fmt
-import os
+use net
+use fmt
+use os
 
 mem ip
 {

@@ -1,5 +1,5 @@
 
-import fmt
+use fmt
 
 func test_while_break(){
     a = 10

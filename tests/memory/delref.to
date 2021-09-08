@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 // 1. 测试动态变量的解引用
 // 2. 测试变量的引用

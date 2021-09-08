@@ -3,7 +3,7 @@
 <img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/toolang/too">
 </p>
 
-Toolang是一种编程语言，旨在创造一种非常简单的语言，已屏蔽了基于c/c++实现的compiler、asmer、linker，目前正在自举中...
+toolang是一种编程语言，旨在创造一种非常简单的语言，已屏蔽了基于c/c++实现的compiler、asmer、linker，目前正在自举中...
 ```asciidoc
 too      [options] file.to        
     -s    file  ast -> asm       编译.to代码 生成.s汇编文件
@@ -50,7 +50,7 @@ tol      [options|file.o...]
 - [x] closure
 - [ ] float
 ```
-import fmt
+use fmt
 class http{
     # member
     request
@@ -83,14 +83,14 @@ func main(){
 ## @keywords
 - [x] func
 - [x] return
-- [x] import
+- [x] use
 - [x] if 
 - [x] while,for|range for
 - [x] continue,break,match
 
 ```
-import fmt
-import os
+use fmt
+use os
 func main(){
     arr = [0,1,2,3,4]
     map = {"1":"a","hello":"world","2":"b",3:"c","map":arr}

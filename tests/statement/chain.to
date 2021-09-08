@@ -1,5 +1,5 @@
-import fmt
-import os
+use fmt
+use os
 
 func call(){
 	ca =  func(){

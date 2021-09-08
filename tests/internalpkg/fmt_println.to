@@ -1,5 +1,5 @@
 
-import fmt
+use fmt
 
 func main(){
     a = -1323

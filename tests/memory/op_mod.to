@@ -1,4 +1,4 @@
-import fmt
+use fmt
 
 mem pointer{
 	i8 up

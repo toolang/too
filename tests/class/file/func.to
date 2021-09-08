@@ -1,5 +1,5 @@
 
-import fmt
+use fmt
 
 File::init(){
 	fmt.println("this is file.File class")

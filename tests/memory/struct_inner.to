@@ -1,7 +1,7 @@
 
-import fmt
-import os
-import net
+use fmt
+use os
+use net
 
 mem data {
 	i8 a,b,c,d

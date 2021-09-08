@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 class http {
     // 可以不必显示定义成员变量

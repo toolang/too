@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 func hash_key(data<u8*>,len<u64>){
     i<i64>   = 0
     key<i64> = 0

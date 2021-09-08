@@ -1,6 +1,6 @@
 
-import fmt
-import os
+use fmt
+use os
 
 func test_int(b){
     fmt.sprintf("test int return  %d \n",b)

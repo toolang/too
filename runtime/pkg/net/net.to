@@ -6,7 +6,7 @@ extern int  net_process_events(net)
 extern int  close_listening_sockets(net)
 extern int  register_http(port,net)
 
-import fmt
+use fmt
 
 //全局net
 global_net

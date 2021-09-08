@@ -1,6 +1,6 @@
 
-import os
-import fmt
+use os
+use fmt
 
 func main(){
     fmt.println("before")

@@ -1,8 +1,8 @@
-import fmt
-import os
+use fmt
+use os
 
-import file
-import file.file2
+use file
+use file.file2
 
 func testobj1(obj)
 {

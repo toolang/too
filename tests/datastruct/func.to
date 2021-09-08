@@ -1,7 +1,7 @@
 
-import fmt
-import pkg1
-import os
+use fmt
+use pkg1
+use os
 
 func func_noargs() {
     fmt.println("no args test")

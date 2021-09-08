@@ -1,7 +1,7 @@
 
 extern void exit(int)
 
-import fmt
+use fmt
 
 func die(str){
     fmt.println(str)

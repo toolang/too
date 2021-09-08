@@ -1,4 +1,4 @@
-import fmt
+use fmt
 
 
 func test2(){
