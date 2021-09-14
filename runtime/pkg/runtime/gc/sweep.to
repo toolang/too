@@ -1,3 +1,4 @@
+use runtime
 
 extern u64 get_sp()
 extern u64 get_bp()
@@ -48,8 +49,8 @@ func gc_mark(ptr<u64*>)
 func gc_sweep()
 {
 
-    area<arena> = *arenas 
-
+    area<arena> = arenas 
+    
     for (p<u64> = area.first_address ; p < area.pool_address ; p += POOL_SIZE)
     {
         po<pool> = p
@@ -57,7 +58,7 @@ func gc_sweep()
         size<i32> = index2size(po.szidx)
         start_addr<u64> = p + POOL_OVERHEAD
         end_addr<u64>   = p + POOL_SIZE
-
+        _.printf(*"start_addr:%p end_addr:%p\n",start_addr,end_addr)
         for (pp<u64> = start_addr ; pp < end_addr ; pp += size)
         {
             obj<block> = pp
@@ -67,7 +68,7 @@ func gc_sweep()
                     flag_unset(obj,FLAG_MARK)
                 else {
                     flag_unset(obj,FLAG_ALLOC)
-                    _.free(pp)
+                    free(pp)
                 }
             }
         }
@@ -84,6 +85,7 @@ func tell_is_stackarg(arg<u64*>){
 }
 func scan_register()
 {
+    reg<u64*> = null
     reg = _.get_sp()  tell_is_stackarg(reg)
     reg = _.get_bp()  tell_is_stackarg(reg)
     reg = _.get_di()  tell_is_stackarg(reg)
@@ -100,14 +102,15 @@ func scan_stack(){
     if spstart < cur_sp {
         os.die("spstart should >= cur_sp")
     }
-
+    ai<i32> = 0
     for ( cur_sp ;cur_sp < spstart ; cur_sp += 2){
         ptr<u64> = *cur_sp
-        v<value> = ptr
+        v<runtime.value> = ptr
         hdr<block> = ptr - 8
         po<pool> = pool_addr(ptr)
-        areobj<arena> = *arenas 
-        if po < areobj.address || po > areobj.address + ARENA_SIZE {
+        areobj<arena> = getarena(ai) 
+        #FIXME: po(-4191910998841462784) > 140577428357136 should be false
+        if po < areobj.address || areobj.address + ARENA_SIZE < po{
             continue
         }
         if in_heap(ptr,po) == False {
@@ -117,7 +120,7 @@ func scan_stack(){
             _.stringmark(ptr)
             continue
         }
-        if v.type == String {
+        if v.type == runtime.String {
             //TODO: fix 会有 type=string data=1的情况
             _.stringmark(v.data)
         }
@@ -128,6 +131,7 @@ func scan_stack(){
 }
 func gc()
 {
+    _.printf(*"gc  start")
     scan_register()
     scan_stack()
 

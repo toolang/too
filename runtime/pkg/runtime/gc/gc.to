@@ -1,3 +1,4 @@
+use runtime
 
 // 内存分配器
 // 分配策略:
@@ -26,7 +27,6 @@ arenas<u64*>
 unused_arena_objects<u64*>
 usable_arenas<arena>
 narenas_currently_allocated<u64*>
-hugmem<u64*>
 spstart<u64*>
 
 //macro
@@ -48,6 +48,10 @@ POOL_OVERHEAD<i32> = 48
 DUMMY_SIZE_IDX<i32> = 65535
 NOT_STACK<i8>     = 10
 INITIAL_ARENA_OBJECTS<i8> = 16
+
+True<i32> = 1
+False<i32> = 0
+Null<i32> = 0
 
 
 mem block {
@@ -79,7 +83,7 @@ mem arena {
 }
 func index2size(i<u32>){
 	ret<u32> = i + 1
-	ret <<= ALIGMENT_SHIFT
+	ret <<= ALIGNMENT_SHIFT
 	return ret
 }
 
@@ -90,12 +94,13 @@ func numblocks(i<u64>){
 
 func pool_addr(p<u64>){
 	psm<u64> = POOL_SIZE_MASK
-	return p & ~psm
+	ret<u64> = p & ~psm
+	return ret
 }
 func pta(x<i32>){
 	p<u64> = 2 * x * 8
 	p 	  += pools
-	p 	  -= 2 * 8
+	p 	  -= 16
 	return p
 }
 func in_heap(p<u64>,po<pool>){
@@ -121,10 +126,18 @@ func is_marked(p<u64>){
 	if l && r return True
 	else return False
 }
+func size_class(i<u32>){
+	i -= 1
+	return i >> ALIGNMENT_SHIFT
+}
 func getpool(i<i32>){
 	p<u64*> = pools + i*8
 	return *p
 }
 func getarena(i<i32>){
 	return arenas + i * sizeof(arena)
+}
+func assert(ret<i8>,str){
+    if ret return True
+    os.die(str)
 }

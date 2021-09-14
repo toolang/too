@@ -29,7 +29,6 @@ func mark(list<List>,v<u64*>){
 	{
         if cur.value == v {
 			hdr<block> = v - 8
-            block* hdr = (block*)((void*)v - 8)
 			flag_set(hdr,FLAG_MARK)
             for (p<u64*>  = v ; p < v + cur.size - 8 ; p += 1){
                 gc_mark(*p)

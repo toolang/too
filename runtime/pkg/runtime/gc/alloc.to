@@ -1,13 +1,17 @@
 
 hugmem<u64*>
 extern void malloc()
+extern void realloc()
 extern void memset()
+extern void memcpy()
+use runtime
+use fmt
 
 func newarena(){
+	_.printf(*"new arena\n")
 	arenaobj<arena> = null
 	excess<u32> = null
-	if unused_arena_objects == null 
-	{
+	if unused_arena_objects == null {
 		i<u32> = 0
 		numarenas<u32> = 0
 		nbytes<u64> = 0
@@ -17,16 +21,15 @@ func newarena(){
 		else numarenas = INITIAL_ARENA_OBJECTS
 
 		if  numarenas <= maxarenas 
-			return Null	/* overflow */
+			return Null	
 
 		nbytes = numarenas * sizeof(arena)
 
 		arenaobj = _.realloc(arenas, nbytes)
 		if  arenaobj == Null return Null
 		arenas = arenaobj
-		if usable_arenas != Null || unused_arena_objects != Null{
-			os.die("usable_arenas and unused_arena_objects should be null")
-		}
+		assert(usable_arenas == null,"alloc:31")	
+		assert(unused_arena_objects == null,"alloc:33")
 
 		for (i = maxarenas ; i < numarenas ; i += 1) 
 		{
@@ -47,10 +50,7 @@ func newarena(){
 	}
 	arenaobj = unused_arena_objects
 	unused_arena_objects = arenaobj.nextarena
-
-	if arenaobj.address != 0 {
-		os.die("arenaobj.address should be 0")	
-	}	
+	assert(areobj.address == 0,"54")
 
 	arenaobj.address = _.malloc(ARENA_SIZE)
 	if  arenaobj.address == 0 {
@@ -86,11 +86,11 @@ func malloc(nbytes<u64>)
 	next<pool> = null
 	size<u32>  = null
 
-	if nbytes > I32_MAX {
+	if nbytes > runtime.I32_MAX {
 		return Null
 	}
 	if nbytes - 1  < SMALL_THRESHOLD  {
-		size = nbytes - 1 >> ALIGNMENT_SHIFT
+		size = size_class(nbytes)
 		po = getpool(size + size)
 		if po != po.nextpool {
 			# refcount ++
@@ -130,9 +130,7 @@ expend_pool:
 			usable_arenas.nextarena = null
 			usable_arenas.prevarena = null
 		}
-		if usable_arenas.address == null {
-			os.die("usable_arenas.address == null")
-		}
+		assert(usable_arenas.address != null,"136")
 
 		po = usable_arenas.freepools
 		if po != null {
@@ -146,15 +144,10 @@ expend_pool:
 				usable_arenas = usable_arenas.nextarena
 				if usable_arenas != null {
 					usable_arenas.prevarena = null
-					if usable_arenas.address == null {
-						os.die("usable_arenas.address == null")
-					}
+					assert(usable_arenas.address != null,"152")
 				}
 			}else {
-				if usable_arenas.freepools != null || usable_arenas.pool_address <= usable_arenas.address + ARENA_SIZE - POOL_SIZE {
-				}else{
-					os.die("usable_arenas.freepools == null")
-				}
+				assert(usable_arenas.freepools != null || usable_arenas.pool_address <= usable_arenas.address + ARENA_SIZE - POOL_SIZE ,"153")
 			}
 		init_pool:
 			next = getpool(size + size)
@@ -200,18 +193,12 @@ expend_pool:
 		usable_arenas.nfreepools -= 1
 
 		if usable_arenas.nfreepools == 0 {
-			if usable_arenas.nextarena == null ||
-			       usable_arenas.nextarena.prevarena ==
-			       	   usable_arenas {
-			}else{
-				os.die("207: usable_arenas.nfreepools == 0")
-			}
+			assert(usable_arenas == null)
+			assert(usable_arenas.nextarena.prevarena == usable_arenas)
 			usable_arenas = usable_arenas.nextarena
 			if usable_arenas != null {
 				usable_arenas.prevarena = null
-				if usable_arenas.address == null {
-					os.die("213: usable_arenas.address == null")
-				}
+				assert(usable_arenas.address != null,"213")
 			}
 		}
 		goto init_pool
@@ -221,13 +208,12 @@ redirect:
 	if nbytes == 0
 		nbytes = 1
 	ret<block> = _.malloc(nbytes)
-	_.push(hugmem,&ret.addr,nbytes)
+	push(hugmem,&ret.addr,nbytes)
 	return ret
 }
-
 func free(p<block>)
 {
-
+	_.printf(*"free %p\n",p)
 	po<pool> = null
 	lastfree<block> = null
 	next<pool> = null
@@ -237,7 +223,7 @@ func free(p<block>)
 	if p == null	
 		return Null
 	po = pool_addr(p)
-	if in_heap(p,po) {
+	if in_heap(p,po)  == True {
 
 		 if po.ref <= 0 {
 			 return True
@@ -249,7 +235,7 @@ func free(p<block>)
 		lastfree = po.freeblock
 		p.addr = lastfree
 		po.freeblock = p
-		if lastfree {
+		if lastfree != null{
 			ao<arena> = null
 			nf<u32>   = null
 			po.ref -= 1
@@ -265,11 +251,8 @@ func free(p<block>)
 			ao.freepools = po
 			ao.nfreepools += 1
 			nf = ao.nfreepools
-
-			if ao.nextarena == null ||
-				     nf <= ao.nextarena.nfreepools {
-				return True
-			}
+			if ao.nextarena == null  return True 
+			if nf <= ao.nextarena.nfreepools return True
 
 			if ao.prevarena != null {
 				if ao.prevarena.nextarena != ao {
@@ -336,7 +319,10 @@ func gc_malloc(nbytes<u64>)
 	return &hdr.addr
 
 }
+
 func gc_init(){
+	poolss<u64> = 512
+	pools = _.malloc(poolss)
 	spstart = _.get_bp()
 	//init hug mem
 	hugmem = _.malloc(sizeof(List))
