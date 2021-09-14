@@ -8,7 +8,6 @@ use runtime
 use fmt
 
 func newarena(){
-	_.printf(*"new arena\n")
 	arenaobj<arena> = null
 	excess<u32> = null
 	if unused_arena_objects == null {
@@ -213,7 +212,6 @@ redirect:
 }
 func free(p<block>)
 {
-	_.printf(*"free %p\n",p)
 	po<pool> = null
 	lastfree<block> = null
 	next<pool> = null
@@ -313,7 +311,7 @@ func free(p<block>)
 func gc_malloc(nbytes<u64>)
 {
 	hdr<block> = malloc(nbytes + 8)
-	_.memset(hdr,0,nbytes+8)
+	_.memset(hdr,Null,nbytes+8)
 	hdr.mask = BLOCK_MASK
 	flag_set(hdr,FLAG_ALLOC)
 	return &hdr.addr

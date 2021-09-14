@@ -14,14 +14,15 @@ extern u64 get_bx()
 extern void free()
 extern void mark()
 extern void stringmark()
+extern void printf()
 
 func gc_mark(ptr<u64*>)
 {
     if ptr == Null return True
 
     po<pool>  = pool_addr(ptr)
-    areobj<arena> = *arenas
-    if po < areobj.address || po > areobj.address + ARENA_SIZE {
+    areobj<arena> = arenas
+    if po < areobj.address || areobj.address + ARENA_SIZE < po{
         // mark(&Hugmem,ptr)
         return NOT_STACK
     }
@@ -58,13 +59,12 @@ func gc_sweep()
         size<i32> = index2size(po.szidx)
         start_addr<u64> = p + POOL_OVERHEAD
         end_addr<u64>   = p + POOL_SIZE
-        _.printf(*"start_addr:%p end_addr:%p\n",start_addr,end_addr)
         for (pp<u64> = start_addr ; pp < end_addr ; pp += size)
         {
             obj<block> = pp
-            if flag_test(obj,FLAG_ALLOC) == True 
+            if flag_test(obj,FLAG_ALLOC) != False 
             {
-                if flag_test(obj,FLAG_MARK) == True 
+                if flag_test(obj,FLAG_MARK) != False
                     flag_unset(obj,FLAG_MARK)
                 else {
                     flag_unset(obj,FLAG_ALLOC)
@@ -110,7 +110,7 @@ func scan_stack(){
         po<pool> = pool_addr(ptr)
         areobj<arena> = getarena(ai) 
         #FIXME: po(-4191910998841462784) > 140577428357136 should be false
-        if po < areobj.address || areobj.address + ARENA_SIZE < po{
+        if po < areobj.address || areobj.address + ARENA_SIZE < po {
             continue
         }
         if in_heap(ptr,po) == False {
@@ -131,7 +131,6 @@ func scan_stack(){
 }
 func gc()
 {
-    _.printf(*"gc  start")
     scan_register()
     scan_stack()
 
