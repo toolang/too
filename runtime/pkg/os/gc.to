@@ -1,7 +1,7 @@
 
-extern void gc()
+use runtime.gc
 
 func gc()
 {
-    _.gc()
+    gc.gc()
 }

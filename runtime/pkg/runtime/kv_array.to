@@ -1,12 +1,11 @@
 
 use fmt
 use os
+use runtime.gc
+
 extern void printf()
 extern int stringlen(void)
-extern int newobject(void,void)
-extern int gc_malloc(void)
 extern void memcpy(void,void,void)
-extern void gc_free(void)
 
 mem array {
     u64*     addr
@@ -111,7 +110,7 @@ func array_create(n<u32>,size<u64>){
     return a
 }
 func array_destroy(a<array>){
-    _.gc_free(a)
+    gc.gc_free(a)
 }
 func array_push(a<array>){
     size<u64> =  0
@@ -121,14 +120,14 @@ func array_push(a<array>){
         // 数组满了
         size = a.size * a.total
         // 直接扩充2倍
-        newp = _.gc_malloc(size * 2)
+        newp = gc.gc_malloc(size * 2)
         if  newp == null {
             fmt.println("[arr_pushn] failed to expand memeory")
             return Null
         }
         _.memcpy(newp,a.addr,size)
         //手动释放之前绝对不会用到的数组,降低gc压力
-        _.gc_free(a.addr)
+        gc.gc_free(a.addr)
         a.addr = newp
         //扩充2倍
         a.total *= 2
@@ -152,14 +151,14 @@ func array_push_n(a<array>,n<u32>)
         if  n >= a.total  total = 2 * n
         else total = 2 * a.total
 
-        newp = _.gc_malloc(total * a.size)
+        newp = gc.gc_malloc(total * a.size)
         if  newp == null  {
             fmt.println("[arr_pushn] failed to expand memeory")
             return Null
         }
         _.memcpy(newp, a.addr, a.used * a.size)
         //手动释放拷贝前的数组降低gc压力
-        _.gc_free(a.addr)
+        gc.gc_free(a.addr)
         a.addr = newp
         a.total = total
     }

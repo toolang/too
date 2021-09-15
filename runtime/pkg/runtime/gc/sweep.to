@@ -43,7 +43,7 @@ func gc_mark(ptr<u64*>)
     }
     for (p<u64*> = ptr ; p < ptr + size - 8 ; p += 1) {
         if gc_mark(*p) == NOT_STACK {
-            _.mark(hugmem,*p)
+            mark(hugmem,*p)
         }
     }
     return True
@@ -63,6 +63,9 @@ func gc_sweep()
         for (pp<u64> = start_addr ; pp < end_addr ; pp += size)
         {
             obj<block> = pp
+            if obj.mask != BLOCK_MASK {
+                continue
+            }
             if flag_test(obj,FLAG_ALLOC) != False 
             {
                 if flag_test(obj,FLAG_MARK) != False
@@ -80,7 +83,7 @@ func tell_is_stackarg(arg<u64*>){
     top<u64> = _.get_sp()
     if spstart > arg  && arg > top {
         if gc_mark(*arg) == NOT_STACK {
-            _.mark(hugmem,*arg)
+            mark(hugmem,*arg)
         }
     }
 }
@@ -123,10 +126,14 @@ func scan_stack(){
         }
         if v.type == runtime.String {
             //TODO: fix 会有 type=string data=1的情况
-            _.stringmark(v.data)
+            temp_po<pool> = pool_addr(v.data)
+            if temp_po < areobj.address || areobj.address + ARENA_SIZE < temp_po {
+            }else{
+                _.stringmark(v.data)
+            }
         }
         if gc_mark(ptr) == NOT_STACK {
-            _.mark(hugmem,ptr)
+            mark(hugmem,ptr)
         }
     }
 }
