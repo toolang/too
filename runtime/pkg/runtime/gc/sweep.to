@@ -15,6 +15,7 @@ extern void free()
 extern void mark()
 extern void stringmark()
 extern void printf()
+extern void exit()
 
 func gc_mark(ptr<u64*>)
 {
@@ -100,7 +101,7 @@ func scan_register()
 func scan_stack(){
     cur_sp<u64*> = _.get_sp()
     if spstart < cur_sp {
-        os.die("spstart should >= cur_sp")
+        die(*"spstart should >= cur_sp")
     }
     ai<i32> = 0
     for ( cur_sp ;cur_sp < spstart ; cur_sp += 2){

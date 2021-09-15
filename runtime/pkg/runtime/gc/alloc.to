@@ -27,8 +27,8 @@ func newarena(){
 		arenaobj = _.realloc(arenas, nbytes)
 		if  arenaobj == Null return Null
 		arenas = arenaobj
-		assert(usable_arenas == null,"alloc:31")	
-		assert(unused_arena_objects == null,"alloc:33")
+		assert(usable_arenas == null,*"alloc:31")	
+		assert(unused_arena_objects == null,*"alloc:33")
 
 		for (i = maxarenas ; i < numarenas ; i += 1) 
 		{
@@ -45,11 +45,11 @@ func newarena(){
 		maxarenas = numarenas
 	}
 	if unused_arena_objects == Null {
-		os.die("unused_arena_objects should not be null")
+		die(*"unused_arena_objects should not be null")
 	}
 	arenaobj = unused_arena_objects
 	unused_arena_objects = arenaobj.nextarena
-	assert(areobj.address == 0,"54")
+	assert(areobj.address == 0,*"54")
 
 	arenaobj.address = _.malloc(ARENA_SIZE)
 	if  arenaobj.address == 0 {
@@ -64,7 +64,7 @@ func newarena(){
 	arenaobj.pool_address = arenaobj.address
 	arenaobj.nfreepools = ARENA_SIZE / POOL_SIZE
 	if POOL_SIZE * arenaobj.nfreepools != ARENA_SIZE {
-		os.die("should be arena_size")
+		die(*"should be arena_size")
 	}
 	excess = arenaobj.address & POOL_SIZE_MASK
 	if  excess != 0 {
@@ -104,7 +104,7 @@ func malloc(nbytes<u64>)
 				
 				goto expend_pool
 			}
-			if bp == null os.die("bp == null")
+			if bp == null die(*"bp == null")
 
 			po.freeblock = bp.addr
 			if po.freeblock != null 
@@ -129,24 +129,24 @@ expend_pool:
 			usable_arenas.nextarena = null
 			usable_arenas.prevarena = null
 		}
-		assert(usable_arenas.address != null,"136")
+		assert(usable_arenas.address != null,*"136")
 
 		po = usable_arenas.freepools
 		if po != null {
 			usable_arenas.freepools = po.nextpool
 			usable_arenas.nfreepools -= 1
 			if usable_arenas.nfreepools == 0 {
-				if usable_arenas.freepools != null os.die("usable_arenas.freepools == null")
+				if usable_arenas.freepools != null die(*"usable_arenas.freepools == null")
 				if usable_arenas.nextarena != null && usable_arenas.nextarena.prevarena != usable_arenas {
-					os.die("usable_arenas.nextarena == null,prevarena == usable_arenas")
+					die(*"usable_arenas.nextarena == null,prevarena == usable_arenas")
 				}
 				usable_arenas = usable_arenas.nextarena
 				if usable_arenas != null {
 					usable_arenas.prevarena = null
-					assert(usable_arenas.address != null,"152")
+					assert(usable_arenas.address != null,*"152")
 				}
 			}else {
-				assert(usable_arenas.freepools != null || usable_arenas.pool_address <= usable_arenas.address + ARENA_SIZE - POOL_SIZE ,"153")
+				assert(usable_arenas.freepools != null || usable_arenas.pool_address <= usable_arenas.address + ARENA_SIZE - POOL_SIZE ,*"153")
 			}
 		init_pool:
 			next = getpool(size + size)
@@ -171,21 +171,21 @@ expend_pool:
 			return bp
 		}
 		if usable_arenas.nfreepools <= 0 {
-			os.die("usable_arenas.nfreepools <= 0")
+			die(*"usable_arenas.nfreepools <= 0")
 		}
 		if usable_arenas.freepools != null {
-			os.die("usable_arenas.freepools == null")
+			die(*"usable_arenas.freepools == null")
 		}
 		po = usable_arenas.pool_address
 		if po <= usable_arenas.address + ARENA_SIZE - POOL_SIZE {
 		}else {
-			os.die("po <= usable_arenas.address + ARENA_SIZE - POOL_ADDR")
+			die(*"po <= usable_arenas.address + ARENA_SIZE - POOL_ADDR")
 		}
 							   
 		po.arenaindex = usable_arenas - arenas
 
 		if getarena(po.arenaindex) != usable_arenas {
-			os.die("getarena != usable_arenas")
+			die(*"getarena != usable_arenas")
 		}	
 		po.szidx = DUMMY_SIZE_IDX
 		usable_arenas.pool_address += POOL_SIZE
@@ -197,7 +197,7 @@ expend_pool:
 			usable_arenas = usable_arenas.nextarena
 			if usable_arenas != null {
 				usable_arenas.prevarena = null
-				assert(usable_arenas.address != null,"213")
+				assert(usable_arenas.address != null,*"213")
 			}
 		}
 		goto init_pool
@@ -227,9 +227,9 @@ func free(p<block>)
 			 return True
 		 }
 		 if po.ref <= 0 {
-			 os.die("po.ref <= 0")
+			 die(*"po.ref <= 0")
 		 }
-		_.memset(p,0,index2size(po.szidx))
+		_.memset(p,runtime.Null,index2size(po.szidx))
 		lastfree = po.freeblock
 		p.addr = lastfree
 		po.freeblock = p
@@ -255,12 +255,12 @@ func free(p<block>)
 			if ao.prevarena != null {
 				if ao.prevarena.nextarena != ao {
 					#FIXME: miss " lead dead while
-					os.die("ao.prevarena.nextarena != ao")
+					die(*"ao.prevarena.nextarena != ao")
 				}	
 				ao.prevarena.nextarena = ao.nextarena
 			}else {
 				if usable_arenas != ao {
-					os.die("281: usable_arenas != ao")
+					die(*"281: usable_arenas != ao")
 				}
 				usable_arenas = ao.nextarena
 			}
@@ -273,27 +273,27 @@ func free(p<block>)
 			}
 
 			assert(ao.nextarena == null ||
-				ao.prevarena == ao.nextarena.prevarena,"293")
-			assert(ao.prevarena.nextarena == ao.nextarena,"295")
+				ao.prevarena == ao.nextarena.prevarena,*"293")
+			assert(ao.prevarena.nextarena == ao.nextarena,*"295")
 
 			ao.prevarena.nextarena = ao
 			if ao.nextarena != null
 				ao.nextarena.prevarena = ao
 
 			assert(ao.nextarena == null ||
-				  nf <= ao.nextarena.nfreepools,"302")
+				  nf <= ao.nextarena.nfreepools,*"302")
 			assert(ao.prevarena == null ||
-				  nf > ao.prevarena.nfreepools,"303")
+				  nf > ao.prevarena.nfreepools,*"303")
 			assert(ao.nextarena == null ||
-				ao.nextarena.prevarena == ao,"306")
+				ao.nextarena.prevarena == ao,*"306")
 			assert((usable_arenas == ao &&
 				ao.prevarena == null) ||
-				ao.prevarena.nextarena == ao,"309")
+				ao.prevarena.nextarena == ao,*"309")
 
 			return True
 		}
 		po.ref -= 1
-		assert(po.ref > 0,"314")	
+		assert(po.ref > 0,*"314")	
 		size = po.szidx
 		next = getpool(size + size)
 		prev = next.prevpool
@@ -334,7 +334,7 @@ func gc_init(){
 func gc_realloc(p<u64*>, nbytes<u64>){
 	if !p {
         if nbytes < 0 {
-			os.die("[gc] realloc failed")
+			die(*"[gc] realloc failed")
         }
         return gc_malloc(nbytes)
     }
