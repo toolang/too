@@ -1,25 +1,22 @@
+use std
 
-extern string stringempty()
-extern string stringdup()
 extern string stringcatfmt()
-extern string stringcat()
-extern string stringcmp()
 extern string stringlen()
 extern string arr_tostring()
 
 func value_string_plus(lhs<value>,rhs<value>)
 {
-    tmstr<i8*> = _.stringempty()
+    tmstr<i8*> = std.stringempty()
     match lhs.type 
 	{
 		Int   : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
 		Bool  : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
         Float : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
         String: {
-            tmstr = _.stringdup(lhs.data)
+            tmstr = std.stringdup(lhs.data)
             if rhs.type == Int        tmstr = _.stringcatfmt(tmstr,*"%I",rhs.data)
-            else if rhs.type == Array tmstr = _.stringcat(tmstr,arr_tostring(rhs))
-            else                      tmstr = _.stringcat(tmstr,rhs.data)
+            else if rhs.type == Array tmstr = std.stringcat(tmstr,arr_tostring(rhs))
+            else                      tmstr = std.stringcat(tmstr,rhs.data)
         }
     }
     return tmstr
@@ -38,8 +35,8 @@ func value_string_mul(lhs<value>,rhs<value>)
 {
     //如果两个都是字母则返回相加的那部分
     if lhs.type == String && rhs.type == String {
-        tmstr<i8*> = _.stringdup(lhs.data)
-        tmstr = _.stringcat(tmstr,rhs.data)
+        tmstr<i8*> = std.stringdup(lhs.data)
+        tmstr = std.stringcat(tmstr,rhs.data)
         return tmstr
     }
 
@@ -55,11 +52,11 @@ func value_string_mul(lhs<value>,rhs<value>)
     else srcv = rhs
 
     // 在字符串运算中都是从新生成一份内存来进行存储结果
-    tmstr<i8*> = _.stringdup(srcv.data)
+    tmstr<i8*> = std.stringdup(srcv.data)
     //例如: a = "abc" * 1  需要去除乘以1
     count -= 1
     for (i<i64> = 0 ; i < count ; i += 1) {
-        tmstr = _.stringcat(tmstr,srcv.data)
+        tmstr = std.stringcat(tmstr,srcv.data)
     }
     return tmstr
 }
@@ -87,7 +84,7 @@ func value_string_equal(lhs<value>,rhs<value>,equal<i32>){
         else return True
     }
     //TODO: c函数调用自动判断为mem运算 if _stringcmp(..) == 0 {}
-    ret<i8> = _.stringcmp(lhs.data,rhs.data)
+    ret<i8> = std.stringcmp(lhs.data,rhs.data)
     if ret == 0 {
         // == 返回true
         // != 返回false
@@ -104,7 +101,7 @@ func value_string_lowerthan(lhs<value>,rhs<value>,equal<i32>){
     if lhs.type != String || rhs.type != String {
         return False
     }
-    eq<i32> = _.stringcmp(lhs.data,rhs.data) 
+    eq<i32> = std.stringcmp(lhs.data,rhs.data) 
     if equal {
         return eq <= 0
     }
@@ -116,7 +113,7 @@ func value_string_greaterthan(lhs<value>,rhs<value>,equal<i32>){
     if lhs.type != String || rhs.type != String {
         return False
     }
-    eq<i32> = _.stringcmp(lhs.data,rhs.data) 
+    eq<i32> = std.stringcmp(lhs.data,rhs.data) 
     if equal return eq >= 0
     return eq > 0
 }

@@ -1,7 +1,6 @@
 
 use os
-
-extern string stringnew(init) 
+use std
 
 func args_init(argc<u64> argv<u64*>){
 	c = int(argc)
@@ -10,7 +9,7 @@ func args_init(argc<u64> argv<u64*>){
 	while argc > 0 {
 		str<value> = new value
 		str.type = String
-		str.data = _.stringnew(*argv)
+		str.data = std.stringnew(*argv)
 		arr_pushone(arr,str)
 		// 8字节指针
 		argv += PointerSize

@@ -13,7 +13,6 @@ extern u64 get_ax()
 extern u64 get_bx()
 extern void free()
 extern void mark()
-extern void stringmark()
 extern void printf()
 extern void exit()
 
@@ -121,7 +120,7 @@ func scan_stack(){
             continue
         }
         if hdr.flags < 1 || hdr.flags > 3 {
-            _.stringmark(ptr)
+            std.stringmark(ptr)
             continue
         }
         if v.type == runtime.String {
@@ -129,7 +128,7 @@ func scan_stack(){
             temp_po<pool> = pool_addr(v.data)
             if temp_po < areobj.address || areobj.address + ARENA_SIZE < temp_po {
             }else{
-                _.stringmark(v.data)
+                std.stringmark(v.data)
             }
         }
         if gc_mark(ptr) == NOT_STACK {

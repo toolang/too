@@ -2,9 +2,9 @@
 use fmt
 use os
 use runtime.gc
+use std
 
 extern void printf()
-extern int stringlen(void)
 extern void memcpy(void,void,void)
 
 mem array {
@@ -33,7 +33,7 @@ func arr_get(varr<value>,index<value>){
     i<i64> = 0
     match index.type {
         Int : i = index.data
-        String : i = _.stringlen(index.data)
+        String : i = std.stringlen(index.data)
         _   : os.die("[arr_get] invalid type" + type_string(index.type))
     }
     if  i >= arr.used {
@@ -69,7 +69,7 @@ func arr_updateone(varr<value>,index<value>,var<value>){
 
     match index.type {
         Int : i = index.data
-        String : i = _.stringlen(index.data)
+        String : i = std.stringlen(index.data)
         # FIXME: _ : os.die("[arr_update]" invalid type" + type_string(index.type))
         _ : os.die("[arr_update] invalid type" + type_string(index.type))
     }
@@ -167,28 +167,27 @@ func array_push_n(a<array>,n<u32>)
 
     return elt
 }
-extern void stringcat()
 extern void stringcatfmt()
 func arr_tostring(varr<value>)
 {
-    ret<i8*>   = _.stringempty()
+    ret<i8*>   = std.stringempty()
     arr<array> = varr.data
     orr<u64*>  = arr.addr
 
-    ret = _.stringcat(ret,*"[")
+    ret = std.stringcat(ret,*"[")
 
     for (i<i32> = 0 ; i < arr.used ; i += 1) {
         p<u64*>  = orr + i * PointerSize
         v<value> = *p
         //String
         if v.type == String {
-            ret = _.stringcat(ret,v.data)
-            ret = _.stringcat(ret,*",")
+            ret = std.stringcat(ret,v.data)
+            ret = std.stringcat(ret,*",")
         //Int,Float,Bool,Char
         }else {
             ret = _.stringcatfmt(ret,*"%I,",v.data)
         }
     }
-    ret = _.stringcat(ret,*"]")
+    ret = std.stringcat(ret,*"]")
     return ret
 }
