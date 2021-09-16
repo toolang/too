@@ -3,9 +3,12 @@
 ARRAY_SIZE<i8>  = 8
 
 # base
-PointerSize<i8> = 8
-True<i8>   		= 1
-False<i8>  		= 0
+PointerSize<i32>    = 8
+True<i32>   		= 1
+False<i32>  		= 0
+Zero<i32>			= 0
+Positive1<i32>		= 1
+Negative1<i32> 		= -1
 
 mem value  { 
 	u64 type,data 
