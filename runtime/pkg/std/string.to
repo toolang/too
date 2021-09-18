@@ -372,4 +372,13 @@ func string_realloc(ptr<u64*>, size<u64>) {
 func string_free(ptr<u64*>) {
     gc.gc_free(ptr) 
 }
+func strlen(str<i8*>){
+	cnt<u64> = 0
+	if str == null return runtime.Zero
 
+	while *str != 0 {
+		cnt += 1
+		str += 1
+	}	
+	return cnt
+}

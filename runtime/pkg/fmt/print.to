@@ -1,0 +1,14 @@
+use std
+use fmt
+
+func fputs(str<i8*> , out<u64*>){
+	l<u64> = std.strlen(str)	
+	if l < 1 return l
+
+	bit<i8> = 1
+	if l != std.fwrite(str,bit,l,out) {
+		return std.EOF	
+	}
+	return l
+}
+
