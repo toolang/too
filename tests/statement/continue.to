@@ -8,7 +8,7 @@ func test_continue(){
         if  a == 5 {
             continue
         }
-        fmt.sprintf("continue a=%d\n",a)
+        fmt.println("continue a=%d\n",a)
     }
 }
 

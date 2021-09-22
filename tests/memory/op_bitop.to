@@ -59,22 +59,22 @@ func test_and(){
     b<i8> = 10
     a = a & b
     if  a != 10 {
-        fmt.sprintf("test int bitand %d != 10 failed\n",int(a))
+        fmt.println("test int bitand %d != 10 failed\n",int(a))
         os.exit(1)
     }
     c<i8> = 0
     a &= c
     if  a != 0 {
-        fmt.sprintf("test int bitand %d != 0 failed\n",int(a))
+        fmt.println("test int bitand %d != 0 failed\n",int(a))
         os.exit(1)
     }
     // 10 & 2 = 2
     e<i8> = b & 2
     if  e != 2 {
-        fmt.sprintf("test int bitand %d != 2 failed\n",int(e))
+        fmt.println("test int bitand %d != 2 failed\n",int(e))
         os.exit(1)
     }
-    fmt.sprintf("test int bitand %d  success\n",int(e))
+    fmt.println("test int bitand %d  success\n",int(e))
 }
 func test_or(){
     //   1 1 0 1
@@ -84,21 +84,21 @@ func test_or(){
     //   1 1 1 1
     a = a | b
     if  a != 15 {
-        fmt.sprintf("test int bitor %d != 15 failed\n",int(a))
+        fmt.println("test int bitor %d != 15 failed\n",int(a))
         os.exit(1)
     }
     c = 0
     a |= *c
     if  a != 15 {
-        fmt.sprintf("test int bitor %d != 15 failed\n",int(a))
+        fmt.println("test int bitor %d != 15 failed\n",int(a))
         os.exit(1)
     }
     e<i8> = a | 16
     if  e != 31 {
-        fmt.sprintf("test int bitor %d != 31 failed\n",int(e))
+        fmt.println("test int bitor %d != 31 failed\n",int(e))
         os.exit(1)
     }
-    fmt.sprintf("test int bitor %d  success\n",int(e))
+    fmt.println("test int bitor %d  success\n",int(e))
 }
 func test_lognot(){
 	a<i8> = 100

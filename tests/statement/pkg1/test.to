@@ -2,6 +2,6 @@ use fmt
 
 
 func test(){
-    fmt.sprintf("this is pkg1\n")
+    fmt.println("this is pkg1\n")
     test2()
 }

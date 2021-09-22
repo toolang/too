@@ -5,20 +5,20 @@ func test_while_break(){
     a = 10
     while a {
         if  a == 5 {
-            fmt.sprintf("should break %d\n",a)
+            fmt.println("should break %d\n",a)
             break
         }
         a = a - 1
-        fmt.sprintf("break %d\n",a)
+        fmt.println("break %d\n",a)
     }
 }
 func break_double(){
     b = 1
     while b {
         c = 1
-        fmt.sprintf("outside\n")
+        fmt.println("outside\n")
         while c {
-            fmt.sprintf("inside\n")
+            fmt.println("inside\n")
             break
         }
         break

@@ -27,7 +27,7 @@ func array_test(top){
     while i < top {
         os.gc()
         if  arr[i] != i {
-            fmt.sprintf("[gc] arr[%d] != %d\n",arr[i],i)
+            fmt.println("[gc] arr[%d] != %d\n",arr[i],i)
             os.die("")
         }
         i += 1

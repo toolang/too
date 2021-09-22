@@ -33,14 +33,14 @@ func test_no_brace(){
 func test_has_brace(){
     a = 1
     if  a == 1 {
-        fmt.sprintf("OK\n")
+        fmt.println("OK\n")
         if  a != 10 {
-            fmt.sprintf("OK\n")
+            fmt.println("OK\n")
         }else{
             os.die("failed")
         }
     }else{
-        fmt.sprintf("OK\n")
+        fmt.println("OK\n")
         os.exit(1)
     }
     //测试 elseif
