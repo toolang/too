@@ -1,4 +1,6 @@
 use runtime
+use fmt
+use std
 
 // 内存分配器
 // 分配策略:
@@ -142,7 +144,7 @@ func assert(ret<i8>,str<i8*>){
     die(str)
 }
 func die(msg<i8*>){
-	if msg != null _.printf(msg)
+	if msg != null fmt.vfprintf(std.STDOUT,msg)
 	code<i8> = -1
 	_.exit(code)
 }

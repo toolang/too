@@ -326,7 +326,7 @@ func isTrue(cond<value>){
 func operator_switch(opt<i32>,lhs<value>,rhs<value>){
     if rhs == null {
         if opt != LOGNOT && opt != BITNOT {
-            _.printf(*"[operator] only !,~ at unary expression,not:%d\n",opt)
+            fmt.vfprintf(std.STDOUT,*"[operator] only !,~ at unary expression,not:%d\n",opt)
             os.exit(-1)
         }
     }

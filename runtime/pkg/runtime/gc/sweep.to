@@ -13,7 +13,6 @@ extern u64 get_ax()
 extern u64 get_bx()
 extern void free()
 extern void mark()
-extern void printf()
 extern void exit()
 
 func gc_mark(ptr<u64*>)

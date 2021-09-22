@@ -1,7 +1,8 @@
 use runtime.gc
 use runtime
+use std
+use fmt
 
-extern void printf()
 
 LSTRING_MAX_PREALLOC<i32> =  1048576 # 1024 * 1024
 LSTRING_LLSTR_SIZE<i32>   = 21
@@ -47,7 +48,7 @@ func LSTRING_HDR(type<i32>,s<u8*>){
         LSTRING_TYPE_16: l = sizeof(stringhdr16)
         LSTRING_TYPE_32: l = sizeof(stringhdr32)
         LSTRING_TYPE_64: l = sizeof(stringhdr64)
-        _ : _.printf(*"string: unknown type\n")
+        _ : fmt.vfprintf(std.STDOUT,*"string: unknown type\n")
     }
     return s - l
 } 
@@ -106,7 +107,7 @@ func stringsetlen(s<u8*>, newlen<u64>) {
             sh64<stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
             sh64.len = newlen
         }
-        _ : _.printf(*"string: unknow type")
+        _ : fmt.vfprintf(std.STDOUT,*"string: unknow type")
     }
 }
 
@@ -136,7 +137,7 @@ func stringinclen(s<u8*>, inc<u64>) {
             sh64<stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
             sh64.len += inc
         }
-        _ : _.printf(*"string: unknow type")
+        _ : fmt.vfprintf(std.STDOUT,*"string: unknow type")
     }
 }
 
@@ -163,7 +164,7 @@ func stringalloc(s<u8*>) {
             sh64<stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
             return sh64.alloc
         }
-        _ : _.printf(*"string: unknow type")
+        _ : fmt.vfprintf(std.STDOUT,*"string: unknow type")
     }
 }
 
@@ -190,7 +191,7 @@ func stringsetalloc(s<u8*>, newlen<u64>) {
             sh64.alloc = newlen
         }
         _ : {
-            _.printf(*"string: unknow type\n")
+            fmt.vfprintf(std.STDOUT,*"string: unknow type\n")
         }
     }
 }

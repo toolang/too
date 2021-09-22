@@ -1,7 +1,6 @@
 
 use fmt
 use os
-extern void printf(void)
 
 mem info {
 	i8  a

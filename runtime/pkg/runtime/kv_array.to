@@ -4,7 +4,6 @@ use os
 use runtime.gc
 use std
 
-extern void printf()
 extern void memcpy(void,void,void)
 
 mem array {

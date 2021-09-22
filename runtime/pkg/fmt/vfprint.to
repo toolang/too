@@ -5,7 +5,6 @@ use fmt
 flag_s<i8> = 115 # 's'
 flag_percent<i8> = 37 # '%'
 flag_d<i8> = 100 # '100
-extern void printf()
 func fputs(s<i8*>,out<u64>)
 {
 	ll<u64>		= std.strlen(s)
@@ -24,8 +23,6 @@ func fputc(c<i8>,out<u64*>){
 	}
 	return c
 }
-//func printf()
-extern void printf()
 //vfprintf
 func vfprintf(out<u64>, format<i8*>, args,args1,args2,args3)
 {
