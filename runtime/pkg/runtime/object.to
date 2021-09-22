@@ -138,14 +138,14 @@ func object_member_get(obj<value>, k<u32>){
     c<object> = obj.data 
     v<value> = member_find(c.members,key)
     if  v == null {
-        fmt.sprintf("object_get] not find the memeber:%d value\n",key)
+        fmt.println("object_get] not find the memeber:%d value\n",key)
         return null
     }
     return v
 }
 func object_unary_operator(opt<i32>,obj<value>,k<u32>,v<value>){
     if   obj == null || v == null  {
-        fmt.sprintf(" [object-uop] probably wrong at there! object:%p rhs:%p\n",obj,int(v))
+        fmt.println(" [object-uop] probably wrong at there! object:%p rhs:%p\n",obj,int(v))
         return Null
     }
     key<value> = object_member_get(obj,k)
