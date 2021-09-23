@@ -143,6 +143,7 @@ func assert(ret<i8>,str<i8*>){
     if ret return True
     die(str)
 }
+extern void exit()
 func die(msg<i8*>){
 	if msg != null fmt.vfprintf(std.STDOUT,msg)
 	code<i8> = -1

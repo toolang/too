@@ -3,6 +3,7 @@ hugmem<u64*>
 extern void malloc()
 extern void realloc()
 extern void memset()
+extern void free()
 use runtime
 use fmt
 
@@ -320,7 +321,7 @@ func gc_malloc(nbytes<u64>)
 func gc_init(){
 	poolss<u64> = 512
 	pools = _.malloc(poolss)
-	spstart = _.get_bp()
+	spstart = get_bp()
 	//init hug mem
 	hugmem = _.malloc(sizeof(List))
 	for (i<i32> = 0 ; i < 32 ; i += 1) {

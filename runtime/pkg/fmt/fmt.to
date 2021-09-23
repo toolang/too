@@ -4,8 +4,6 @@ use runtime
 use std
 use fmt
 
-extern int printf(string)
-
 func fatal(size,args...){
    println(args)
    os.exit(-1)

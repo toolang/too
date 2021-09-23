@@ -1,19 +1,15 @@
 use runtime
 
-extern u64 get_sp()
-extern u64 get_bp()
-extern u64 get_di()
-extern u64 get_si()
-extern u64 get_dx()
-extern u64 get_cx()
-extern u64 get_r8()
-extern u64 get_r9()
-extern u64 get_bp()
-extern u64 get_ax()
-extern u64 get_bx()
-extern void free()
-extern void mark()
-extern void exit()
+func get_sp()
+func get_di()
+func get_si()
+func get_dx()
+func get_cx()
+func get_r8()
+func get_r9()
+func get_bp()
+func get_ax()
+func get_bx()
 
 func gc_mark(ptr<u64*>)
 {
@@ -78,7 +74,7 @@ func gc_sweep()
 }
 func tell_is_stackarg(arg<u64*>){
     if arg == null return True
-    top<u64> = _.get_sp()
+    top<u64> = get_sp()
     if spstart > arg  && arg > top {
         if gc_mark(*arg) == NOT_STACK {
             mark(hugmem,*arg)
@@ -88,19 +84,19 @@ func tell_is_stackarg(arg<u64*>){
 func scan_register()
 {
     reg<u64*> = null
-    reg = _.get_sp()  tell_is_stackarg(reg)
-    reg = _.get_bp()  tell_is_stackarg(reg)
-    reg = _.get_di()  tell_is_stackarg(reg)
-    reg = _.get_si()  tell_is_stackarg(reg)
-    reg = _.get_dx()  tell_is_stackarg(reg)
-    reg = _.get_cx()  tell_is_stackarg(reg)
-    reg = _.get_r8()  tell_is_stackarg(reg)
-    reg = _.get_r9()  tell_is_stackarg(reg)
-    reg = _.get_ax()  tell_is_stackarg(reg)
-    reg = _.get_bx()  tell_is_stackarg(reg)
+    reg = get_sp()  tell_is_stackarg(reg)
+    reg = get_bp()  tell_is_stackarg(reg)
+    reg = get_di()  tell_is_stackarg(reg)
+    reg = get_si()  tell_is_stackarg(reg)
+    reg = get_dx()  tell_is_stackarg(reg)
+    reg = get_cx()  tell_is_stackarg(reg)
+    reg = get_r8()  tell_is_stackarg(reg)
+    reg = get_r9()  tell_is_stackarg(reg)
+    reg = get_ax()  tell_is_stackarg(reg)
+    reg = get_bx()  tell_is_stackarg(reg)
 }
 func scan_stack(){
-    cur_sp<u64*> = _.get_sp()
+    cur_sp<u64*> = get_sp()
     if spstart < cur_sp {
         die(*"spstart should >= cur_sp")
     }
