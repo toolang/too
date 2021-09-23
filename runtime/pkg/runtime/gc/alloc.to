@@ -3,7 +3,6 @@ hugmem<u64*>
 extern void malloc()
 extern void realloc()
 extern void memset()
-extern void memcpy()
 use runtime
 use fmt
 
@@ -343,7 +342,7 @@ func gc_realloc(p<u64*>, nbytes<u64>){
         return Null
     }
     newp<u64*> = gc_malloc(nbytes)
-    _.memcpy(newp,p,nbytes)
+    std.memcpy(newp,p,nbytes)
     gc_free(p)
     return newp
 }

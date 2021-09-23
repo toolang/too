@@ -4,8 +4,6 @@ use os
 use runtime.gc
 use std
 
-extern void memcpy(void,void,void)
-
 mem array {
     u64*     addr
     u32   	 used
@@ -124,7 +122,7 @@ func array_push(a<array>){
             fmt.println("[arr_pushn] failed to expand memeory")
             return Null
         }
-        _.memcpy(newp,a.addr,size)
+        std.memcpy(newp,a.addr,size)
         //手动释放之前绝对不会用到的数组,降低gc压力
         gc.gc_free(a.addr)
         a.addr = newp
@@ -155,7 +153,7 @@ func array_push_n(a<array>,n<u32>)
             fmt.println("[arr_pushn] failed to expand memeory")
             return Null
         }
-        _.memcpy(newp, a.addr, a.used * a.size)
+        std.memcpy(newp, a.addr, a.used * a.size)
         //手动释放拷贝前的数组降低gc压力
         gc.gc_free(a.addr)
         a.addr = newp

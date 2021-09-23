@@ -2,7 +2,6 @@ use runtime
 use runtime.gc
 
 extern void memcmp()
-extern void memcpy()
 extern void tolower()
 extern void toupper()
 extern void strlen()
@@ -115,7 +114,7 @@ func stringnewlen(init<u64*>, initlen<u64>) {
         }
     }
     if initlen != runtime.Null && init != runtime.Null
-        _.memcpy(s, init, initlen)
+        std.memcpy(s, init, initlen)
     //last pos set '\0' to     
     //s[initlen] = '\0'
     sp<u8*> = s + initlen
@@ -190,7 +189,7 @@ func stringMakeRoomFor(s<u8*>, addlen<u64>) {
     } else {
         newsh = gc.gc_malloc(hdrlen + newlen+1)
         if newsh == null return runtime.Null
-        _.memcpy(newsh + hdrlen, s, len + 1)
+        std.memcpy(newsh + hdrlen, s, len + 1)
         gc.gc_free(sh)
         s = newsh + hdrlen
         ht = s - 1
@@ -207,7 +206,7 @@ func stringcatlen(s<u8*>,t<u64*>, len<u64>) {
 
     s = stringMakeRoomFor(s,len)
     if s == null return runtime.Null
-    _.memcpy(s+curlen, t, len)
+    std.memcpy(s+curlen, t, len)
     stringsetlen(s, curlen + len)
 
     sp<u8*> = s + curlen + len
@@ -229,7 +228,7 @@ func stringcpylen(s<u8*>, t<i8*>, len<u64>) {
         s = stringMakeRoomFor(s,len - stringlen(s))
         if s == null return runtime.Null
     }
-    _.memcpy(s, t, len)
+    std.memcpy(s, t, len)
     sp<u8*> = s + len
     #s[len] = '\0'
     *sp = 0
