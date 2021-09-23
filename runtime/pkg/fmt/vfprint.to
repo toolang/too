@@ -2,9 +2,16 @@ use runtime
 use std
 use fmt
 
-flag_s<i8> = 115 # 's'
 flag_percent<i8> = 37 # '%'
-flag_d<i8> = 100 # '100
+flag_d<i8> = 100 # 'd'
+flag_D<i8> = 68  #  'D'
+flag_s<i8> = 115 # 's'
+flag_S<i8> = 83  # 'S'
+flag_i<i8> = 105 # 'i'
+flag_I<i8> = 73  # 'I'
+flag_u<i8> = 117 # 'u'
+flag_U<i8> = 85  # 'U'
+
 func fputs(s<i8*>,out<u64>)
 {
 	ll<u64>		= std.strlen(s)

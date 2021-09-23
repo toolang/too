@@ -382,3 +382,111 @@ func strlen(str<i8*>){
 	}	
 	return cnt
 }
+
+
+func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
+    initlen<u64> = stringlen(s)
+    f<i8*> = fmt
+    i<u64> = 0
+    db<i32> = 2
+    single<i32> = 1
+    s = stringMakeRoomFor(s, initlen + strlen(fmt) * db)
+    f = fmt    
+    i = initlen 
+
+ 	pp<u64*> = &args
+	stack<i32> = 4   
+    while *f != null {
+        //init stack
+		curr = *pp
+		if *f != flag_percent {
+			if stack < 1  pp += 8	else pp -= 8
+			if stack == 1 {	pp = &args	pp += 40	}		
+			stack -= 1
+		}
+		//stack end
+
+        next<i8> = 0
+        str<i8*> = 0
+        l<u64>   = 0
+        num<i64> = 0
+        unum<u64> = 0
+        if stringavail(s) == 0 {
+            s = stringMakeRoomFor(s,single)
+        }
+
+        match *f 
+        {
+            flag_percent: {
+                f   += 1
+                next = *f
+                match next {
+                    flag_s: goto match_flag_S
+                    flag_S:{
+                        match_flag_S:
+                        str = curr
+                        if next == flag_s 
+                            l = strlen(str)
+                        else 
+                            l = stringlen(str)
+                        if stringavail(s) < l {
+                            s = stringMakeRoomFor(s,l)
+                        }
+                        memcpy(s + i,str,l)
+                        stringinclen(s,l)
+                        i += l
+                    }
+                    flag_i: goto match_flag_I
+                    flag_I:{
+                        match_flag_I:
+                        num = curr
+
+                        buf_o<i8:21> = 0
+                        buf<i8*> = &buf_o
+                        l = stringll2str(buf,num)
+                        if stringavail(s) < l {
+                            s = stringMakeRoomFor(s,l)
+                        }
+                        memcpy(s + i,buf,l)
+                        stringinclen(s,l)
+                        i += l
+                    }
+                    flag_u: goto match_flag_U
+                    flag_U:{
+                        match_flag_U:
+                        unum = curr
+
+                        buf_o<i8:21> = 0
+                        buf<i8*> = &buf_o
+                        l = stringull2str(buf,unum)
+                        if stringavail(s) < l {
+                            s = stringMakeRoomFor(s,l)
+                        }
+                        memcpy(s + i,buf,l)
+                        stringinclen(s,l)
+                        i += l
+                    }
+                    _ : {
+                        # s[i++] = next
+                        tp<i8*> = s + i
+                        i += 1
+                        *tp = next
+                        stringinclen(s,1)
+                    } 
+                }
+            }
+            _ : {
+                # s[i++] = *f
+                tp<i8*> = s + i
+                i += 1
+                *tp = *f
+                stringinclen(s,1)
+            }
+        }
+        f += 1
+    }
+    # s[i] = '\0'
+    tp<i8*> = s + i
+    *tp = 0
+    return s
+}
