@@ -4,6 +4,6 @@ use fmt
 
 func main(){
     fmt.println("before")
-    os.daemon()
+    //os.daemon()
     fmt.println("after")
 }
