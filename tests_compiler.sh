@@ -24,8 +24,8 @@ assert(){
     log "[compile] too -s $input ..."
     too -s $input
     check
-    echo "gcc -g *.s /usr/local/lib/coasm/*.s -L/usr/local/lib/colib -linternal -los"
-    gcc -g *.s /usr/local/lib/coasm/*.s -L/usr/local/lib/colib -linternal -los
+    echo "gcc -g *.s /usr/local/lib/coasm/*.s -L/usr/local/lib/colib -los"
+    gcc -g *.s /usr/local/lib/coasm/*.s -L/usr/local/lib/colib -los
     check
     ./a.out
     check

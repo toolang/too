@@ -383,7 +383,7 @@ func strlen(str<i8*>){
 	return cnt
 }
 
-
+extern void printf()
 func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
     initlen<u64> = stringlen(s)
     f<i8*> = fmt
@@ -393,25 +393,19 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
     s = stringMakeRoomFor(s, initlen + strlen(fmt) * db)
     f = fmt    
     i = initlen 
+    curr<u64> = 0
 
  	pp<u64*> = &args
 	stack<i32> = 4   
     while *f != null {
-        //init stack
-		curr = *pp
-		if *f != flag_percent {
-			if stack < 1  pp += 8	else pp -= 8
-			if stack == 1 {	pp = &args	pp += 40	}		
-			stack -= 1
-		}
-		//stack end
+
 
         next<i8> = 0
         str<i8*> = 0
         l<u64>   = 0
         num<i64> = 0
         unum<u64> = 0
-        if stringavail(s) == 0 {
+        if stringavail(s) == runtime.Zero {
             s = stringMakeRoomFor(s,single)
         }
 
@@ -424,6 +418,12 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                     flag_s: goto match_flag_S
                     flag_S:{
                         match_flag_S:
+                        //init stack
+                        curr = *pp
+                        if stack < 1  pp += 8	else pp -= 8
+                        if stack == 1 {	pp = &args	pp += 40	}		
+                        stack -= 1
+                        //stack end
                         str = curr
                         if next == flag_s 
                             l = strlen(str)
@@ -439,6 +439,12 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                     flag_i: goto match_flag_I
                     flag_I:{
                         match_flag_I:
+                        //init stack
+                        curr = *pp
+                        if stack < 1  pp += 8	else pp -= 8
+                        if stack == 1 {	pp = &args	pp += 40	}		
+                        stack -= 1
+                        //stack end
                         num = curr
 
                         buf_o<i8:21> = 0
@@ -454,6 +460,12 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                     flag_u: goto match_flag_U
                     flag_U:{
                         match_flag_U:
+                        //init stack
+                        curr = *pp
+                        if stack < 1  pp += 8	else pp -= 8
+                        if stack == 1 {	pp = &args	pp += 40	}		
+                        stack -= 1
+                        //stack end
                         unum = curr
 
                         buf_o<i8:21> = 0
@@ -471,7 +483,7 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                         tp<i8*> = s + i
                         i += 1
                         *tp = next
-                        stringinclen(s,1)
+                        stringinclen(s,single)
                     } 
                 }
             }

@@ -166,7 +166,6 @@ func array_push_n(a<array>,n<u32>)
 
     return elt
 }
-extern void stringcatfmt()
 func arr_tostring(varr<value>)
 {
     ret<i8*>   = std.stringempty()
@@ -184,7 +183,7 @@ func arr_tostring(varr<value>)
             ret = std.stringcat(ret,*",")
         //Int,Float,Bool,Char
         }else {
-            ret = _.stringcatfmt(ret,*"%I,",v.data)
+            ret = std.stringcatfmt(ret,*"%I,",v.data)
         }
     }
     ret = std.stringcat(ret,*"]")

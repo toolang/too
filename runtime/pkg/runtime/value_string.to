@@ -1,6 +1,5 @@
 use std
 
-extern string stringcatfmt()
 extern string stringlen()
 extern string arr_tostring()
 
@@ -9,12 +8,12 @@ func value_string_plus(lhs<value>,rhs<value>)
     tmstr<i8*> = std.stringempty()
     match lhs.type 
 	{
-		Int   : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
-		Bool  : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
-        Float : tmstr = _.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+		Int   : tmstr = std.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+		Bool  : tmstr = std.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
+        Float : tmstr = std.stringcatfmt(tmstr,*"%I%S",lhs.data,rhs.data)
         String: {
             tmstr = std.stringdup(lhs.data)
-            if rhs.type == Int        tmstr = _.stringcatfmt(tmstr,*"%I",rhs.data)
+            if rhs.type == Int        tmstr = std.stringcatfmt(tmstr,*"%I",rhs.data)
             else if rhs.type == Array tmstr = std.stringcat(tmstr,arr_tostring(rhs))
             else                      tmstr = std.stringcat(tmstr,rhs.data)
         }
