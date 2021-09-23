@@ -1,8 +1,9 @@
 .text
-.globl sleep
-sleep:
+.globl time_sleep
+time_sleep:
      sub    $0x18,%rsp
-     mov    %rdi,%rax
+     add    $8,%rdi
+     mov    (%rdi),%rax
      imul   $1000000,%rax,%rax
      mov    %rax,0x20(%rsp)
      mov    %rbp,0x10(%rsp)
@@ -26,9 +27,11 @@ sleep:
      mov    0x10(%rsp),%rbp
      add    $0x18,%rsp
      retq
-.globl usleep
-usleep:
+.globl time_usleep
+time_usleep:
      sub    $0x18,%rsp
+     add    $8,%rdi
+     mov    (%rdi),%rdi
      mov    %rdi,0x20(%rsp)
      mov    %rbp,0x10(%rsp)
      lea    0x10(%rsp),%rbp

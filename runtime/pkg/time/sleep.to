@@ -1,11 +1,5 @@
 
-extern void sleep(int)
-extern void usleep(int)
-
 //func time.sleep
-func usleep(usecond){
-    _.usleep(*usecond)
-}
-func sleep(second){
-    _.sleep(*second)
-}
+func sleep()
+//func time.usleep
+func usleep()

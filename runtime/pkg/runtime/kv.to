@@ -1,5 +1,4 @@
 
-extern void map_insert(void,void,void)
 
 func cap(v<value>){
 	type<i8> = v.type

@@ -1,8 +1,5 @@
 use std
 
-extern string stringlen()
-extern string arr_tostring()
-
 func value_string_plus(lhs<value>,rhs<value>)
 {
     tmstr<i8*> = std.stringempty()

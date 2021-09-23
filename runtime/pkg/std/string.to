@@ -4,7 +4,6 @@ use runtime.gc
 extern void memcmp()
 extern void tolower()
 extern void toupper()
-extern void strlen()
 extern void memset()
 
 func stringlen(s<u8*>) {
@@ -129,7 +128,7 @@ func stringempty() {
 func stringnew(init<i8*>) {
     initlen<u64>  = null
     if  init == null  initlen = 0  
-    else              initlen = _.strlen(init)
+    else              initlen = strlen(init)
 
     return stringnewlen(init, initlen)
 }
@@ -146,7 +145,7 @@ func stringfree(s<u8*>) {
 }
 
 func stringupdatelen(s<u8*>) {
-    reallen<u64> = _.strlen(s)
+    reallen<u64> = strlen(s)
     stringsetlen(s, reallen)
 }
 
@@ -216,7 +215,7 @@ func stringcatlen(s<u8*>,t<u64*>, len<u64>) {
 }
 
 func stringcat(s<u8*>, t<i8*>) {
-    return stringcatlen(s, t, _.strlen(t))
+    return stringcatlen(s, t, strlen(t))
 }
 
 func stringcatstring(s<u8*>, t<u8*>) {
@@ -237,7 +236,7 @@ func stringcpylen(s<u8*>, t<i8*>, len<u64>) {
 }
 
 func stringcpy(s<u8*>, t<i8*>) {
-    return stringcpylen(s, t, _.strlen(t))
+    return stringcpylen(s, t, strlen(t))
 }
 
 func stringll2str(s<i8*>, value<i64>) {
@@ -382,7 +381,6 @@ func strlen(str<i8*>){
 	return cnt
 }
 
-extern void printf()
 func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
     initlen<u64> = stringlen(s)
     f<i8*> = fmt
