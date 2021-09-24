@@ -1,13 +1,12 @@
 
-extern void exit(int)
-
 use fmt
+use std
 
 func die(str){
     fmt.println(str)
     code<i8> = -1
-    _.exit(code)
+    std.die(code)
 }
 func exit(code){
-    _.exit(*code)
+    std.die(*code)
 }

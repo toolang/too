@@ -27,4 +27,9 @@ std_seek:
 	mov $0x8,%rax
 	syscall
 	retq
+.global std_die
+std_die:
+	mov $60,%rax
+	syscall
+	retq
 	

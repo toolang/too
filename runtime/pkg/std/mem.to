@@ -1,3 +1,4 @@
+use runtime
 
 OP_T_THERS<i8> = 16
 
@@ -49,4 +50,18 @@ func strcmp(p1<i8*>, p2<i8*>) {
 func strcat(dest<i8*> , src<i8*>){
 	strcopy(dest + strlen(dest) , src)
 	return dest
+}
+func memcmp(vl<u64> , vr<u64>, n<u64>)
+{
+	l<i8*> = vl
+	r<i8*> = vr
+	while n  && *l == *r {
+		n -= 1
+		l += 1
+		r += 1
+	}
+	if n  {
+		return *l - *r	
+	}
+	return runtime.Zero
 }
