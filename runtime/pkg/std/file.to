@@ -4,8 +4,20 @@ STDIN<i64>  = 0
 
 EOF<i64>    = -1
 
+//open syscall; implement by asm
+func open(filename<i8*> , flags<i64> , mode<i64>)
+
+//read syscall ; implement by asm
+func read(fd<i64> , buffer<u64*> , size<u64>)
+
 //write syscall; implement by asm
 func write(fd,buffer,size)
+
+//close syscall; implement by asm
+func close(fd<i64>)
+
+//seek syscall ; implement by asm
+func seek(fd<i64> , offset<i64> , mode<i64>)
 
 //fwrite
 func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){

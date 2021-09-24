@@ -1,18 +1,30 @@
+.global std_open  
+std_open:
+	mov    $0x2,%rax
+	syscall
+	retq   
+
+.global std_read  
+std_read:
+	mov    $0,%rax
+	syscall
+	retq   
+
+.global std_close  
+std_close:
+	mov    $0x3,%rax
+	syscall
+	retq  
+
 .global std_write  
 std_write:
-	push   %rbp
-	mov    %rsp,%rbp
-	mov    %rdi,-0x18(%rbp)
-	mov    %rsi,-0x20(%rbp)
-	mov    %rdx,-0x28(%rbp)
-	movq   $0x0,-0x8(%rbp)
 	mov    $0x1,%rax
-	mov    -0x18(%rbp),%rbx
-	mov    -0x20(%rbp),%rcx
-	mov    -0x28(%rbp),%rdx
 	syscall
-	mov    %rax,-0x8(%rbp)
-	mov    -0x8(%rbp),%rax
-	pop    %rbp
 	retq   
+
+.global std_seek
+std_seek:
+	mov $0x8,%rax
+	syscall
+	retq
 	
