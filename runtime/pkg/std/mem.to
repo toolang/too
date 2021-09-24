@@ -46,3 +46,7 @@ func strcmp(p1<i8*>, p2<i8*>) {
 
   	return c1 - c2
 }
+func strcat(dest<i8*> , src<i8*>){
+	strcopy(dest + strlen(dest) , src)
+	return dest
+}

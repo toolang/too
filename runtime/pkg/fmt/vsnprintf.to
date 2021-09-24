@@ -1,4 +1,3 @@
-extern void strcat()
 func vsnprintf(dstr<i8*>, format<i8*>, args...)
 {
 	translating<u64>	= 0
@@ -38,7 +37,7 @@ func vsnprintf(dstr<i8*>, format<i8*>, args...)
 					bl<i32> = 10
 					std.itoa(curr,buf,bl)
 					l<i32> = std.strlen(buf)
-					_.strcat(dstr,buf)
+					std.strcat(dstr,buf)
 					i += l
 					ret += l
 				}else
@@ -55,7 +54,7 @@ func vsnprintf(dstr<i8*>, format<i8*>, args...)
 					str<i8*> = curr
 					translating	= 0
 					ll<i32> = std.strlen(str)
-					_.strcat(dstr,str)
+					std.strcat(dstr,str)
 					i += ll
 
 					ret += ll
