@@ -1,8 +1,17 @@
+use runtime
+
 STDERR<i64> = 2
 STDOUT<i64> = 1
 STDIN<i64>  = 0
 
 EOF<i64>    = -1
+
+O_RDONLY<i64> = 0
+O_WRONLY<i64> = 1
+O_RDWR<i64>   = 1
+O_CREAT<i64>  = 100
+O_TRUNC<i64>  = 1000
+O_APPEND<i64> = 2000
 
 //open syscall; implement by asm
 func open(filename<i8*> , flags<i64> , mode<i64>)
@@ -11,7 +20,7 @@ func open(filename<i8*> , flags<i64> , mode<i64>)
 func read(fd<i64> , buffer<u64*> , size<u64>)
 
 //write syscall; implement by asm
-func write(fd,buffer,size)
+func write(fd<i64>,buffer<i8*>,size<u64>)
 
 //close syscall; implement by asm
 func close(fd<i64>)
@@ -22,4 +31,34 @@ func seek(fd<i64> , offset<i64> , mode<i64>)
 //fwrite
 func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){
 	return write(fd,buffer,size * count)
+}
+//fopen
+func fopen(filename<i8*> , mode<i8*>){
+	fd<i64> = -1
+	flags<i64> = 0
+	access<i64> = 700
+
+	if strcmp(mode,*"w") == runtime.Zero {
+		flags |= O_WRONLY | O_CREAT | O_TRUNC
+	}
+	if strcmp(mode,*"w+") == runtime.Zero {
+		flags |= O_RDWR | O_CREAT | O_TRUNC
+	}
+	if strcmp(mode,*"r") == runtime.Zero {
+		flags |= O_RDONLY
+	}
+	if strcmp(mode,*"r+") == runtime.Zero {
+		flags |= O_RDWR | O_CREAT 
+	}
+	fd = open(filename,flags,access)
+	return fd
+}
+func fread(fd<u64>,buffer<i8*>,size<i64>,count<i64>){
+	return read(fd,buffer,size * count)
+}
+func fclose(fp<u64>){
+	return close(fp)
+}
+func fseek(fp<u64>,offset<i64> , set<i64>){
+	return seek(fp,offset,set)
 }
