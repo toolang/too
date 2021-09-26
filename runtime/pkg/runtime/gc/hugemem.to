@@ -12,7 +12,7 @@ mem List {
 
 func push(list<List>,v<u64*>,size<i32>)
 {
-	node<Lnode> = _.malloc(sizeof(Lnode))
+	node<Lnode> = std.malloc(sizeof(Lnode))
     node.value = v
     node.size = size
     node.next = Null
