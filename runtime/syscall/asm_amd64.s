@@ -14,5 +14,7 @@ main:
 	call main_main
     mov %rbp, %rsp
     pop %rbp
+	mov $0,%rdi
+	call std_die
     ret
 	

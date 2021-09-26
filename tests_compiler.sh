@@ -24,8 +24,8 @@ assert(){
     log "[compile] too -s $input ..."
     too -s $input
     check
-    echo "gcc -g *.s /usr/local/lib/coasm/*.s "
-    gcc -g *.s /usr/local/lib/coasm/*.s 
+    echo "gcc -g *.s /usr/local/lib/coasm/*.s -rdynamic -static -nostdlib -e main"
+    gcc -g *.s /usr/local/lib/coasm/*.s -rdynamic -static -nostdlib -e main 
     check
     ./a.out
     check
