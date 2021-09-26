@@ -5,9 +5,13 @@ use string
 
 func args_init(argc<u64> argv<u64*>){
 	c = int(argc)
+	c -= 1
 
 	arr = []
 	while argc > 0 {
+		if *argv == null {
+			break
+		}
 		str<value> = new value
 		str.type = String
 		str.data = string.stringnew(*argv)
@@ -16,7 +20,7 @@ func args_init(argc<u64> argv<u64*>){
 		argv += PointerSize
 		argc -= 1
 	}
-	os.argc = c
+	os.argc = c 
 	os.argv = arr
 
 }
