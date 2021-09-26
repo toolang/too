@@ -94,7 +94,7 @@ func initmalloc()
 	//32MB heap size
 	heap_size<u64> = 33554432
 
-	base	 = brk(0)
+	base	 = brk(ZERO)
 	end<u64> = base + heap_size
 	end		 = brk(end)
 	if end == null {
