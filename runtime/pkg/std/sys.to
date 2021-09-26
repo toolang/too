@@ -1,2 +1,11 @@
 //die;implement by asm
 func die(code<i8>)
+
+//sleep ; implement by asm
+func sleep(sec<u64>)
+
+//sleep ; implement by asm
+func usleep(sec<u64>)
+
+//brk ; implement by asm
+func brk(brk<u64>)

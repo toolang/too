@@ -1,5 +1,4 @@
 .text
-
 .globl runtime_gc_get_sp
 runtime_gc_get_sp:
     movq %rsp,%rax

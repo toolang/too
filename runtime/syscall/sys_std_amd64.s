@@ -1,6 +1,46 @@
 .text
-.globl time_sleep
-time_sleep:
+.global std_open  
+std_open:
+	mov    $0x2,%rax
+	syscall
+	retq   
+
+.global std_read  
+std_read:
+	mov    $0,%rax
+	syscall
+	retq   
+
+.global std_close  
+std_close:
+	mov    $0x3,%rax
+	syscall
+	retq  
+
+.global std_write  
+std_write:
+	mov    $0x1,%rax
+	syscall
+	retq   
+
+.global std_seek
+std_seek:
+	mov $0x8,%rax
+	syscall
+	retq
+.global std_die
+std_die:
+	mov $60,%rax
+	syscall
+	retq
+.global std_brk
+std_brk:
+    mov $12,%rax
+    syscall
+    retq
+
+.globl std_sleep
+std_sleep:
      sub    $0x18,%rsp
      add    $8,%rdi
      mov    (%rdi),%rax
@@ -27,8 +67,8 @@ time_sleep:
      mov    0x10(%rsp),%rbp
      add    $0x18,%rsp
      retq
-.globl time_usleep
-time_usleep:
+.globl std_usleep
+std_usleep:
      sub    $0x18,%rsp
      add    $8,%rdi
      mov    (%rdi),%rdi
@@ -54,3 +94,4 @@ time_usleep:
      mov    0x10(%rsp),%rbp
      add    $0x18,%rsp
      retq
+
