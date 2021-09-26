@@ -1,6 +1,8 @@
 
 use fmt
 use os
+use string
+
 func hash_key(data<u8*>,len<u64>){
     i<i64>   = 0
     key<i64> = 0
@@ -17,7 +19,7 @@ func get_hash_key(key<value>){
 		return key.data
 	}
 	if  key.type == String {
-		return hash_key(key.data,std.stringlen(key.data))
+		return hash_key(key.data,string.stringlen(key.data))
 	}
     fmt.println("[hash_key] unsupport type:" + type_string(key))
     os.exit(-1)

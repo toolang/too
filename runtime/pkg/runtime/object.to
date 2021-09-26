@@ -2,6 +2,7 @@
 use fmt
 use os
 use std
+use string
 
 
 func newobject(type<i32> , data<u64*>)
@@ -11,7 +12,7 @@ func newobject(type<i32> , data<u64*>)
     match type {
         Int:    ret.data = data
         Float:  ret.data = data
-        String: ret.data = std.stringnew(data)
+        String: ret.data = string.stringnew(data)
         Bool:   ret.data = data
         Char:   ret.data = data
         Null:   ret.data = 0

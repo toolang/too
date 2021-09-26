@@ -125,7 +125,7 @@ func stringempty() {
 func stringnew(init<i8*>) {
     initlen<u64>  = null
     if  init == null  initlen = 0  
-    else              initlen = strlen(init)
+    else              initlen = std.strlen(init)
 
     return stringnewlen(init, initlen)
 }
@@ -142,7 +142,7 @@ func stringfree(s<u8*>) {
 }
 
 func stringupdatelen(s<u8*>) {
-    reallen<u64> = strlen(s)
+    reallen<u64> = std.strlen(s)
     stringsetlen(s, reallen)
 }
 
@@ -212,7 +212,7 @@ func stringcatlen(s<u8*>,t<u64*>, len<u64>) {
 }
 
 func stringcat(s<u8*>, t<i8*>) {
-    return stringcatlen(s, t, strlen(t))
+    return stringcatlen(s, t, std.strlen(t))
 }
 
 func stringcatstring(s<u8*>, t<u8*>) {
@@ -233,7 +233,7 @@ func stringcpylen(s<u8*>, t<i8*>, len<u64>) {
 }
 
 func stringcpy(s<u8*>, t<i8*>) {
-    return stringcpylen(s, t, strlen(t))
+    return stringcpylen(s, t, std.strlen(t))
 }
 
 func stringll2str(s<i8*>, value<i64>) {
@@ -316,7 +316,7 @@ func stringtolower(s<u8*>) {
     for (j<u64> = 0 ; j < len ; j += 1) {
         sp<u8*> = s + j
         #s[j] = tolower(s[j])
-        *sp = tolower(*s)
+        *sp = std.tolower(*s)
     }
 }
 
@@ -327,7 +327,7 @@ func stringtoupper(s<u8*>) {
     for (j<u64> = 0; j < len ; j += 1) {
         sp<u8*> = s + j
         # s[j] = toupper(s[j])
-        *sp = toupper(*sp)
+        *sp = std.toupper(*sp)
     }
 }
 
@@ -367,16 +367,6 @@ func string_realloc(ptr<u64*>, size<u64>) {
 func string_free(ptr<u64*>) {
     gc.gc_free(ptr) 
 }
-func strlen(str<i8*>){
-	cnt<u64> = 0
-	if str == null return runtime.Zero
-
-	while *str != 0 {
-		cnt += 1
-		str += 1
-	}	
-	return cnt
-}
 
 func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
     initlen<u64> = stringlen(s)
@@ -384,7 +374,7 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
     i<u64> = 0
     db<i32> = 2
     single<i32> = 1
-    s = stringMakeRoomFor(s, initlen + strlen(fmt) * db)
+    s = stringMakeRoomFor(s, initlen + std.strlen(fmt) * db)
     f = fmt    
     i = initlen 
     curr<u64> = 0
@@ -420,13 +410,13 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                         //stack end
                         str = curr
                         if next == flag_s 
-                            l = strlen(str)
+                            l = std.strlen(str)
                         else 
                             l = stringlen(str)
                         if stringavail(s) < l {
                             s = stringMakeRoomFor(s,l)
                         }
-                        memcpy(s + i,str,l)
+                        std.memcpy(s + i,str,l)
                         stringinclen(s,l)
                         i += l
                     }
@@ -447,7 +437,7 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                         if stringavail(s) < l {
                             s = stringMakeRoomFor(s,l)
                         }
-                        memcpy(s + i,buf,l)
+                        std.memcpy(s + i,buf,l)
                         stringinclen(s,l)
                         i += l
                     }
@@ -468,7 +458,7 @@ func stringcatfmt(s<i8*>, fmt<i8*>, args,args1,args2,args3) {
                         if stringavail(s) < l {
                             s = stringMakeRoomFor(s,l)
                         }
-                        memcpy(s + i,buf,l)
+                        std.memcpy(s + i,buf,l)
                         stringinclen(s,l)
                         i += l
                     }

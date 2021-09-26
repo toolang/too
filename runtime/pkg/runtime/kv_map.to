@@ -1,3 +1,4 @@
+use string
 
 mem rbtree {
     rbtree_node* root
@@ -53,7 +54,7 @@ func map_find(map<value>, key<value>){
     match key.type {
         Bool   : hk = key.data
         Int    : hk = key.data
-        String : hk = hash_key(key.data,std.stringlen(key.data))
+        String : hk = hash_key(key.data,string.stringlen(key.data))
     }
     node = tree.root
     sentinel = tree.sentinel
@@ -117,7 +118,7 @@ func map_insert(map<value>, k<value>,v<value>)
         hk = k.data
     }
     if  k.type == String {
-        hk = hash_key(k.data,std.stringlen(k.data))
+        hk = hash_key(k.data,string.stringlen(k.data))
     }
     node.key = hk
     node.k = k

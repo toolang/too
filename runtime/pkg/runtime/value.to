@@ -2,6 +2,7 @@
 use std
 use os
 use fmt
+use string
 
 
  // + operator
@@ -310,7 +311,7 @@ func isTrue(cond<value>){
     match cond.type {
         Int:    return cond.data > 0
         Float: return cond.data > 0
-        String: return std.stringlen(cond.data)
+        String: return string.stringlen(cond.data)
         Bool:   return cond.data
         Char:   return cond.data != 0
         #FIXME: coluld: return 0 not return;

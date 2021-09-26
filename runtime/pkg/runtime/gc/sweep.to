@@ -1,4 +1,5 @@
 use runtime
+use string
 
 func get_sp()
 func get_di()
@@ -115,7 +116,7 @@ func scan_stack(){
             continue
         }
         if hdr.flags < 1 || hdr.flags > 3 {
-            std.stringmark(ptr)
+            string.stringmark(ptr)
             continue
         }
         if v.type == runtime.String {
@@ -123,7 +124,7 @@ func scan_stack(){
             temp_po<pool> = pool_addr(v.data)
             if temp_po < areobj.address || areobj.address + ARENA_SIZE < temp_po {
             }else{
-                std.stringmark(v.data)
+                string.stringmark(v.data)
             }
         }
         if gc_mark(ptr) == NOT_STACK {
