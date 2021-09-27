@@ -113,7 +113,7 @@ Linker::symValid()
 		}
 		if  link.prov == null {
 			msym<ELF64_Sym> = link.recv.symTab[link.name]
-			info<ui8> = msym.st_info
+			info<u8> = msym.st_info
 			type = ""
 			if   ELF64_ST_TYPE(info  == STT_OBJECT {
 				type = "变量"

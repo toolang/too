@@ -1,88 +1,88 @@
 
 
-# uint16 Elf32_Half;
-# uint16 Elf64_Half;
-# uint32 Elf32_Word;
+# u16 Elf32_Half;
+# u16 Elf64_Half;
+# u32 Elf32_Word;
 # int32  Elf32_Sword;
-# uint32 Elf64_Word;
+# u32 Elf64_Word;
 # int32  Elf64_Sword;
 
-# uint64 Elf32_Xword;
+# u64 Elf32_Xword;
 # int64  Elf32_Sxword;
-# uint64 Elf64_Xword;
+# u64 Elf64_Xword;
 # int64  Elf64_Sxword;
 
-# uint32 Elf32_Addr
-# uint64 Elf64_Addr
-# uint32 Elf32_Off;
-# uint64 Elf64_Off
-# uint16 Elf32_Section;
-# uint16 Elf64_Section; 
-# uint16 Elf32_Versym;
-# uint16 Elf64_Versym;
+# u32 Elf32_Addr
+# u64 Elf64_Addr
+# u32 Elf32_Off;
+# u64 Elf64_Off
+# u16 Elf32_Section;
+# u16 Elf64_Section; 
+# u16 Elf32_Versym;
+# u16 Elf64_Versym;
 
 # 支持嵌套设Elf64_Ehdr计
 # TODO: struct
 mem Elf64_Ehdr 
 {
-	uint8  e_ident[16]
-	uint16 e_type
-	uint16 e_machine
-	uint32 e_version
-	uint64 e_entry
-	uint64 e_phoff
-	uint64 e_shoff
-	uint32 e_flags
+	u8  e_ident[16]
+	u16 e_type
+	u16 e_machine
+	u32 e_version
+	u64 e_entry
+	u64 e_phoff
+	u64 e_shoff
+	u32 e_flags
 
-	uint16 e_ehsize
-	uint16 e_phentsize
-	uint16 e_phnum
-	uint16 e_shentsize
-	uint16 e_shnum
-	uint16 e_shstrndx
+	u16 e_ehsize
+	u16 e_phentsize
+	u16 e_phnum
+	u16 e_shentsize
+	u16 e_shnum
+	u16 e_shstrndx
 }
 
 # 程序头表
 mem Elf64_Phdr
 {
-	uint32 p_type
-	uint32 p_flags
-	uint64 p_offset
-	uint64 p_vaddr
-	uint64 p_paddr
-	uint64 p_filesz
-	uint64 p_memsz
-	uint64 p_align
+	u32 p_type
+	u32 p_flags
+	u64 p_offset
+	u64 p_vaddr
+	u64 p_paddr
+	u64 p_filesz
+	u64 p_memsz
+	u64 p_align
 }
 
 # 段表
 mem Elf64_Shdr
 {
-	uint32 sh_name
-	uint32 sh_type
-	uint64 sh_flags
-	uint64 sh_addr
-	uint64 sh_offset
-	uint64 sh_shize
-	uint32 sh_link
-	uint32 sh_info
-	uint64 sh_addralign
-	uint64 sh_entsize
+	u32 sh_name
+	u32 sh_type
+	u64 sh_flags
+	u64 sh_addr
+	u64 sh_offset
+	u64 sh_shize
+	u32 sh_link
+	u32 sh_info
+	u64 sh_addralign
+	u64 sh_entsize
 }
 
 mem Elf64_Sym
 {
-	ui32 st_name
-	ui8  st_info
-	ui8  st_other
-	ui16 st_shndx
-	ui64 st_value
-	ui64 st_size
+	u32 st_name
+	u8  st_info
+	u8  st_other
+	u16 st_shndx
+	u64 st_value
+	u64 st_size
 }
 
 mem Elf64_Rela
 {
-	ui64 r_offset
-	ui64 r_info
+	u64 r_offset
+	u64 r_info
 	i64  r_addend
 }

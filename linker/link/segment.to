@@ -13,7 +13,7 @@ class Seglist
 # @param base 加载基地址
 Seglist::allocAddr(name,base,off)
 {
-	begin = off; # 记录文件前偏移
+	begin = off # 记录文件前偏移
 	# 虚拟地址对齐，让所有的段按照4k字节对其
 	if  name != ".bss" {
 		base += (MEM_ALIGN-base % MEM_ALIGN) % MEM_ALIGN
@@ -37,8 +37,20 @@ Seglist::allocAddr(name,base,off)
 		seg = ownerList[i].shdrTab[name]
 		# 读取需要合并段段数据
 		if  name != ".bss" {
-			buf = 
+			//申请数据缓存
+			buf = new seg.sh_size
+			ownerList[i].getData(buf,seg.sh_offset,seg.sh_size)
+			blocks[] = new Block(buf,size,seg.sh_size)
 		}
+		//修改每个文件中对应段的addr
+		seg.sh_addr = base + size
+		size += seg.sh_size
+	}
+	#累加地址
+	base += size
+	# bss段不修改偏移
+	if name != ".bss" {
+		off += size
 	}
 }
 
@@ -58,34 +70,34 @@ Seglist::relocAddr(relAddr,type,symAddr,addend)
 	}
 	# 这里需要进行内存寻址
 	base<i8> = b.data
-	paddr<ui8> = base + relOffset - b.offset
+	paddr<u8> = base + relOffset - b.offset
 
  	if  type == 42 {
-		inst<ui8> = paddr
+		inst<u8> = paddr
 		inst -= 1
-		modr<ui8> = inst
+		modr<u8> = inst
 		inst -= 1
-		opcode<ui8> = inst
+		opcode<u8> = inst
 		# TODO: 针对struct类型 可以通过* 进行内存跳级访问
 		if  *opcode == 0x8b {
 			reg = (*modr - 0x05)/8
 			*opcode = 0xc0 + reg
 		}
 		*paddr = symAddr - addend
-		return
+		return true
 	}
 	if type == R_X86_64_PC32)
 	{
 		*paddr = symAddr - relAddr + *paddr
-		return
+		return true
 	}
 	if  type == R_X86_64_PLT32 {
 		*paddr = symAddr - relAddr + *paddr
-		return
+		return true
 	}
 	if  type == R_X86_64_64 {
 		*paddr = symAddr - addend
-		return
+		return true
 	}
 	fmt.println("unknow rela")
 }

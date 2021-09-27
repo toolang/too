@@ -22,10 +22,10 @@ STB_GLOBAL = 1
 STT_OBJECT = 1
 STT_FUNC   = 2
 
-func ELF64_R_SYM(i<ui64>)	{
+func ELF64_R_SYM(i<u64>)	{
 	return i >> 32
 }
-func ELF32_ST_BIND(val<ui8>){
+func ELF32_ST_BIND(val<u8>){
 	return val >> 4
 }
 func ELF64_ST_BIND(val){
