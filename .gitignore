@@ -32,6 +32,9 @@ tests/statement/*.o
 tests/memory/*.o
 tests/memory/*.s
 tests/src/*
+linker/*.s
+linker/*.o
+linker/a.out
 toa
 too
 tol

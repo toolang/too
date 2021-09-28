@@ -1,0 +1,15 @@
+use std
+use fmt
+
+func fopen(filename,mode){
+	if filename == "" {
+		fmt.print("fopen filename is empty\n")
+		return false
+	}
+	ret<i8> = std.fopen(*filename,*mode)
+	if ret == null {
+		fmt.print("fopen failed\n")
+		return false
+	}
+	return int(ret)
+}

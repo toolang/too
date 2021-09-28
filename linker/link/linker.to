@@ -1,3 +1,4 @@
+use elf
 
 class Linker
 {
@@ -35,10 +36,10 @@ Linker::Linker()
 Linker::addElf(obj)
 {
 	# TODO: new elf.File()
-	elf = new elf.File()
+	e = new elf.File()
 	# 解析elf文件
-	elf->readElf(obj)
-	this.elfs[] = elf
+	e.readElf(obj)
+	this.elfs[] = e
 }
 
 # 开始扫描文件搜集所有信息
@@ -124,8 +125,7 @@ Linker::symValid()
 			if  type == "" {
 				type = "符号"
 			}
-			fmt.println("文件%s的%s名%s为定义",link.recv.elf_dir,
-			type,link.name)
+			fmt.println("文件%s的%s名%s为定义",link.recv.elf_dir,type,link.name)
 			if  flag {
 				flag = false
 			}

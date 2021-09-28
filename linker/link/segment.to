@@ -78,16 +78,16 @@ Seglist::relocAddr(relAddr,type,symAddr,addend)
 		modr<u8> = inst
 		inst -= 1
 		opcode<u8> = inst
-		# TODO: 针对struct类型 可以通过* 进行内存跳级访问
 		if  *opcode == 0x8b {
-			reg = (*modr - 0x05)/8
+			# reg = (*modr - 0x05)/8
+			_reg<u8> = *modr - 0x05
+			reg<u8> = _reg / 8
 			*opcode = 0xc0 + reg
 		}
 		*paddr = symAddr - addend
 		return true
 	}
-	if type == R_X86_64_PC32)
-	{
+	if type == R_X86_64_PC32 {
 		*paddr = symAddr - relAddr + *paddr
 		return true
 	}
