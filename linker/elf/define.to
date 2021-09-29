@@ -1,26 +1,26 @@
 
 # 全局变量定义
-ET_NONE = 0
-ET_REL  = 1 
-ET_EXEC = 2 
-ET_DYN  = 3
-ET_CORE = 4
-ET_NUM  = 5
-ET_LOOS = 0xfe00
-ET_HIOS = 0xfeff
-ET_LOPROC = 0xff00
-ET_HIPROC = 0xffff
+ET_NONE<i32> = 0
+ET_REL<i32>  = 1 
+ET_EXEC<i32> = 2 
+ET_DYN<i32>  = 3
+ET_CORE<i32> = 4
+ET_NUM<i32>  = 5
+ET_LOOS<i32> = 0xfe00
+ET_HIOS<i32> = 0xfeff
+ET_LOPROC<i32> = 0xff00
+ET_HIPROC<i32> = 0xffff
 
-SHN_UNDEF = 0
+SHN_UNDEF<i32> = 0
 
-R_X86_64_PC32 = 2
-R_X86_64_PLT32 = 4
-R_X86_64_64 = 1
+R_X86_64_PC32<i32> = 2
+R_X86_64_PLT32<i32> = 4
+R_X86_64_64<i32> = 1
 
-STB_LOCAL  = 0
-STB_GLOBAL = 1
-STT_OBJECT = 1
-STT_FUNC   = 2
+STB_LOCAL<i32>  = 0
+STB_GLOBAL<i32> = 1
+STT_OBJECT<i32> = 1
+STT_FUNC<i32>   = 2
 
 func ELF64_R_SYM(i<u64>)	{
 	return i >> 32
@@ -33,7 +33,4 @@ func ELF64_ST_BIND(val){
 }
 func ELF64_ST_TYPE(val){
 	return val & 0xf
-}
-func ELF64_ST_TYPE(val){
-	return ELF32_ST_TYPE(val)
 }

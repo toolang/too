@@ -49,7 +49,7 @@ File::readElf(file)
 	strTab<Elf64_Shdr> = shdrTab[".strtab"]
 	io.fseek(fp,strTab.sh_offset,0)
 	# 读取字符串表
-	strTabData<i8> = io.fread(strTab->sh_size,1,fp);
+	strTabData<i8> = io.fread(strTab.sh_size,1,fp)
 
 
 	# 读取符号表

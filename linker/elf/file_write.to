@@ -5,19 +5,20 @@ use io
 # 写入程序表头
 File::writeHeader(out) 
 {
+    ehdr<Elf64_Ehdr> = this.ehdr
     bytes = 0
 
 	fp = io.fopen(out,"w+")
     bytes += ehdr.e_ehsize
 
 	# elf文件头
-    io.fwrite(ehdr, ehdr.e_ehsize, 1, fp)
+    io.fwrite(fp,ehdr,ehdr.e_ehsize)
 
-    if len(phdrTab) != 0 {  //程序头表
+    if std.len(phdrTab) != 0 {  //程序头表
         for (phd : phdrTab) {
-            bytes += ehdr.e_phentsize
+            bytes += int(ehdr.e_phentsize)
 			# 写入程序表头
-            io.fwrite(phd, ehdr.e_phentsize, 1, fp)
+            io.fwrite(fp,phd,ehdr.e_phentsize)
         }
     }
     io.fclose(fp)
@@ -29,30 +30,33 @@ File::writeHeader(out)
 File::writeSecSym(out) 
 {
     bytes = 0
+    ehdr<Elf64_Ehdr> = this.ehdr
+    shstrtabSize<i32> = this.shstrtabSize
+    strtabSize<i3w>  = this.strtabSize
 
     fp = io.fopen(out,"a+")
-    bytes += shstrtabSize
+    bytes += int(shstrtabSize)
     #字符串段表: 写入所有关于段名的字符串 .shstrtab
-    io.fwrite(shstrtab,shstrtabSize,1,fp)
+    io.fwrite(fp,shstrtab,shstrtabSize)
     #段表: 写入所有段
-    for(i = 0;i < len(shdrNames); i += 1)
+    for(i = 0;i < std.len(this.shdrNames); i += 1)
     {
-		sh = shdrTab[shdrNames[i]]
-        bytes += ehdr.e_shentsize
-        io.fwrite(sh,ehdr.e_shentsize,1,fp)
+		sh = this.shdrTab[shdrNames[i]]
+        bytes += int(ehdr.e_shentsize)
+        io.fwrite(fp,sh,ehdr.e_shentsize)
     }
     #符号表: 写入所有符号
-    for(i = 0;i < len(symNames.size() ; i += 1)
+    Elf64_Sym_Size<i8> = sizeof(Elf64_Sym)
+    for(i = 0;i < std.len(symNames) ; i += 1)
     {
 		sym = symTab[symNames[i]]
-        bytes += sizeof(Elf64_Sym)
-        io.fwrite(sym,sizeof(Elf64_Sym),1,fp)
+        bytes += int(Elf64_Sym_Size)
+        io.fwrite(fp,sym,Elf64_Sym_Size)
     }
     # 字符串表: 写入所有字符串
-    bytes += strtabSize
-    io.fwrite(strtab,strtabSize,1,fp)
+    bytes += int(strtabSize)
+    io.fwrite(fp,strtab,strtabSize)
     io.fclose(fp)
-
     return bytes
 }
 

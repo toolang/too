@@ -1,6 +1,18 @@
 use std
 use fmt
 
+#func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){
+func fwrite(fd,buffer<u64>,size<u64>){
+	s<i8> = 1
+	ret<u64> = std.fwrite(buffer,size,s,*fd)
+	if ret != size {
+		fmt.print("fwrite err\n")
+		return false
+	}
+	return true
+}
+
+#func fopen(filename,mode)
 func fopen(filename,mode){
 	if filename == "" {
 		fmt.print("fopen filename is empty\n")
@@ -12,4 +24,8 @@ func fopen(filename,mode){
 		return false
 	}
 	return int(ret)
+}
+//func fclose(fp<u64>)
+func fclose(fp){
+	return std.fclose(*fp)
 }

@@ -1,3 +1,7 @@
+use std
+use fmt
+use os
+
 Linker::buildExe()
 {
 	ehdr<Elf64_Ehdr> = exe.ehdr
@@ -98,7 +102,9 @@ Linker::buildExe()
 	ehdr.e_shnum = 4 + len(segNames)
 	curOff  += sizeof(Elf64_Shdr) * (4 + len(segNames))
 
-	exe.addShdr("symtab",SHT_SYMTAB,0,0,curOff,(1+len(symDef)*sizeof(Elf64_Sym),0,0,1,sizeof(Elf64_Sym))
+	eas = 1 + len(symDef)	
+	eas *= int(sizeof(Elf64_Sym))
+	exe.addShdr("symtab",SHT_SYMTAB,0,0,curOff,eas,0,0,1,sizeof(Elf64_Sym))
 	symtab<Elf64_Sym> = exe.shdrTab[".symtab"]
 	symtab.sh_link = exe.getSegIndex(".symtab") + 1
 	strtabSize = 0
@@ -145,10 +151,8 @@ Linker::buildExe()
 Linker::writeExe(out)
 {
 	offset = exe.writeHeader(out)
-	if   offset != (sizeof(Elf64_Ehdr  + len(exe.phdrTab) * sizeof(Elf64_Phdr)) {
-		fmt.println("offset")
-		os.exit(-1)
-	}
+	slen = int(sizeof(Elf64_Ehdr)) + len(exe.phdrTab) * int(sizeof(Elf64_Phdr))
+	fmt.assert(offset,slen,"Linker::writeExe")
 	fp = io.fopen(out,"a+")
 	pad = 0
 	for(seg : segNames){

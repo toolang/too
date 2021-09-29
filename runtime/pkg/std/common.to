@@ -1,0 +1,6 @@
+use runtime
+
+
+func len(v){
+	return runtime.len(v)
+}

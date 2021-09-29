@@ -1,18 +1,19 @@
 
 use fmt
+use string
 
 // 解析字符串
 func len_string(v<u8*>){
-	fmt.println("len_string",v)
-	p = int(*v)
-	len = 0
-	while p != 0 {
-		fmt.println(p)
-		v += 1
-		p = int(*v)
-		len += 1
-	}
-	return len
+	len<i32> = string.stringlen(v)
+	return int(len)
+	//len = 0
+	//while p != 0 {
+	//	fmt.println(p)
+	//	v += 1
+	//	p = int(*v)
+	//	len += 1
+	//}
+	//return len
 }
 
 mem array_t {
@@ -35,7 +36,7 @@ func len(v<value>){
 		Int  : return data
 		Bool : return data
 		Array : return len_array(v.data)
-		String : os.die("unsupport len(string)")
+		String : return len_string(v.data)
 		Map   : os.die("unsupport len(map)")
 		_     : fmt.println("[warn] len(unknow type)")
 	}
