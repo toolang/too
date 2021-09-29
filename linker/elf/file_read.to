@@ -7,22 +7,20 @@ use io
 File::readElf(file)
 {
 	# TODO: fopen()
-	fp = os.fopen(file,"rb")
-	if !fp {
-		fmt.println("file invalid:",file)
-		os.exit(-1)
+	fp = io.fopen(file,"rb")
+	if !fp  {
+		os.die("file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
-	rewind(fp)
+	io.rewind(fp)
 	# elf文件头部
 	elf_header_size = 64
-	# TODO: <struct>
-	ehdr<Elf64_Ehdr> = io.fread(elf_header_size,1,fp)
+	ehdr<Elf64_Ehdr> = io.fread(fd,elf_header_size)
 	if ehdr.e_type == ET_EXEC {
-		fseek(fp,ehdr.e_phoff,0)
+		io.fseek(fp,ehdr.e_phoff)
 		for(i = 0 ; i < ehdr.e_phnum; i += 1){
-			phdr<Elf64_Phdr> = io.fread(sizeof(Elf64_Phdr),1,fp)
-			phdrTab[] = phdr
+			phdr<Elf64_Phdr> = io.fread(fp,sizeof(Elf64_Phdr))
+			this.phdrTab[] = phdr
 		}
 	}
 	io.fseek(fp,ehdr.e_hsoff + ehdr.e_shentsize *ehdr.e_shstrndx,0)
@@ -139,14 +137,8 @@ File::getData(buf,offset,size)
 	# 打开 elf文件	
 	# TODO: support os.open()
 	fp = os.open(file,"rb")
-	if  !fp {
-		os.exit(-1)
-	}
-	# TODO: support os.rewind(fp)
-	os.rewind(fp)
-	# 设置读取偏移量
-	os.fseek(fp,offset,0)
+	io.fseek(fp,offset)
 	# 读取数据
-	os.fread(buf,size,1,fp)
+	buf<i8*> = io.fread(fp,size)
 	os.fclose(fp)
 }	

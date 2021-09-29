@@ -29,3 +29,27 @@ func fopen(filename,mode){
 func fclose(fp){
 	return std.fclose(*fp)
 }
+
+
+//func seek(fd<i64> , offset<i64> , mode<i64>)
+func rewind(fd){
+	st<i8> = 0
+	std.seek(*fd,st,std.SEEK_SET)	
+}
+
+//func read(fd<i64> , buffer<u64*> , size<u64>
+func fread(fd,size){
+	bsize<i64> = *size
+	buffer<u64*> = new bsize
+	if std.read(*fd,buffer,bsize) != bsize {
+		fmt.println("fread err")
+		return false
+	}
+	return buffer
+}
+
+//func fseek(fp<u64>,offset<i64> , set<i64>)
+func fseek(fp,offset){
+	std.fseek(*fp,*offset,std.SEEK_SET)
+	return true
+}

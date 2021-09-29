@@ -41,7 +41,7 @@ File::writeSecSym(out)
     #段表: 写入所有段
     for(i = 0;i < std.len(this.shdrNames); i += 1)
     {
-		sh = this.shdrTab[shdrNames[i]]
+		sh = this.shdrTab[this.shdrNames[i]]
         bytes += int(ehdr.e_shentsize)
         io.fwrite(fp,sh,ehdr.e_shentsize)
     }
@@ -49,7 +49,7 @@ File::writeSecSym(out)
     Elf64_Sym_Size<i8> = sizeof(Elf64_Sym)
     for(i = 0;i < std.len(symNames) ; i += 1)
     {
-		sym = symTab[symNames[i]]
+		sym = this.symTab[this.symNames[i]]
         bytes += int(Elf64_Sym_Size)
         io.fwrite(fp,sym,Elf64_Sym_Size)
     }

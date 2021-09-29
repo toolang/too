@@ -13,3 +13,8 @@ O_RDWR<i64>   = 1
 O_CREAT<i64>  = 100
 O_TRUNC<i64>  = 1000
 O_APPEND<i64> = 2000
+
+
+SEEK_SET<i64> = 0
+SEEK_CUR<i64> = 1
+SEEK_END<i64> = 2
