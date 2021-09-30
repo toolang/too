@@ -27,7 +27,7 @@ File::readElf(file)
 	# 开始读取段表字符串项
 	shstrTab<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
 	# 转移到段表字符串内容
-	io.fseek(fp,shstrTab.sh_offset,0)
+	io.fseek(fp,shstrTab.sh_offset)
 	//读取段表字符串表
 	shstrTabData<i8*> = io.fread(shstrTab.sh_size,1,fp)
 

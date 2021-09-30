@@ -34,3 +34,6 @@ func ELF64_ST_BIND(val){
 func ELF64_ST_TYPE(val){
 	return val & 0xf
 }
+func ELF64_R_TYPE(val<i64>){
+	return val & 0xffffffff
+}
