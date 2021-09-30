@@ -30,7 +30,7 @@ File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 	ph.p_flags = *flags
 	ph.p_align = *align
 	
-	phdrTab[] = ph
+	this.phdrTab[] = ph
 }
 # 添加一个段表项
 File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info,sh_addralign,sh_entsize)
@@ -42,20 +42,20 @@ File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info
     sh.sh_flags     = *sh_flags
     sh.sh_addr      = *sh_addr
     sh.sh_offset    = *sh_offset
-    sh.sh_size      = *sh_size
+    sh.sh_size     = *sh_size
     sh.sh_link      = *sh_link
     sh.sh_info      = *sh_info
     sh.sh_addralign = *sh_addralign
     sh.sh_entsize   = *sh_entsize
 
-    shdrTab[sh_name] = sh
-    shdrNames[] = sh_name
+    this.shdrTab[sh_name] = sh
+    this.shdrNames[] = sh_name
 }
 # 添加符号表
 File::addSym(st_name,s<Elf64_Sym>)
 {
     sym<Elf64_Sym>    = new Elf64_Sym
-    symTab[st_name]   = sym
+    this.symTab[st_name]   = sym
     if st_name == "" {
         sym.st_name  = 0
         sym.st_value = 0
@@ -71,5 +71,5 @@ File::addSym(st_name,s<Elf64_Sym>)
         sym.st_other = s.st_other
         sym.st_shndx = s.st_shndx
     }
-	symNames[] = st_name
+	this.symNames[] = st_name
 }

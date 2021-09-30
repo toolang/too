@@ -63,7 +63,7 @@ mem Elf64_Shdr
 	u64 sh_flags
 	u64 sh_addr
 	u64 sh_offset
-	u64 sh_shize
+	u64 sh_size
 	u32 sh_link
 	u32 sh_info
 	u64 sh_addralign

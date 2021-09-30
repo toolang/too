@@ -2,7 +2,7 @@
 use os
 use fmt
 use io
-
+use string
 # 开始解析elf文件
 File::readElf(file)
 {
@@ -23,35 +23,35 @@ File::readElf(file)
 			this.phdrTab[] = phdr
 		}
 	}
-	io.fseek(fp,ehdr.e_hsoff + ehdr.e_shentsize *ehdr.e_shstrndx,0)
+	io.fseek(fp,ehdr.e_shoff + ehdr.e_shentsize * ehdr.e_shstrndx)
 	# 开始读取段表字符串项
-	shstrTab<Elf64_Shdr> = io.fread(sizeof(ELf64_Shdr),1,fp)
+	shstrTab<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
 	# 转移到段表字符串内容
 	io.fseek(fp,shstrTab.sh_offset,0)
 	//读取段表字符串表
-	shstrTabData = io.fread(shstrTab.sh_shize,1,fp)
+	shstrTabData<i8*> = io.fread(shstrTab.sh_size,1,fp)
 
 	# 开始读取所有的段表
-	io.fseek(fp,ehdr.e_shoff,0)
-	for(i = 0 ; i < ehdr.e_shum ; i += 1){
-		shdr<Elf64_Shdr> = io.fread(sizeof(Elf64_Shdr),1,fp)
+	io.fseek(fp,ehdr.e_shoff)
+	for(i<i32> = 0 ; i < ehdr.e_shnum ; i += 1){
+		shdr<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
 		# 截取自动遇到\0停止
-		name = strings.sub(shdrNames,shdr.sh_name)
-		shdrNames[] = name
+		name = string.new(shstrTabData + shdr.sh_name)
+		this.shdrNames[] = name
 		# map映射
 		if name != "" {
-			shdrTab[name] = shdr
+			this.shdrTab[name] = shdr
 		}
 	}
 	# 开始读取字符串段表
-	strTab<Elf64_Shdr> = shdrTab[".strtab"]
+	strTab<Elf64_Shdr> = this.shdrTab[".strtab"]
 	io.fseek(fp,strTab.sh_offset,0)
 	# 读取字符串表
 	strTabData<i8> = io.fread(strTab.sh_size,1,fp)
 
 
 	# 读取符号表
-	symTab = shdrTab[".symtab"]
+	symTab = this.shdrTab[".symtab"]
 	io.fseek(fp,symTab.sh_size,0)
 	symNum = symTab.sh_size / symTab.sh_entsize
 
@@ -59,10 +59,9 @@ File::readElf(file)
 	symList = []
 	for(i = 0 ; i < symNum ; i += 1){
 		sym<Elf64_Sym> = io.fread(sizeof(Elf64_Sym),1,fp)
-		symList[] = sym
-		
-		name = strings.sub(strTabData,sym.st_name)
-		symbols[] = name
+		this.symList[] = sym
+		name = string.new(strTabData + sym.st_name)		
+		this.symbols[] = name
 
 		if  name == "_GLOBAL_OFFSET_TABLE_" {
 			continue
@@ -71,9 +70,9 @@ File::readElf(file)
 			symTab[name] = sym
 			continue
 		}
-		if  sym.st_shndx != SH_UNDEF && sym.st_name == 0 {
+		if  sym.st_shndx != SHN_UNDEF && sym.st_name == 0 {
 			# 可能是段名
-			name = shdrNames[sym.st_shndx]
+			name = this.shdrNames[int(sym.st_shndx)]
 			if  name != "" {
 				symTab[name] = sym
 			}
@@ -90,12 +89,15 @@ File::readElf(file)
 			for(j = 0 ; j < relNum ; j += 1){
 				rela<Elf64_Rela> = io.fread(sizeof(Elf64_Rela),1,fp)
 				sym<Elf64_Sym> = symList[ELF64_R_SYM(rela.r_info)]
-				index          = sym.st_name
-				name = strings.sub(strTabData,index)
-				if  name == "" && sym.st_shndx != SHU_UNDEF {
-					name = shdrNames[sym.st_shndx]
+				index<i32>          = sym.st_name
+				name = string.new(strTabData + index)
+				if name == "" {
+					name = this.shdrNames[int(sym.st_shndx)]
 				}
-				relTab[] = RelItem(strings.sub(k,5),rela,name)
+				if  sym.st_shndx != SHU_UNDEF {
+					name = this.shdrNames[sym.st_shndx]
+				}
+				this.relTab[] = new RelItem(string.sub(k,5),rela,name)
 			}
 		}
 	}
@@ -107,9 +109,9 @@ File::getSymIndex(symname)
 {
 	index = 0
 	//TODO: len() 函数
-	sl = len(symNames)
+	sl = std.len(symNames)
 	for(i = 0 ; i < sl ; i += 1){
-		if  symNames[i] == symname {
+		if  this.symNames[i] == symname {
 			break
 		}
 		index += 1
@@ -121,10 +123,9 @@ File::getSymIndex(symname)
 File::getSegIndex(segname)
 {
 	index = 0
-	//TODO: len() 函数
-	sl = len(shdrNames)
+	sl = std.len(this.shdrNames)
 	for(i = 0 ; i < sl ; i += 1){
-		if   shdrNames[i] == segname {
+		if   this.shdrNames[i] == segname {
 			break
 		}
 		index += 1
@@ -135,10 +136,9 @@ File::getSegIndex(segname)
 File::getData(buf,offset,size)
 {
 	# 打开 elf文件	
-	# TODO: support os.open()
-	fp = os.open(file,"rb")
+	fp = io.fopen(file,"rb")
 	io.fseek(fp,offset)
 	# 读取数据
 	buf<i8*> = io.fread(fp,size)
-	os.fclose(fp)
+	io.fclose(fp)
 }	

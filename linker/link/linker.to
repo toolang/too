@@ -22,20 +22,19 @@ class Linker
 # 初始化
 Linker::Linker()
 {
-	segNames[] = ".text"
-	segNames[] = ".data"
-	segNames[] = ".roadata"
-	segNames[] = ".data.rel.local"
-	segNames[] = ".bss"
+	this.segNames[] = ".text"
+	this.segNames[] = ".data"
+	this.segNames[] = ".roadata"
+	this.segNames[] = ".data.rel.local"
+	this.segNames[] = ".bss"
 	for(name : segNames){
-		seglists[name] = new SegList()
+		this.seglists[name] = new Seglist()
 	}
 }
 # 1. 解析elf文件
 # 2. 追加到待链接数组中等待链接
 Linker::addElf(obj)
 {
-	# TODO: new elf.File()
 	e = new elf.File()
 	# 解析elf文件
 	e.readElf(obj)
@@ -45,24 +44,24 @@ Linker::addElf(obj)
 # 开始扫描文件搜集所有信息
 Linker::collectInfo()
 {
-	for(elf : elfs){
+	for(e : elfs){
 		# 记录段表信息
 		for(seg : segNames){
-			if  elf.shdrTab[seg] {
-				segLists[seg].ownerList[] = elf
+			if  e.shdrTab[seg] {
+				segLists[seg].ownerList[] = e
 			}
 		}
 		# 记录符号引用信息
-		for(name,sym<Elf64_Sym> : elf.symTab){
+		for(name,sym<Elf64_Sym> : e.symTab){
 			symLink<SymLink> = new SymLink
 			symLink.name = name
 			if  sym.st_shndx == STN_UNDEF {
-				symLink.recv = elf
+				symLink.recv = e
 				symLink.prov = null
 				symLinks[] = symLink
 			}
 			if  sym.st_shndx != SHN_ABS {
-				symLink.prov = elf
+				symLink.prov = e
 				symLink.recv = null
 				symDef[] = symLink
 			}

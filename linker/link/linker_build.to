@@ -1,6 +1,7 @@
 use std
 use fmt
 use os
+use elf
 
 Linker::buildExe()
 {
