@@ -1,0 +1,17 @@
+use runtime
+
+func new(init<i8*>){
+	r<i8*> = stringnew(init)
+	return runtime.newobject(runtime.STRING,r)
+}
+func sub(v<runtime.value>,lo){
+	str<i8*> = v.data
+	l<i32> = *lo
+	fmt.println(int(l),int(stringlen(str)))
+	if l > stringlen(str) {
+		return ""
+	}
+
+	str += l
+	return new(str)
+}
