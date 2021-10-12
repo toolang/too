@@ -11,6 +11,12 @@ ET_HIOS<i32> = 0xfeff
 ET_LOPROC<i32> = 0xff00
 ET_HIPROC<i32> = 0xffff
 
+PF_X<i32>    = 1
+PF_W<i32>    = 2
+PF_R<i32>    = 4
+PF_MASKOS<i32> =   0x0ff00000
+PF_MASKPROC<i32> = 0xf0000000
+
 SHN_UNDEF<i32> = 0
 
 R_X86_64_PC32<i32> = 2
