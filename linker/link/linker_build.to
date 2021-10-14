@@ -143,16 +143,16 @@ Linker::buildExe()
 		index =0
 		strIndex = {}
 		strIndex[""] = strtabSize - 1
-		for(sym : this.symDef){
-			strIndex[sym.name] = index
-			exe.strtab += sym.name + "\0"
-			index += len(sym.name) + 1
+		for(sd : this.symDef){
+			strIndex[sd.name] = index
+			exe.strtab += sd.name + "\0"
+			index += std.len(sd.name) + 1
 		}
-		for(name,sym<Elf64_Sym> : exe.symTab){
-			sym.st_name = strIndex[name]
+		for(name,st<elf.Elf64_Sym> : exe.symTab){
+			st.st_name = strIndex[name]
 		}
 		#更新段表name
-		for(name,sh<elf.ELF64_Shdr> : exe.shdrTab){
+		for(name,sh<elf.Elf64_Shdr> : exe.shdrTab){
 			sh.sh_name = shstrIndex[name]
 		}
 
@@ -161,13 +161,14 @@ Linker::buildExe()
 
 Linker::writeExe(out)
 {
+	exe = this.exe
 	offset = exe.writeHeader(out)
-	slen = int(sizeof(Elf64_Ehdr)) + len(exe.phdrTab) * int(sizeof(Elf64_Phdr))
+	slen = int(sizeof(elf.Elf64_Ehdr)) + std.len(exe.phdrTab) * int(sizeof(elf.Elf64_Phdr))
 	fmt.assert(offset,slen,"Linker::writeExe")
 	fp = io.fopen(out,"a+")
 	pad = 0
-	for(seg : segNames){
-		sl = segLists[seg]
+	for(seg : this.segNames){
+		sl = this.segLists[seg]
 		padnum = sl.offset - sl.begin
 		offset += padnum
 		while padnum {

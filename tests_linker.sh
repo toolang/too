@@ -25,12 +25,11 @@ assert(){
     log "[compile] too -s $input ..."
     too -s $input
     check
-    log "[asmer] toa -p ."
-    toa -p .
+    #log "[asmer] toa -p ."
+    #toa -p .
+    echo "gcc -g *.s /usr/local/lib/coasm/*.s -rdynamic -static -nostdlib"
+    gcc -g -c *.s /usr/local/lib/coasm/*.s -rdynamic -static -nostdlib 
     echo "start linking..."
-    # toa目前未全部兼容GNU，运行时c库需要采用gcc打包为.o文件
-    # toa -p /usr/local/lib/coasm
-    `gcc -c /usr/local/lib/coasm/*.s`
     log "[linker] tol -p ."
     tol -p .
     check

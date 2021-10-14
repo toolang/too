@@ -9,8 +9,8 @@ check: install test
 
 test:
 	sh tests_compiler.sh
-	sh tests_asmer.sh
 	sh tests_linker.sh
+	sh tests_asmer.sh
 install:
 	rm -rf $(prefix)/lib/copkg/*
 	cp -r runtime/pkg/* $(prefix)/lib/copkg/
