@@ -195,7 +195,7 @@ Linker::writeExe(out)
 		}
 	}
 	io.fclose(fp)
-	sts<Elf64_Shdr> = exe.shdrTab[".shstrtab"]
+	sts<elf.Elf64_Shdr> = exe.shdrTab[".shstrtab"]
 	if  offset != sts.sh_offset {
 		fmt.println("ofsset")
 		os.exit(-1)
@@ -210,14 +210,14 @@ Linker::writeExe(out)
 
 Linker::link(out)
 {
-	collectInfo()
-	if   !symValid() {
+	this.collectInfo()
+	if   !this.symValid() {
 		return false
 	}
-	allocAddr()
-	symParser()
-	relocate()
-	buildExe()
-	writeExe(out)
+	this.allocAddr()
+	this.symParser()
+	this.relocate()
+	this.buildExe()
+	this.writeExe(out)
 	return true
 }
