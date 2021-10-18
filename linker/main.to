@@ -1,45 +1,45 @@
 
 use fmt
 use link
+use os 
 
 func print_help(){
-    fmt.println("usage: ./cld [options|file.o...]" +
-                "  -p       指定扫描目录下所有.0文件进行链接生成可执行程序" +
-                "  file.o   ... 手动指定多个file.o进行链接"
+    fmt.println("usage: ./cld [options|file.o...]\n" +
+                "  -p       指定扫描目录下所有.0文件进行链接生成可执行程序\n" +
+                "  file.o   ... 手动指定多个file.o进行链接\n"
     )
 }
 
-func link(argc,argv){
+func link(){
     linker  = new link.Linker()
     outfile = "a.out"
-    for(i = 1; i < argc ; i += 1){
-        obj = argv[i]
+    for(obj : os.argv){
         # 添加目标文件
         linker.addElf(obj)
-        i += 1
     }
     # 开始链接
     linker.link(outfile)
 }
 
-func scan(argc,argv){
+func scan(){
     linker  = new link.Linker()
+
     outfile = "a.out" 
-    for(i = 2 ; i < argc ; i += 1) {
+    for(path : os.argv){
+        //if io.is_dir(path) os.die("path not directory:" + path)
 
     }
 }
 
 
-func main(argc,argv) {
-    if  argc < 3 {
+func main() {
+    if  os.argc < 2 {
         return print_help()
     }
-
     //scan
-    if argv[1] != "-p" {
-        return scan(argc,argv)
+    if os.argv[1] != "-p" {
+        return scan()
     }
-    return link(argc,argv)
+    return link()
 
 }

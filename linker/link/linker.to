@@ -1,26 +1,31 @@
 use elf
 
+#统计读写的字节数
+bytes
+
 class Linker
 {
-	# map[string]SegList
-	seglists
-	# arr[SymLink*]
-	symLinks
-	# arr[SymLink*]
-	symDef
-	# arr[elf,elf,elf]
-	elfs
-	# 链接关心的段
-	segNames
-	# File* 最后输出的文件
-	exe
-	# 拥有全局符号start _start的文件
-	startOwner
+	seglists		# map[string]SegList
+	symLinks		# arr[SymLink*]
+	symDef			# arr[SymLink*]
+	elfs			# arr[elf,elf,elf]
+	segNames		# arr[string] 链接关心的段
+	exe				# File* 最后输出的文件
+	startOwner		# 拥有全局符号start _start的文件
 	bssaddr
 	bytes
 }
+Linker::init(){
+	this.segNames = []
+	this.bssaddr  = 0
+	this.elfs = []
+	this.symLinks = []
+	this.symDef   = []
+
+	this.linker()
+}
 # 初始化
-Linker::Linker()
+Linker::linker()
 {
 	this.segNames[] = ".text"
 	this.segNames[] = ".data"

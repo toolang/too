@@ -5,7 +5,13 @@ class Seglist
 	size	   # 合并后的大小
 	begin  	   # 对齐前开始位置偏移
 	ownerList  # array[ElfFile] 
-	blocks	   # array[block]
+	blocks	   # array[Block]
+}
+Seglist::init(){
+	#初始化数组 array[ElfFile]
+	this.ownerList = []
+	#初始化数组 array[Block]
+	this.blocks    = []
 }
 
 # @param name string 段名	
@@ -13,7 +19,7 @@ class Seglist
 # @param base 加载基地址
 Seglist::allocAddr(name,base,off)
 {
-	begin = off # 记录文件前偏移
+	this.begin = off # 记录文件前偏移
 	# 虚拟地址对齐，让所有的段按照4k字节对其
 	if  name != ".bss" {
 		base += (MEM_ALIGN-base % MEM_ALIGN) % MEM_ALIGN
