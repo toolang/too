@@ -1,0 +1,34 @@
+DT_UNKNOWN<i32> = 0
+DT_FIFO<i32>    = 1
+DT_CHR<i32>     = 2
+DT_DIR<i32>     = 4
+DT_BLK<i32>     = 6
+DT_REG<i32>     = 8
+DT_LNK<i32>     = 10
+DT_SOCK<i32>    = 12 
+DT_WHT<i32>     = 14
+
+mem Dirent{
+    i64 d_ino 
+    i64 d_off
+    u16 d_reclen
+    i8* d_name
+}
+
+//getdents syscall; implement by syscall/sys_std_amd64.s
+func getdents(fd<u32> , dirent<Dirent> , count<u32>)
+
+func dirtype(t<i32>){
+    match t {
+        DT_REG : return "file"
+        DT_DIR : return "directory"
+        DT_FIFO: return "fifo"
+        DT_SOCK: return "socket"
+        DT_LNK : return "symlink"
+        DT_BLK : return "blockdev"
+        DT_CHR : return "chardev"
+        DT_WHT : return "wht"
+        DT_UNKNOWN : return "unknow"
+        _      : return "invalid"
+    }
+}

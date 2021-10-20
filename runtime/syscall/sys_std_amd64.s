@@ -95,3 +95,9 @@ std_usleep:
      add    $0x18,%rsp
      retq
 
+.globl std_getdents
+std_getdents:
+     mov $78,%rax
+     syscall
+     retq
+
