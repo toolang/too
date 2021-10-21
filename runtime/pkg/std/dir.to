@@ -1,3 +1,9 @@
+use runtime
+use fmt
+
+//getdents syscall; implement by syscall/sys_std_amd64.s
+func getdents(fd<u32> , dirent<Dirent> , count<u32>)
+
 DT_UNKNOWN<i32> = 0
 DT_FIFO<i32>    = 1
 DT_CHR<i32>     = 2
@@ -8,17 +14,68 @@ DT_LNK<i32>     = 10
 DT_SOCK<i32>    = 12 
 DT_WHT<i32>     = 14
 
+
+DIRENT_BUF_SIZE<i32> = 4096
+
+mem Dir{
+    u64     fd
+    Dirent* dir
+    i32     counts
+    i32     pos
+    i32     init
+}
+
 mem Dirent{
     i64 d_ino 
     i64 d_off
     u16 d_reclen
     i8* d_name
 }
+//opendir
+//@param  dir_path
+//@return Dir
+func opendir(dir_path<runtime.value>){
+     fd<i32> = open(dir_path.data,O_RDONLY | O_DIRECTORY)
+     if fd == -1 {
+	    fmt.vfprintf(STDOUT,*"opendir failed\n")
+        return false
+     }
+     dir<Dir> = new Dir
+     dir.fd = fd
+     dir.pos = 0
+     //init buffer
+     buf<i8*> = new DIRENT_BUF_SIZE
+     dir.dir = buf
+     dir.init = 0
+     return dir
+}
+func readdir(dir<Dir>){
+    //need init
+    if dir.init == 0 {
+        dir.init = 1
+init_dents:
+        counts<i32> = getdents(dir.fd,dir.dir,DIRENT_BUF_SIZE)
+        if counts == -1 {
+	        fmt.vfprintf(STDOUT,*"getdents failed\n")
+            return false
+        }
+        if counts == 0 {
+            return false
+        }
+        dir.pos = 0
+        dir.counts = counts
+    }
+    if dir.pos >= dir.counts {
+        goto init_dents
+    }
 
-//getdents syscall; implement by syscall/sys_std_amd64.s
-func getdents(fd<u32> , dirent<Dirent> , count<u32>)
-
-func dirtype(t<i32>){
+    d<Dirent> = dir.dir + dir.pos
+    dir.pos += 1
+    str = runtime.newobject(runtime.String,&d.d_name)
+    return str
+}
+func dirtype(t<i8>){
+    fmt.println(int(t))
     match t {
         DT_REG : return "file"
         DT_DIR : return "directory"
