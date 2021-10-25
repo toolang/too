@@ -1,5 +1,6 @@
 use runtime
 use fmt
+use string
 
 //getdents syscall; implement by syscall/sys_std_amd64.s
 func getdents(fd<u32> , dirent<Dirent> , count<u32>)
@@ -24,12 +25,19 @@ mem Dir{
     i32     pos
     i32     init
 }
-
+//for user space
+class dirent {}
+//dirent::init(type,name){
+//    fmt.println(type,name)
+//    this.type = type
+//    this.name = name
+//}
+//for internal
 mem Dirent{
     i64 d_ino 
     i64 d_off
     u16 d_reclen
-    i8* d_name
+    i8 d_name
 }
 //opendir
 //@param  dir_path
@@ -69,13 +77,22 @@ init_dents:
         goto init_dents
     }
 
+
     d<Dirent> = dir.dir + dir.pos
-    dir.pos += 1
-    str = runtime.newobject(runtime.String,&d.d_name)
-    return str
+    name_str = string.stringnew(&d.d_name)
+    file_name = runtime.newobject(runtime.String,name_str)
+    file_type_p<i8*> = d + d.d_reclen - 1 
+    file_type = dirtype(*file_type_p)
+
+    #incr pos
+    dir.pos += d.d_reclen
+    # return wrap obj
+    file = new dirent(file_type,file_name)
+    file.type = file_type
+    file.name = file_name
+    return file
 }
 func dirtype(t<i8>){
-    fmt.println(int(t))
     match t {
         DT_REG : return "file"
         DT_DIR : return "directory"

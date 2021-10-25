@@ -139,7 +139,7 @@ func object_member_get(obj<value>, k<u32>){
     c<object> = obj.data 
     v<value> = member_find(c.members,key)
     if  v == null {
-        fmt.println("object_get] not find the memeber:%d value\n",key)
+        //fmt.println("object_get] not find the memeber:%d value\n",key)
         return null
     }
     return v
