@@ -1,0 +1,24 @@
+
+use fmt
+use std
+use os
+
+func main(){
+    fmt.println("test open/read dir")
+
+    fd = std.opendir("./dir")
+    while true {
+        file = std.readdir(fd)
+        if !file break
+
+        match file.name {
+            "a" : fmt.assert(file.type,"file","a should be file")
+            "b" : fmt.assert(file.type,"file","b should be file")
+            "." : fmt.assert(file.type,"directory", ". should be directory")
+            "..": fmt.assert(file.type,"directory",".. should be directory")
+            _   : os.die("should be a,b,.,..")
+        }
+        fmt.println(file.name,file.type)
+    }
+    fmt.println("test open/read dir passed")
+}
