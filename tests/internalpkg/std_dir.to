@@ -3,7 +3,7 @@ use fmt
 use std
 use os
 
-func main(){
+func test_open_read(){
     fmt.println("test open/read dir")
 
     fd = std.opendir("./dir")
@@ -21,4 +21,29 @@ func main(){
         fmt.println(file.name,file.type)
     }
     fmt.println("test open/read dir passed")
+}
+func test_tell(){
+    fmt.println("test is_dir && is_file")
+    if !std.is_dir("./dir") {
+        os.die("./dir should be directory")
+    }
+    if std.is_dir("./dir1") {
+        os.die("./dir1 not exist")
+    }
+    if !std.is_file("./std_dir.to") {
+        os.die("./std_dir.to is file")
+    }
+    if std.is_file("./std_dir.to1") {
+        os.die("./std_dir.to1 not exist")
+    }
+
+    //test file or directory
+    if std.is_dir("./std_dir.to") {
+        os.die("./std_dir.to is file")
+    }
+    fmt.println("test is_dir && is_success")
+}
+func main(){
+    test_open_read()
+    test_tell()
 }

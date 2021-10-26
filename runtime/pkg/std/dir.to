@@ -112,8 +112,17 @@ func is_dir(filepath<runtime.value>){
     ret<i8> = stat(filepath.data,s)
     if ret != 0 return false
 
-    fmt.println(filepath,int(s.st_mode),int(s.st_mode & S_IFDIR))
-    if s.st_mode & S_IFDIR {
+    if s.st_mode & S_IFDIR > 0 {
+        return true
+    }
+    return false
+}
+func is_file(filepath<runtime.value>){
+    s<Stat> = new Stat
+    ret<i8> = stat(filepath.data,s)
+    if ret != 0 return false
+
+    if s.st_mode & S_IFREG > 0 {
         return true
     }
     return false
