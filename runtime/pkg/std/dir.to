@@ -106,3 +106,15 @@ func dirtype(t<i8>){
         _      : return "invalid"
     }
 }
+
+func is_dir(filepath<runtime.value>){
+    s<Stat> = new Stat
+    ret<i8> = stat(filepath.data,s)
+    if ret != 0 return false
+
+    fmt.println(filepath,int(s.st_mode),int(s.st_mode & S_IFDIR))
+    if s.st_mode & S_IFDIR {
+        return true
+    }
+    return false
+}

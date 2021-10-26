@@ -15,6 +15,15 @@ func close(fd<i64>)
 //seek syscall ; implement by asm
 func seek(fd<i64> , offset<i64> , mode<i64>)
 
+//stat syscall; implement by syscall/sys_std_amd64.s
+func stat(filename<i8*>,statbuf<Stat>)
+
+//fstat syscall; implement by syscall/sys_std_amd64.s
+func fstat(fd<i64>,statbuf<Stat>)
+
+//lstat syscall; implement by syscall/sys_std_amd64.s
+func lstat(filename<i8*>,statbuf<Stat>)
+
 //fwrite
 func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){
 	return write(fd,buffer,size * count)
@@ -49,3 +58,5 @@ func fclose(fp<u64>){
 func fseek(fp<u64>,offset<i64> , set<i64>){
 	return seek(fp,offset,set)
 }
+
+

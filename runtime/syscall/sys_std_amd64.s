@@ -101,3 +101,20 @@ std_getdents:
      syscall
      retq
 
+.globl std_stat
+std_stat:
+     mov $4 , %rax
+     syscall
+     retq
+
+.globl std_fstat
+std_fstat:
+     mov $5 , %rax
+     syscall
+     retq
+
+.globl std_lstat
+std_lstat:
+     mov $6 , %rax
+     syscall
+     retq
