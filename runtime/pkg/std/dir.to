@@ -24,6 +24,7 @@ mem Dir{
     i32     counts
     i32     pos
     i32     init
+    runtime.value* path
 }
 //for user space
 class dirent {}
@@ -55,6 +56,7 @@ func opendir(dir_path<runtime.value>){
      buf<i8*> = new DIRENT_BUF_SIZE
      dir.dir = buf
      dir.init = 0
+     dir.path = dir_path
      return dir
 }
 func readdir(dir<Dir>){
@@ -87,10 +89,20 @@ init_dents:
     #incr pos
     dir.pos += d.d_reclen
     # return wrap obj
-    file = new dirent(file_type,file_name)
+    #file = new dirent(file_type,file_name)
+    file = new dirent()
     file.type = file_type
     file.name = file_name
+    file.path = dir.path + "/" + file_name
     return file
+}
+dirent::isFile(){
+    if this.type == "file" return true
+    return false
+}
+dirent::isDir(){
+    if this.type == "directory" return true
+    return false
 }
 func dirtype(t<i8>){
     match t {

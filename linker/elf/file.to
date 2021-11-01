@@ -17,6 +17,20 @@ class File {
     strtab      # 字符串表数据
     strtabsize  # 字符串表数据长度
 }
+File::init(){
+    # header头
+    this.ehdr    = new Elf64_Ehdr
+    this.phdrTab = [] # [Elf64_Phdr]
+    this.shdrTab = {} # {".text":Elf64_Shdr,}
+    this.shdrNames = [] # [".data",".text",]
+    this.symTab  = {}
+    this.symNames = []
+    this.symbols = []
+    this.relTab = []
+
+    #
+}
+
 # 添加程序表头
 File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 {

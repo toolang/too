@@ -2,6 +2,7 @@
 use fmt
 use link
 use os 
+use std
 
 func print_help(){
     fmt.println("usage: ./cld [options|file.o...]\n" +
@@ -25,10 +26,20 @@ func scan(){
     linker  = new link.Linker()
 
     outfile = "a.out" 
-    for(path : os.argv){
-        //if io.is_dir(path) os.die("path not directory:" + path)
-
+    # 扫描所有路径
+    for(dir : os.argv){
+        if !std.is_dir(dir) os.die(dir + " not exist")
+        # 迭代目录文件
+        fd = std.opendir(dir)
+        while true {
+            file = std.readdir(fd)
+            if !file || !file.isFile() break
+            # 解析目标文件
+            linker.addElf(file.path)
+        }
     }
+    # 开始链接
+    linker.link(outfile)
 }
 
 
