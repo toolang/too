@@ -1,5 +1,6 @@
 use std
 use fmt
+use os 
 
 #func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){
 func fwrite(fd,buffer<u64>,size<u64>){
@@ -38,18 +39,18 @@ func rewind(fd){
 }
 
 //func read(fd<i64> , buffer<u64*> , size<u64>
-func fread(fd,size){
-	bsize<i64> = *size
-	buffer<u64*> = new bsize
-	if std.read(*fd,buffer,bsize) != bsize {
-		fmt.println("fread err")
+func fread(fd,size<i64>){
+	buffer<u64*> = new size
+	if std.read(*fd,buffer,size) != size {
+		//fmt.println("fread err")
+		os.die("fread err")
 		return false
 	}
 	return buffer
 }
 
 //func fseek(fp<u64>,offset<i64> , set<i64>)
-func fseek(fp,offset){
-	std.fseek(*fp,*offset,std.SEEK_SET)
+func fseek(fp,offset<i64>){
+	std.fseek(*fp,offset,std.SEEK_SET)
 	return true
 }

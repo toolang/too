@@ -6,19 +6,18 @@ use string
 # 开始解析elf文件
 File::readElf(file)
 {
-	# TODO: fopen()
 	fp = io.fopen(file,"rb")
 	if !fp  {
 		os.die("file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
 	io.rewind(fp)
+
 	# elf文件头部
-	elf_header_size = 64
-	ehdr<Elf64_Ehdr> = io.fread(fd,elf_header_size)
+	ehdr<Elf64_Ehdr> = io.fread(fd,sizeof(Elf64_Ehdr))
 	if ehdr.e_type == ET_EXEC {
 		io.fseek(fp,ehdr.e_phoff)
-		for(i = 0 ; i < ehdr.e_phnum; i += 1){
+		for(i = 0 ; i < int(ehdr.e_phnum); i += 1){
 			phdr<Elf64_Phdr> = io.fread(fp,sizeof(Elf64_Phdr))
 			this.phdrTab[] = phdr
 		}
@@ -29,7 +28,8 @@ File::readElf(file)
 	# 转移到段表字符串内容
 	io.fseek(fp,shstrTab.sh_offset)
 	//读取段表字符串表
-	shstrTabData<i8*> = io.fread(shstrTab.sh_size,1,fp)
+	shstrTabData<i8*> = io.fread(fp,shstrTab.sh_size)
+	fmt.println("字符串表:",string.new(shstrTabData))
 
 	# 开始读取所有的段表
 	io.fseek(fp,ehdr.e_shoff)
@@ -37,6 +37,8 @@ File::readElf(file)
 		shdr<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
 		# 截取自动遇到\0停止
 		name = string.new(shstrTabData + shdr.sh_name)
+		fmt.println("read section.name:", name)
+
 		this.shdrNames[] = name
 		# map映射
 		if name != "" {
@@ -45,60 +47,61 @@ File::readElf(file)
 	}
 	# 开始读取字符串段表
 	strTab<Elf64_Shdr> = this.shdrTab[".strtab"]
-	io.fseek(fp,strTab.sh_offset,0)
+	io.fseek(fp,strTab.sh_offset)
 	# 读取字符串表
-	strTabData<i8> = io.fread(strTab.sh_size,1,fp)
+	strTabData<i8*> = io.fread(fp,strTab.sh_size)
 
 
 	# 读取符号表
-	symTab = this.shdrTab[".symtab"]
-	io.fseek(fp,symTab.sh_size,0)
-	symNum = symTab.sh_size / symTab.sh_entsize
+	sh_symTab<Elf64_Shdr> = this.shdrTab[".symtab"]
+	io.fseek(fp,sh_ymTab.sh_size)
+	symNum = sh_symTab.sh_size / sh_symTab.sh_entsize
 
 	# 记录符号表段所有符号信息，方便进行重定位
 	symList = []
 	for(i = 0 ; i < symNum ; i += 1){
-		sym<Elf64_Sym> = io.fread(sizeof(Elf64_Sym),1,fp)
+		sym<Elf64_Sym> = io.fread(fp,sizeof(Elf64_Sym))
 		this.symList[] = sym
 		name = string.new(strTabData + sym.st_name)		
+		fmt.println("read symbols table.name:", name)
 		this.symbols[] = name
 
 		if  name == "_GLOBAL_OFFSET_TABLE_" {
 			continue
 		}
 		if  name != "" {
-			symTab[name] = sym
+			this.symTab[name] = sym
 			continue
 		}
 		if  sym.st_shndx != SHN_UNDEF && sym.st_name == 0 {
 			# 可能是段名
 			name = this.shdrNames[int(sym.st_shndx)]
+			fmt.println("read symbols table.name: " ,name)
 			if  name != "" {
-				symTab[name] = sym
+				this.symTab[name] = sym
 			}
 		}
 	}
-
+	fmt.println(dir,"重定位数据")
 	# 更新重定位段段数据
-	# TODO: map 的迭代
-	for(k,v : shdrTab){
+	for( k,v : this.shdrTab ){
 		if  k == ".rela.text" || k == ".rela.data" {
 			relTab<Elf64_Shdr> = v
-			io.fseek(fp,relTab.sh_offset,0)
+			io.fseek(fp,relTab.sh_offset)
 			relNum = relTab.sh_size / sizeof(Elf64_Rela)
 			for(j = 0 ; j < relNum ; j += 1){
-				rela<Elf64_Rela> = io.fread(sizeof(Elf64_Rela),1,fp)
+				rela<Elf64_Rela> = io.fread(fp,sizeof(Elf64_Rela))
 				sym<Elf64_Sym> = symList[ELF64_R_SYM(rela.r_info)]
 				index<i32>          = sym.st_name
 				name = string.new(strTabData + index)
-				if name == "" {
-					name = this.shdrNames[int(sym.st_shndx)]
-				}
-				if  sym.st_shndx != SHU_UNDEF {
-					name = this.shdrNames[sym.st_shndx]
+				fmt.println("name:",name)
+				if name == ""{
+					if sym.st_shndx != SHU_UNDEF
+						name = this.shdrNames[int(sym.st_shndx)]
 				}
 				this.relTab[] = new RelItem(string.sub(k,5),rela,name)
-			}
+				fmt.println("name:",name)
+			} 
 		}
 	}
 	io.fclose(fp)
