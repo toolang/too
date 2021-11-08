@@ -50,10 +50,12 @@ Linker::addElf(obj)
 Linker::collectInfo()
 {
 	for(e : this.elfs){
+		fmt.println("collect elf info:",e.elfdir)
 		# 记录段表信息
-		for(seg : segNames){
+		for(seg : this.segNames){
 			if  e.shdrTab[seg] {
 				tmp = this.segLists[seg].ownerList
+				# TODO: copy on write 
 				tmp[] = e
 			}
 		}
@@ -62,11 +64,13 @@ Linker::collectInfo()
 			symLink = new SymLink()
 			symLink.name = name
 			if  sym.st_shndx == STN_UNDEF {
+				fmt.println(name, " 未定义 ")
 				symLink.recv = e
 				symLink.prov = null
 				this.symLinks[] = symLink
 			}
 			if  sym.st_shndx != SHN_ABS {
+				fmt.println(name, " 已定义")
 				symLink.prov = e
 				symLink.recv = null
 				this.symDef[] = symLink
@@ -86,9 +90,10 @@ Linker::symValid()
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		# 只支持全局符号
 		if   elf.ELF64_ST_BIND(sym.st_info)  != STB_GLOBAL {
+			fmt.println(def.name + " 非全局符号”)
 			continue
 		}
-		if  def.name == "mini_crt_entry" {
+		if  def.name == "main" {
 			startOwner = def.prov
 		}
 		for(j = i + 1 ; j < std.len(this.symDef); j += 1){
@@ -105,8 +110,8 @@ Linker::symValid()
 		}
 	}
 	if  startOwner == null {
-		fmt.println("链接器找不到入口:mini_crt_entry")
-		falg = false
+		fmt.println("链接器找不到入口: main")
+		flag = false
 	}
 	# 遍历未定义的符号
 	for(link : this.symLinks){
