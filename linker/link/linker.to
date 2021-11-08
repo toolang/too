@@ -147,13 +147,13 @@ Linker::symValid()
 # 分配地址空间
 Linker::allocAddr()
 {
-	curAddr = BASE_ADDR
-	curOff = sizeof(elf.Elf64_Ehdr) + sizeof(elf.Elf64_Phdr) * std.len(segNames)
+	curAddr<i32> = BASE_ADDR
+	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(segNames)
 
 	for(seg : this.segNames){
-		this.segLists[seg].allocAddr(seg,curAddr,curOff)
+		this.segLists[seg].allocAddr(seg,&curAddr,*curOff)
 	}
-	bssaddr = curAddr
+	this.bssaddr = int(curAddr)
 }
 
 Linker::symParser()
