@@ -90,7 +90,7 @@ Linker::symValid()
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		# 只支持全局符号
 		if   elf.ELF64_ST_BIND(sym.st_info)  != STB_GLOBAL {
-			fmt.println(def.name + " 非全局符号”)
+			fmt.println(def.name + " 非全局符号")
 			continue
 		}
 		if  def.name == "main" {
@@ -158,22 +158,24 @@ Linker::allocAddr()
 
 Linker::symParser()
 {
+	fmt.println("符号解析")
 	for(def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""
 		if  sym.st_shndx == SHN_COMMON {
 			segName = ".bss"
 		}else{
-			segName = def.prov.shdrNames[sym.st_shndx]
+			segName = def.prov.shdrNames[int(sym.st_shndx)]
 		}
 		if  segName == ".bss" && def.name != ".bss" {
-			bssaddr += sym.st_size
-			sym.st_value = bssaddr
+			this.bssaddr += int(sym.st_size)
+			sym.st_value = *this.bssaddr
 		}else{
 			sh<elf.Elf64_Shdr> = def.prov.shdrTab[segName]
 			sym.st_value = sym.st_value + sh.sh_addr
 		}
 	}
+	fmt.println("未定义符号解析")
 	for(syml : this.symLinks){
 		provsym<elf.Elf64_Sym> = syml.prov.symTab[syml.name]
 		recvsym<elf.Elf64_Sym> = syml.recv.symTab[syml.name]
@@ -184,7 +186,9 @@ Linker::symParser()
 # 重定位
 Linker::relocate()
 {
+	fmt.println("重定位")
 	for(e : elf.elfs){
+		//TODO: copy on write
 		tab = e.relTab
 		for(t : tab){
 			if  t.relname == "" {
@@ -195,10 +199,10 @@ Linker::relocate()
 			rel<elf.Elf64_Rela> = t.rel
 			sh<elf.Elf64_Shdr> = e.shdrTab[t.segname]
 			file = e.elf_dir
-			symAddr = sym.st_value + rel.r_addend
-			relAddr = sh.sh_addr + rel.r_offset
+			symAddr<u32> = sym.st_value + rel.r_addend
+			relAddr<u32> = sh.sh_addr + rel.r_offset
 			# 开始重定位操作
-			this.segLists[t.segname].relocaAddr(relAddr,elf.ELF64_R_TYPE(rel.r_info),symAddrrel.r_addend)
+			this.segLists[t.segname].relocaAddr(relAddr,elf.ELF64_R_TYPE(rel.r_info),symAddr,rel.r_addend)
 		}
 	}
 }

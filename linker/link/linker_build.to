@@ -5,6 +5,7 @@ use elf
 
 Linker::buildExe()
 {
+	fmt.println("build exe")
 	exe = this.exe
 	ehdr<elf.Elf64_Ehdr> = exe.ehdr
 	#  获取变量的地址
@@ -22,9 +23,9 @@ Linker::buildExe()
 	ehdr.e_version = elf.EV_CURRENT
 	ehdr.e_flags = 0
 	ehdr.e_ehsize = sizeof(elf.Elf64_Ehdr)
+
 	#curOff = sizeof(elf.Elf64_Ehdr) + sizeof(elf.Elf64_Phdr) * std.len(this.segNames)
-	curOff = sizeof(elf.Elf64_Ehdr) + sizeof(elf.Elf64_Phdr) 
-	curOff *= std.len(this.segNames)
+	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(this.segNames)
 	# 空段表
 	this.exe.addShdr("",0,0,0,0,0,0,0,0,0)
 
@@ -33,7 +34,7 @@ Linker::buildExe()
 		# 每个字符串末尾自动加上结束符号 \0
 		shstrtabSize += std.len(seg) + 1
 
-		flags = PF_W | PF_R
+		flags<i32> = PF_W | PF_R
 		filesz = this.segLists[seg].size
 		if  seg == ".text" {
 			flags = PF_X | PF_R
