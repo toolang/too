@@ -43,29 +43,29 @@ Linker::buildExe()
 			filesz = 0
 		}
 		# 添加程序头表
-		this.exe.addPhdr(PT_LOAD,
+		this.exe.addPhdr(int(PT_LOAD),
 			this.segLists[seg].offset,
 			this.segLists[seg].baseAddr,
 			filesz,
 			this.segLists[seg].size,
-			flags,
-			MEM_ALIGN
+			int(flags),
+			int(MEM_ALIGN)
 		)
 		# 计算有效数据段的大小和偏移
 		curOff = this.segLists[seg].offset
 		#生成段表项
-		sh_type = SHT_PROGBITS
-		sh_flags = SHF_ALLOC | SHF_WRITE
+		sh_type = int(SHT_PROGBITS)
+		sh_flags<i32> = SHF_ALLOC | SHF_WRITE
 		sh_align = 4
 		if  seg == ".bss" {
-			sh_type = SHT_NOBITS
+			sh_type = int(SHT_NOBITS)
 		}
 		if  seg == ".text" {
 			sh_flags = SHF_ALLOC |SHF_EXECINSTR
 			sh_align = 16
 		}
 		# 添加一个段表项，暂时按照4字节对齐
-		this.exe.addShdr(seg,sh_type,sh_flags,
+		this.exe.addShdr(seg,sh_type,int(sh_flags),
 			this.segLists[seg].baseAddr,
 			this.segLists[seg].offset,
 			this.segLists[seg].size,
@@ -78,7 +78,7 @@ Linker::buildExe()
 
 	# 初始化一段字符串内存
 	str = ""
-	exe.shstrtab = *str
+	#exe.shstrtab = *str
 	exe.shstrtabSize = shstrtabSize
 
 	index = 0
@@ -101,6 +101,7 @@ Linker::buildExe()
 		str += i 
 		index += std.len(i) + 1
 	}
+	exe.shstrtab = *str
 
 	exe.addShdr(".shstrtab",SHT_STRTAB,0,0,curOff,shstrtabSize,SHN_UNDEF,0,1,0)
 	ehdr.e_shstrndx = exe.getSegIndex(".shstrtab")
