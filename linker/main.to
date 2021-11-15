@@ -44,11 +44,11 @@ func scan(){
 
 
 func main() {
-    if  os.argc < 2 {
+    if  os.argc < 1 {
         return print_help()
     }
     //scan
-    if os.argv[1] != "-p" {
+    if os.argv[0] != "-p" {
         return scan()
     }
     return link()

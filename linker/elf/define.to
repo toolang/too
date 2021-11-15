@@ -28,6 +28,10 @@ STB_GLOBAL<i32> = 1
 STT_OBJECT<i32> = 1
 STT_FUNC<i32>   = 2
 
+SHF_WRITE<i32>  = 1
+SHF_ALLOC<i32>  = 2
+SHF_EXECINSTR<i32> = 4
+
 func ELF64_R_SYM(i<u64>)	{
 	return i >> 32
 }

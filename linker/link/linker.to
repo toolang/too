@@ -27,6 +27,7 @@ Linker::init(){
 # 初始化
 Linker::linker()
 {
+	fmt.println("Linker::linker")
 	this.segNames[] = ".text"
 	this.segNames[] = ".data"
 	this.segNames[] = ".roadata"

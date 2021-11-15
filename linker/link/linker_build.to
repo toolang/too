@@ -34,10 +34,10 @@ Linker::buildExe()
 		# 每个字符串末尾自动加上结束符号 \0
 		shstrtabSize += std.len(seg) + 1
 
-		flags<i32> = PF_W | PF_R
+		flags<i32> = elf.PF_W | elf.PF_R
 		filesz = this.segLists[seg].size
 		if  seg == ".text" {
-			flags = PF_X | PF_R
+			flags = elf.PF_X | elf.PF_R
 		}
 		if  seg == ".bss"  {
 			filesz = 0
@@ -54,14 +54,14 @@ Linker::buildExe()
 		# 计算有效数据段的大小和偏移
 		curOff = this.segLists[seg].offset
 		#生成段表项
-		sh_type = int(SHT_PROGBITS)
-		sh_flags<i32> = SHF_ALLOC | SHF_WRITE
+		sh_type = int(elf.SHT_PROGBITS)
+		sh_flags<i32> = elf.SHF_ALLOC | elf.SHF_WRITE
 		sh_align = 4
 		if  seg == ".bss" {
-			sh_type = int(SHT_NOBITS)
+			sh_type = int(elf.SHT_NOBITS)
 		}
 		if  seg == ".text" {
-			sh_flags = SHF_ALLOC |SHF_EXECINSTR
+			sh_flags = elf.SHF_ALLOC | elf.SHF_EXECINSTR
 			sh_align = 16
 		}
 		# 添加一个段表项，暂时按照4字节对齐
@@ -74,7 +74,8 @@ Linker::buildExe()
 	}
 	ehdr.e_phoff = sizeof(elf.Elf64_Ehdr)
 	ehdr.e_phentsize = sizeof(elf.Elf64_Phdr)
-	ehdr.e_phnum = std.len(segNames)
+	segnames_len = std.len(segNames)
+	ehdr.e_phnum = *segnames_len
 
 	# 初始化一段字符串内存
 	str = ""
@@ -103,19 +104,21 @@ Linker::buildExe()
 	}
 	exe.shstrtab = *str
 
-	exe.addShdr(".shstrtab",SHT_STRTAB,0,0,curOff,shstrtabSize,SHN_UNDEF,0,1,0)
-	ehdr.e_shstrndx = exe.getSegIndex(".shstrtab")
+	exe.addShdr(".shstrtab",int(SHT_STRTAB),0,0,curOff,shstrtabSize,int(SHN_UNDEF),0,1,0)
+	shstrtab_idx = exe.getSegIndex(".shstrtab")
+	ehdr.e_shstrndx = *shstrtab_idx
 
 	# 段表偏移
 	curOff += shstrtabSize
-	ehdr.e_shoff = curOff
+	ehdr.e_shoff = *curOff
 	ehdr.e_shentsize = sizeof(elf.Elf64_Shdr)
-	ehdr.e_shnum = 4 + std.len(segNames)
-	curOff  += sizeof(elf.Elf64_Shdr) * (4 + std.len(this.segNames))
+	sec_lens = 4 + std.len(segNames)
+	ehdr.e_shnum = *sec_lens
+	curOff  += int(sizeof(elf.Elf64_Shdr)) * sec_lens
 
 	eas = 1 + std.len(symDef)	
 	eas *= int(sizeof(elf.Elf64_Sym))
-	exe.addShdr("symtab",SHT_SYMTAB,0,0,curOff,eas,0,0,1,sizeof(elf.Elf64_Sym))
+	exe.addShdr("symtab",int(SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
 	symtab<elf.Elf64_Shdr> = exe.shdrTab[".symtab"]
 	symtab.sh_link = exe.getSegIndex(".symtab") + 1
 	strtabSize = 0
@@ -138,11 +141,11 @@ Linker::buildExe()
 		ehdr.e_entry = start.st_value
 		#curOff += (1 + std.len(this.symDef)) * sizeof(elf.Elf64_Sym)
 		ts = std.len(this.symDef) + 1
-		curOff += ts * sizeof(elf.Elf64_Sym)
-		exe.addShdr(".strtab",SHT_STRTAB,0,0,curOff,strtabSize,SHU_UNDEF,0,1,0)
+		curOff += ts * int(sizeof(elf.Elf64_Sym))
+		exe.addShdr(".strtab",int(SHT_STRTAB),0,0,curOff,strtabSize,SHU_UNDEF,0,1,0)
 		
 		exe.strtabSize = strtabSize
-		index =0
+		index = 0
 		strIndex = {}
 		strIndex[""] = strtabSize - 1
 		for(sd : this.symDef){
@@ -163,47 +166,50 @@ Linker::buildExe()
 
 Linker::writeExe(out)
 {
+	fmt.println("write exe")
 	exe = this.exe
 	offset = exe.writeHeader(out)
 	slen = int(sizeof(elf.Elf64_Ehdr)) + std.len(exe.phdrTab) * int(sizeof(elf.Elf64_Phdr))
 	fmt.assert(offset,slen,"Linker::writeExe")
 	fp = io.fopen(out,"a+")
-	pad = 0
+	pad<i8*> = 0
+	one<i8> = 1
 	for(seg : this.segNames){
 		sl = this.segLists[seg]
 		padnum = sl.offset - sl.begin
 		offset += padnum
 		while padnum {
 			padnum -= 1
-			io.fwrite(pad,1,1,fp)
+			io.fwrite(fp,&pad,one)
 		}
 		#输出
 		if  seg != ".bss" {
-			old = null
-			instPad = 0x90
-			for(b : sl.blocks){
+			old<Block> = null
+			instPad<i8*> = 0x90
+			for(b<Block> : sl.blocks){
 				if  old != null {
-					padnum = b.offset - (old.offset + old.size)
-					offset += padnum
+
+					padnum<i32> = b.offset - old.offset + old.size
+					offset += int(padnum)
 					while padnum {
 						padnum -= 1
-						io.fwrite(instPad,1,1,fp)
+						io.fwrite(fp,&instPad,one)
 					}
 				}
 				old = b
-				offset += b.size
-				io.fwrite(b.data,b.size,1,fp)
+				offset += int(b.size)
+				io.fwrite(fp,b.data,b.size)
 			}
 		}
 	}
 	io.fclose(fp)
 	sts<elf.Elf64_Shdr> = exe.shdrTab[".shstrtab"]
-	if  offset != sts.sh_offset {
+	if  offset != int(sts.sh_offset) {
 		fmt.println("ofsset")
 		os.exit(-1)
 	}
 	offset += exe.shstrtabSize
-	if  offset != ehdr.e_shoff {
+	if  offset != (ehdr.e_shoff) {
 		fmt.println("ofsset")
 		os.exit(-1)
 	}

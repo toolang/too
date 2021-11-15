@@ -5,11 +5,12 @@ use io
 # 写入程序表头
 File::writeHeader(out) 
 {
+    fmt.println("write header")
     ehdr<Elf64_Ehdr> = this.ehdr
     bytes = 0
 
 	fp = io.fopen(out,"w+")
-    bytes += ehdr.e_ehsize
+    bytes += int(ehdr.e_ehsize)
 
 	# elf文件头
     io.fwrite(fp,ehdr,ehdr.e_ehsize)
