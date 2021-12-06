@@ -17,7 +17,9 @@ PF_R<i32>    = 4
 PF_MASKOS<i32> =   0x0ff00000
 PF_MASKPROC<i32> = 0xf0000000
 
-SHN_UNDEF<i32> = 0
+SHN_UNDEF<i32>  = 0
+SHN_COMMON<i32> = 	0xfff2
+SHN_ABS<i32>    =		0xfff1
 
 R_X86_64_PC32<i32> = 2
 R_X86_64_PLT32<i32> = 4
@@ -31,6 +33,26 @@ STT_FUNC<i32>   = 2
 SHF_WRITE<i32>  = 1
 SHF_ALLOC<i32>  = 2
 SHF_EXECINSTR<i32> = 4
+
+EM_X86_64<i32>  = 62
+EV_NONE<i32>    = 0
+EV_CURRENT<i32> = 1
+EV_NUM<i32>     = 2
+
+PT_NULL<i32>	=	0
+PT_LOAD<i32>    =	1		
+PT_DYNAMIC<i32> = 2		
+PT_INTERP<i32>  = 3		
+PT_NOTE<i32>    = 4		
+PT_SHLIB<i32>   = 5		
+PT_PHDR<i32>    = 6	
+
+
+SHT_PROGBITS<i32> = 1		
+SHT_SYMTAB<i32>   = 2
+SHT_STRTAB<i32>   = 3
+SHT_NOBITS<i32>   = 8
+
 
 func ELF64_R_SYM(i<u64>)	{
 	return i >> 32

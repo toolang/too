@@ -1,3 +1,4 @@
+use fmt
 
 class File {
     ehdr        # Elf64_Ehdr elf头
@@ -18,6 +19,7 @@ class File {
     strtabsize  # 字符串表数据长度
 }
 File::init(){
+    fmt.println("File::init")
     # header头
     this.ehdr    = new Elf64_Ehdr
     this.phdrTab = [] # [Elf64_Phdr]
@@ -27,8 +29,6 @@ File::init(){
     this.symNames = []
     this.symbols = []
     this.relTab = []
-
-    #
 }
 
 # 添加程序表头

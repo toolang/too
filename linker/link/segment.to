@@ -1,3 +1,5 @@
+use elf
+
 class Seglist
 {
 	baseAddr   # 分配基地址
@@ -98,15 +100,15 @@ Seglist::relocAddr(relAddr,type,symAddr,addend)
 		*paddr = symAddr - addend
 		return true
 	}
-	if type == R_X86_64_PC32 {
+	if type == elf.R_X86_64_PC32 {
 		*paddr = symAddr - relAddr + *paddr
 		return true
 	}
-	if  type == R_X86_64_PLT32 {
+	if  type == elf.R_X86_64_PLT32 {
 		*paddr = symAddr - relAddr + *paddr
 		return true
 	}
-	if  type == R_X86_64_64 {
+	if  type == elf.R_X86_64_64 {
 		*paddr = symAddr - addend
 		return true
 	}

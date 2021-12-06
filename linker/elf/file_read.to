@@ -6,15 +6,16 @@ use string
 # 开始解析elf文件
 File::readElf(file)
 {
-	fp = io.fopen(file,"rb")
-	if !fp  {
+	fmt.println("File::readElf ",file)
+	fp<i8> = io.fopen(file,"rb")
+	if fp <= 0  {
 		os.die("file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
 	io.rewind(fp)
 
 	# elf文件头部
-	ehdr<Elf64_Ehdr> = io.fread(fd,sizeof(Elf64_Ehdr))
+	ehdr<Elf64_Ehdr> = io.fread(fp,sizeof(Elf64_Ehdr))
 	if ehdr.e_type == ET_EXEC {
 		io.fseek(fp,ehdr.e_phoff)
 		for(i = 0 ; i < int(ehdr.e_phnum); i += 1){
@@ -38,7 +39,6 @@ File::readElf(file)
 		# 截取自动遇到\0停止
 		name = string.new(shstrTabData + shdr.sh_name)
 		fmt.println("read section.name:", name)
-
 		this.shdrNames[] = name
 		# map映射
 		if name != "" {
@@ -54,7 +54,7 @@ File::readElf(file)
 
 	# 读取符号表
 	sh_symTab<Elf64_Shdr> = this.shdrTab[".symtab"]
-	io.fseek(fp,sh_ymTab.sh_size)
+	io.fseek(fp,sh_symTab.sh_size)
 	symNum = sh_symTab.sh_size / sh_symTab.sh_entsize
 
 	# 记录符号表段所有符号信息，方便进行重定位
@@ -82,7 +82,7 @@ File::readElf(file)
 			}
 		}
 	}
-	fmt.println(dir,"重定位数据")
+	fmt.println(file,"重定位数据")
 	# 更新重定位段段数据
 	for( k,v : this.shdrTab ){
 		if  k == ".rela.text" || k == ".rela.data" {
@@ -96,7 +96,7 @@ File::readElf(file)
 				name = string.new(strTabData + index)
 				fmt.println("name:",name)
 				if name == ""{
-					if sym.st_shndx != SHU_UNDEF
+					if sym.st_shndx != SHN_UNDEF
 						name = this.shdrNames[int(sym.st_shndx)]
 				}
 				this.relTab[] = new RelItem(string.sub(k,5),rela,name)

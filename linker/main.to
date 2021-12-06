@@ -12,6 +12,7 @@ func print_help(){
 }
 
 func link(){
+    fmt.println("main.link")
     linker  = new link.Linker()
     outfile = "a.out"
     for(obj : os.argv){
@@ -23,6 +24,7 @@ func link(){
 }
 
 func scan(){
+    fmt.println("main.scan")
     linker  = new link.Linker()
 
     outfile = "a.out" 
@@ -48,7 +50,7 @@ func main() {
         return print_help()
     }
     //scan
-    if os.argv[0] != "-p" {
+    if os.argv[0] == "-p" {
         return scan()
     }
     return link()

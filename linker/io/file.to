@@ -24,7 +24,8 @@ func fopen(filename,mode){
 		fmt.print("fopen failed\n")
 		return false
 	}
-	return int(ret)
+	fmt.println("fopen file:",int(ret))
+	return ret
 }
 //func fclose(fp<u64>)
 func fclose(fp){
@@ -35,15 +36,17 @@ func fclose(fp){
 //func seek(fd<i64> , offset<i64> , mode<i64>)
 func rewind(fd){
 	st<i8> = 0
-	std.seek(*fd,st,std.SEEK_SET)	
+	std.seek(fd,st,std.SEEK_SET)	
 }
 
 //func read(fd<i64> , buffer<u64*> , size<u64>
-func fread(fd,size<i64>){
+func fread(fd<i8>,size<i64>){
+	fmt.println("fread fd:",int(fd),int(size))
 	buffer<u64*> = new size
-	if std.read(*fd,buffer,size) != size {
+	read_size<i64> = std.read(fd,buffer,size)
+	if read_size != size {
 		//fmt.println("fread err")
-		os.die("fread err")
+		os.die("fread err " + int(read_size))
 		return false
 	}
 	return buffer
@@ -51,6 +54,7 @@ func fread(fd,size<i64>){
 
 //func fseek(fp<u64>,offset<i64> , set<i64>)
 func fseek(fp,offset<i64>){
-	std.fseek(*fp,offset,std.SEEK_SET)
+	fmt.println("io.fseek:",int(fp),int(offset))
+	std.fseek(fp,offset,std.SEEK_SET)
 	return true
 }

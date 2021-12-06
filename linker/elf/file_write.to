@@ -1,6 +1,7 @@
 
 use std
 use io
+use fmt
 # 写入header头
 # 写入程序表头
 File::writeHeader(out) 

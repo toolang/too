@@ -43,7 +43,7 @@ Linker::buildExe()
 			filesz = 0
 		}
 		# 添加程序头表
-		this.exe.addPhdr(int(PT_LOAD),
+		this.exe.addPhdr(int(elf.PT_LOAD),
 			this.segLists[seg].offset,
 			this.segLists[seg].baseAddr,
 			filesz,
@@ -69,7 +69,7 @@ Linker::buildExe()
 			this.segLists[seg].baseAddr,
 			this.segLists[seg].offset,
 			this.segLists[seg].size,
-			SHN_UNDEF,0,sh_align,0
+			elf.SHN_UNDEF,0,sh_align,0
 		)
 	}
 	ehdr.e_phoff = sizeof(elf.Elf64_Ehdr)
@@ -104,7 +104,7 @@ Linker::buildExe()
 	}
 	exe.shstrtab = *str
 
-	exe.addShdr(".shstrtab",int(SHT_STRTAB),0,0,curOff,shstrtabSize,int(SHN_UNDEF),0,1,0)
+	exe.addShdr(".shstrtab",int(elf.SHT_STRTAB),0,0,curOff,shstrtabSize,int(elf.SHN_UNDEF),0,1,0)
 	shstrtab_idx = exe.getSegIndex(".shstrtab")
 	ehdr.e_shstrndx = *shstrtab_idx
 
@@ -118,7 +118,7 @@ Linker::buildExe()
 
 	eas = 1 + std.len(symDef)	
 	eas *= int(sizeof(elf.Elf64_Sym))
-	exe.addShdr("symtab",int(SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
+	exe.addShdr("symtab",int(elf.SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
 	symtab<elf.Elf64_Shdr> = exe.shdrTab[".symtab"]
 	symtab.sh_link = exe.getSegIndex(".symtab") + 1
 	strtabSize = 0
@@ -129,7 +129,7 @@ Linker::buildExe()
 		name = def.name
 		strtabSize += std.len(name) + 1
 		sym<elf.Elf64_Sym> = def.prov.symTab[name]
-		if  sym.st_shndx == SHN_COMMON {
+		if  sym.st_shndx == elf.SHN_COMMON {
 			sym.st_shndx = exe.getSegIndex(".bss")
 		}else{
 			sym.st_shndx = exe.getSegIndex(def.prov.shdrNames[sym.st_shndx])
@@ -137,13 +137,13 @@ Linker::buildExe()
 		exe.addSym(name,sym)
 
 		#记录程序入口
-		start<elf.Elf64_Sym> = exe.symTab[START]
+		start<elf.Elf64_Sym> = exe.symTab["main"]
 		ehdr.e_entry = start.st_value
 		#curOff += (1 + std.len(this.symDef)) * sizeof(elf.Elf64_Sym)
 		ts = std.len(this.symDef) + 1
 		curOff += ts * int(sizeof(elf.Elf64_Sym))
-		exe.addShdr(".strtab",int(SHT_STRTAB),0,0,curOff,strtabSize,SHU_UNDEF,0,1,0)
-		
+		exe.addShdr(".strtab",int(elf.SHT_STRTAB),0,0,curOff,strtabSize,elf.SHN_UNDEF,0,1,0)
+		2
 		exe.strtabSize = strtabSize
 		index = 0
 		strIndex = {}
@@ -168,6 +168,7 @@ Linker::writeExe(out)
 {
 	fmt.println("write exe")
 	exe = this.exe
+    ehdr<elf.Elf64_Ehdr> = exe.ehdr
 	offset = exe.writeHeader(out)
 	slen = int(sizeof(elf.Elf64_Ehdr)) + std.len(exe.phdrTab) * int(sizeof(elf.Elf64_Phdr))
 	fmt.assert(offset,slen,"Linker::writeExe")
@@ -218,6 +219,7 @@ Linker::writeExe(out)
 
 Linker::link(out)
 {
+	fmt.println("Linker::link")
 	this.collectInfo()
 	if   !this.symValid() {
 		return false

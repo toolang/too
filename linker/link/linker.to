@@ -1,4 +1,5 @@
 use elf
+use fmt
 
 #统计读写的字节数
 bytes
@@ -16,11 +17,13 @@ class Linker
 	bytes
 }
 Linker::init(){
+	fmt.println("Linker::init")
 	this.segNames = []
 	this.bssaddr  = 0
 	this.elfs = []
 	this.symLinks = []
 	this.symDef   = []
+	this.seglists = {}
 
 	this.linker()
 }
@@ -41,6 +44,7 @@ Linker::linker()
 # 2. 追加到待链接数组中等待链接
 Linker::addElf(obj)
 {
+	fmt.println("Linker::addElf add a elffile:",obj)
 	e = new elf.File()
 	# 解析elf文件
 	e.readElf(obj)
@@ -64,13 +68,13 @@ Linker::collectInfo()
 		for(name,sym<elf.Elf64_Sym> : e.symTab){
 			symLink = new SymLink()
 			symLink.name = name
-			if  sym.st_shndx == STN_UNDEF {
+			if  sym.st_shndx == elf.SHN_UNDEF {
 				fmt.println(name, " 未定义 ")
 				symLink.recv = e
 				symLink.prov = null
 				this.symLinks[] = symLink
 			}
-			if  sym.st_shndx != SHN_ABS {
+			if  sym.st_shndx != elf.SHN_ABS {
 				fmt.println(name, " 已定义")
 				symLink.prov = e
 				symLink.recv = null
@@ -90,7 +94,7 @@ Linker::symValid()
 	for(i,def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		# 只支持全局符号
-		if   elf.ELF64_ST_BIND(sym.st_info)  != STB_GLOBAL {
+		if   elf.ELF64_ST_BIND(sym.st_info)  != elf.STB_GLOBAL {
 			fmt.println(def.name + " 非全局符号")
 			continue
 		}
@@ -99,7 +103,7 @@ Linker::symValid()
 		}
 		for(j = i + 1 ; j < std.len(this.symDef); j += 1){
 			sym = this.symDef[j].prov.symTab[this.symDef[j].name]
-			if   elf.ELF64_ST_BIND(sym.st_info)  != STB_GLOBAL {
+			if   elf.ELF64_ST_BIND(sym.st_info)  != elf.STB_GLOBAL {
 				continue
 			}
 			# 同名符号 有冲突
@@ -127,10 +131,10 @@ Linker::symValid()
 			msym<elf.Elf64_Sym> = link.recv.symTab[link.name]
 			info<u8> = msym.st_info
 			type = ""
-			if   elf.ELF64_ST_TYPE(info)  == STT_OBJECT {
+			if   elf.ELF64_ST_TYPE(info)  == elf.STT_OBJECT {
 				type = "变量"
 			}
-			if   elf.ELF64_ST_TYPE(info)  == STT_FUNC {
+			if   elf.ELF64_ST_TYPE(info)  == elf.STT_FUNC {
 				type = "函数"
 			}
 			if  type == "" {
@@ -163,7 +167,7 @@ Linker::symParser()
 	for(def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""
-		if  sym.st_shndx == SHN_COMMON {
+		if  sym.st_shndx == elf.SHN_COMMON {
 			segName = ".bss"
 		}else{
 			segName = def.prov.shdrNames[int(sym.st_shndx)]
