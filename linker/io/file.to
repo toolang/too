@@ -28,8 +28,8 @@ func fopen(filename,mode){
 	return ret
 }
 //func fclose(fp<u64>)
-func fclose(fp){
-	return std.fclose(*fp)
+func fclose(fp<i64>){
+	return std.fclose(fp)
 }
 
 

@@ -143,7 +143,6 @@ Linker::buildExe()
 		ts = std.len(this.symDef) + 1
 		curOff += ts * int(sizeof(elf.Elf64_Sym))
 		exe.addShdr(".strtab",int(elf.SHT_STRTAB),0,0,curOff,strtabSize,elf.SHN_UNDEF,0,1,0)
-		2
 		exe.strtabSize = strtabSize
 		index = 0
 		strIndex = {}

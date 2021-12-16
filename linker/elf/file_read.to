@@ -7,6 +7,8 @@ use string
 File::readElf(file)
 {
 	fmt.println("File::readElf ",file)
+	this.elfdir = file
+
 	fp<i8> = io.fopen(file,"rb")
 	if fp <= 0  {
 		os.die("file invalid:" + file)
@@ -18,7 +20,7 @@ File::readElf(file)
 	ehdr<Elf64_Ehdr> = io.fread(fp,sizeof(Elf64_Ehdr))
 	if ehdr.e_type == ET_EXEC {
 		io.fseek(fp,ehdr.e_phoff)
-		for(i = 0 ; i < int(ehdr.e_phnum); i += 1){
+		for(i<i32> = 0 ; i < ehdr.e_phnum; i += 1){
 			phdr<Elf64_Phdr> = io.fread(fp,sizeof(Elf64_Phdr))
 			this.phdrTab[] = phdr
 		}
@@ -46,6 +48,7 @@ File::readElf(file)
 		}
 	}
 	# 开始读取字符串段表
+	fmt.println(this.shdrTab)
 	strTab<Elf64_Shdr> = this.shdrTab[".strtab"]
 	io.fseek(fp,strTab.sh_offset)
 	# 读取字符串表
@@ -54,14 +57,14 @@ File::readElf(file)
 
 	# 读取符号表
 	sh_symTab<Elf64_Shdr> = this.shdrTab[".symtab"]
-	io.fseek(fp,sh_symTab.sh_size)
+	io.fseek(fp,sh_symTab.sh_offset)
 	symNum = sh_symTab.sh_size / sh_symTab.sh_entsize
 
 	# 记录符号表段所有符号信息，方便进行重定位
 	symList = []
 	for(i = 0 ; i < symNum ; i += 1){
 		sym<Elf64_Sym> = io.fread(fp,sizeof(Elf64_Sym))
-		this.symList[] = sym
+		symList[] = sym
 		name = string.new(strTabData + sym.st_name)		
 		fmt.println("read symbols table.name:", name)
 		this.symbols[] = name
@@ -82,25 +85,25 @@ File::readElf(file)
 			}
 		}
 	}
-	fmt.println(file,"重定位数据")
+	fmt.println(file,"重定位数据",std.len(symList))
 	# 更新重定位段段数据
 	for( k,v : this.shdrTab ){
 		if  k == ".rela.text" || k == ".rela.data" {
 			relTab<Elf64_Shdr> = v
 			io.fseek(fp,relTab.sh_offset)
-			relNum = relTab.sh_size / sizeof(Elf64_Rela)
-			for(j = 0 ; j < relNum ; j += 1){
+			relNum<i32> = relTab.sh_size / sizeof(Elf64_Rela)
+			for(j<i32> = 0 ; j < relNum ; j += 1){
 				rela<Elf64_Rela> = io.fread(fp,sizeof(Elf64_Rela))
-				sym<Elf64_Sym> = symList[ELF64_R_SYM(rela.r_info)]
+				//fmt.println("symList index:",int(ELF64_R_SYM(rela.r_info)))
+				sym<Elf64_Sym> = symList[int(ELF64_R_SYM(rela.r_info))]
 				index<i32>          = sym.st_name
 				name = string.new(strTabData + index)
-				fmt.println("name:",name)
+				//fmt.println("name:",name,int(j),int(relNum),int(index))
 				if name == ""{
 					if sym.st_shndx != SHN_UNDEF
 						name = this.shdrNames[int(sym.st_shndx)]
 				}
 				this.relTab[] = new RelItem(string.sub(k,5),rela,name)
-				fmt.println("name:",name)
 			} 
 		}
 	}
