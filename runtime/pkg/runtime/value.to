@@ -308,6 +308,10 @@ func value_bitnot(lhs<value>){
 // @param cond
 // @return bool
 func isTrue(cond<value>){
+    if cond == False {
+        fmt.println("isTrue: cond is null ,something wrong  probably")
+        return False
+    }
     match cond.type {
         Int:    return cond.data > 0
         Float: return cond.data > 0
