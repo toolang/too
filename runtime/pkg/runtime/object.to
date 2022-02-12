@@ -164,7 +164,7 @@ func object_func_addr(obj<value>,k<i32>){
     c<object>   = obj.data
     funcaddr<u64*> = member_find(c.funcs,key)
     if  funcaddr == null {
-        fmt.println("[object-func] func not exist")
+        fmt.println("[object-func] func not exist",key)
     }
     return funcaddr
 }

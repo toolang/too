@@ -77,6 +77,8 @@ func newarena(){
 
 func malloc(nbytes<u64>)
 {
+	//gc alloc is is unstable right now
+	//return std.malloc(nbytes)
 	bp<block>  = null
 	po<pool>   = null
 	next<pool> = null
@@ -209,6 +211,8 @@ redirect:
 }
 func free(p<block>)
 {
+	//gc is unstable right now
+	return p
 	po<pool> = null
 	lastfree<block> = null
 	next<pool> = null

@@ -134,6 +134,7 @@ func scan_stack(){
 }
 func gc()
 {
+    return runtime.Null
     scan_register()
     scan_stack()
 

@@ -6,7 +6,7 @@ bytes
 
 class Linker
 {
-	seglists		# map[string]SegList
+	segLists		# map[string]SegList
 	symLinks		# arr[SymLink*]
 	symDef			# arr[SymLink*]
 	elfs			# arr[elf,elf,elf]
@@ -23,7 +23,7 @@ Linker::init(){
 	this.elfs = []
 	this.symLinks = []
 	this.symDef   = []
-	this.seglists = {}
+	this.segLists = {}
 
 	this.linker()
 }
@@ -36,8 +36,10 @@ Linker::linker()
 	this.segNames[] = ".roadata"
 	this.segNames[] = ".data.rel.local"
 	this.segNames[] = ".bss"
+	sl = this.segLists
 	for(name : segNames){
-		this.seglists[name] = new Seglist()
+		tmp = new Seglist()
+		sl[name] = tmp
 	}
 }
 # 1. 解析elf文件
@@ -50,15 +52,16 @@ Linker::addElf(obj)
 	e.readElf(obj)
 	this.elfs[] = e
 }
-
+use runtime
 # 开始扫描文件搜集所有信息
 Linker::collectInfo()
 {
+	Null<i8> = 0
 	for(e : this.elfs){
 		fmt.println("collect elf info:",e.elfdir)
 		# 记录段表信息
 		for(seg : this.segNames){
-			if  e.shdrTab[seg] {
+			if  e.shdrTab[seg] != runtime.Null  {
 				tmp = this.segLists[seg].ownerList
 				# TODO: copy on write 
 				tmp[] = e
@@ -83,14 +86,17 @@ Linker::collectInfo()
 
 		}
 	}
+	os.exit(-1)
 
 }
 
 Linker::symValid()
 {
+	fmt.println("Linker::symValid")
 	flag = true
 	startOwner = null
 	#TODO: 支持 k,v 通过参数引用的方式来获迭代数据
+	fmt.println(this.symDef)
 	for(i,def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		# 只支持全局符号
