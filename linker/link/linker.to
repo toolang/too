@@ -86,7 +86,6 @@ Linker::collectInfo()
 
 		}
 	}
-	os.exit(-1)
 
 }
 
@@ -96,9 +95,10 @@ Linker::symValid()
 	flag = true
 	startOwner = null
 	#TODO: 支持 k,v 通过参数引用的方式来获迭代数据
-	fmt.println(this.symDef)
 	for(i,def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
+		//TODO: support forange for chainExpr
+		//for (si,sv : def.prov.symTab ) {
 		# 只支持全局符号
 		if   elf.ELF64_ST_BIND(sym.st_info)  != elf.STB_GLOBAL {
 			fmt.println(def.name + " 非全局符号")
@@ -152,24 +152,28 @@ Linker::symValid()
 			}
 		}
 	}
+	fmt.println("done symValid")
 	return flag
 }
-
 # 分配地址空间
 Linker::allocAddr()
 {
+	fmt.println("Linker::allocAddr")
 	curAddr<i32> = BASE_ADDR
 	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(segNames)
 
 	for(seg : this.segNames){
-		this.segLists[seg].allocAddr(seg,&curAddr,*curOff)
+		//TODO: support chain access object.func
+		//this.segLists[seg].allocAddr(seg,&curAddr,*curOff)
+		obj = this.segLists[seg]
+		obj.allocAddr(seg,&curAddr,*curOff)
 	}
 	this.bssaddr = int(curAddr)
 }
 
 Linker::symParser()
 {
-	fmt.println("符号解析")
+	fmt.println("Linker::symParser")
 	for(def : this.symDef){
 		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""

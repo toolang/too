@@ -133,7 +133,7 @@ func object_member_update(obj<value>,k<u32>,v<value>){
 func object_member_get(obj<value>, k<u32>){
     key<value> = int(k)
     if  obj.type != Object {
-        fmt.println("[object_membe_get] invalid obj type")
+        fmt.println("[object_membe_get] invalid obj type :",runtime.type_string(obj.type))
         os.exit(-1)
     }
     c<object> = obj.data 
