@@ -24,6 +24,8 @@ Linker::init(){
 	this.symLinks = []
 	this.symDef   = []
 	this.segLists = {}
+	file = new elf.File()
+	this.exe = file
 
 	this.linker()
 }
@@ -201,11 +203,12 @@ Linker::symParser()
 # 重定位
 Linker::relocate()
 {
-	fmt.println("重定位")
+	fmt.println("Linker::relocate")
 	for(e : elf.elfs){
 		//TODO: copy on write
 		tab = e.relTab
 		for(t : tab){
+			fmt.println(t,t.relname)
 			if  t.relname == "" {
 				continue
 			}
@@ -217,7 +220,8 @@ Linker::relocate()
 			symAddr<u32> = sym.st_value + rel.r_addend
 			relAddr<u32> = sh.sh_addr + rel.r_offset
 			# 开始重定位操作
-			this.segLists[t.segname].relocaAddr(relAddr,elf.ELF64_R_TYPE(rel.r_info),symAddr,rel.r_addend)
+			obj = this.segLists[t.segname]
+			obj.relocAddr(relAddr,elf.ELF64_R_TYPE(rel.r_info),symAddr,rel.r_addend)
 		}
 	}
 }

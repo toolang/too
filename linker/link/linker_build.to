@@ -5,8 +5,9 @@ use elf
 
 Linker::buildExe()
 {
-	fmt.println("build exe")
+	fmt.println("Linker::buildExe ")
 	exe = this.exe
+
 	ehdr<elf.Elf64_Ehdr> = exe.ehdr
 	#  获取变量的地址
 	pid<i> = &ehdr.e_ident
@@ -27,10 +28,13 @@ Linker::buildExe()
 	#curOff = sizeof(elf.Elf64_Ehdr) + sizeof(elf.Elf64_Phdr) * std.len(this.segNames)
 	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(this.segNames)
 	# 空段表
-	this.exe.addShdr("",0,0,0,0,0,0,0,0,0)
+	zero = 0
+	exe.addShdr("",zero,zero,zero,zero,zero)
+	exe.addShdr("",zero,zero,zero,zero,zero,zero,zero,zero,zero)
 
 	shstrtabSize = 26
 	for(seg : this.segNames){
+		fmt.println(seg)
 		# 每个字符串末尾自动加上结束符号 \0
 		shstrtabSize += std.len(seg) + 1
 

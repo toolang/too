@@ -3,7 +3,6 @@ use fmt
 class File {
     ehdr        # Elf64_Ehdr elf头
 	# char *buf,Elf64_Off offset,Elf64_Word size)
-	file
 	phdrTab     # 程序头表 Elf64_Phdr
 	shdrTab     # 端表
 	shdrNames   # array[]
@@ -49,6 +48,7 @@ File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 # 添加一个段表项
 File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info,sh_addralign,sh_entsize)
 {
+    fmt.println("File::addShdr",sh_name)
     sh<Elf64_Shdr>    = new Elf64_Shdr
 
     sh.sh_name      = 0
@@ -61,6 +61,7 @@ File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info
     sh.sh_info      = *sh_info
     sh.sh_addralign = *sh_addralign
     sh.sh_entsize   = *sh_entsize
+
 
     this.shdrTab[sh_name] = sh
     this.shdrNames[] = sh_name

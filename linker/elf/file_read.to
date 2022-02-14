@@ -141,8 +141,9 @@ File::getSegIndex(segname)
 
 File::getData(buf,offset,size)
 {
+	fmt.println("File::getData ",elfdir)
 	# 打开 elf文件	
-	fp = io.fopen(file,"rb")
+	fp = io.fopen(elfdir,"rb")
 	io.fseek(fp,offset)
 	# 读取数据
 	buf<i8*> = io.fread(fp,size)

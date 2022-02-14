@@ -55,7 +55,8 @@ Seglist::allocAddr(name,base<i32*>,off<i32>)
 			//申请数据缓存
 			ss<i32> = seg.sh_size
 			buf = new ss
-			this.ownerList[i].getData(buf,seg.sh_offset,seg.sh_size)
+			obj = this.ownerList[i]
+			obj.getData(buf,seg.sh_offset,seg.sh_size)
 			this.blocks[] = newBlock(buf,size,seg.sh_size)
 		}
 		//修改每个文件中对应段的addr
@@ -75,6 +76,7 @@ Seglist::allocAddr(name,base<i32*>,off<i32>)
 # symAddr: 重定位符号的虚拟地址
 Seglist::relocAddr(relAddr,type,symAddr,addend)
 {
+	fmt.println("Seglist::relocAddr")
 	relOffset = relAddr - baseAddr
 
 	# 查找带修正的地址所在pos
