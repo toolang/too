@@ -19,7 +19,7 @@ func for_first(data<value>){
 			iter.cur  = init_index
 			return iter
 		}
-		_     : os.die("[for range]: unsupport type:" + type_string(data.type))
+		_     : os.die("[for range]: first unsupport type:" + type_string(data.type))
 	}
 }
 func for_get_key(data<value>,node){
@@ -32,7 +32,7 @@ func for_get_key(data<value>,node){
 			iter<array_iter> = node
 			return iter.cur
 		}
-		_  : os.die("[for range]: unsupport type:" + type_string(data.type))
+		_  : os.die("[for range]: get key unsupport type:" + type_string(data.type))
 	}
 }
 func for_get_value(data<value>,node){
@@ -46,7 +46,7 @@ func for_get_value(data<value>,node){
 			rv<u64*> = iter.addr
 			return *rv
 		}
-		_ : os.die("[for range]: unsupport type:" + type_string(data.type))
+		_ : os.die("[for range]: get value unsupport type:" + type_string(data.type))
 	}
 }
 func for_get_next(data<value>,node){
@@ -65,6 +65,6 @@ func for_get_next(data<value>,node){
 			arr_node.addr += 8
 			return arr_node
 		}
-		_ : os.die("[for range]: unsupport type:" + type_string(data.type))
+		_ : os.die("[for range]: next unsupport type:" + type_string(data.type))
 	}
 }

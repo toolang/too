@@ -33,6 +33,7 @@ File::init(){
 # 添加程序表头
 File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 {
+    fmt.println("File::addPhdr")
 	ph<Elf64_Phdr> = new Elf64_Phdr
 	ph.p_type = *type	
 	ph.p_offset = *off

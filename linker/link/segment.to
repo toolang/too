@@ -16,6 +16,11 @@ Seglist::init(){
 	this.ownerList = []
 	#初始化数组 array[Block]
 	this.blocks    = []
+	#初始化默认值
+	this.offset = 0
+	this.size 	= 0
+	this.baseAddr = 0
+	this.begin  = 0
 	fmt.println("Seglist::init",this.ownerList,this.blocks)	
 }
 

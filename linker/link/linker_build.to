@@ -29,12 +29,11 @@ Linker::buildExe()
 	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(this.segNames)
 	# 空段表
 	zero = 0
-	exe.addShdr("",zero,zero,zero,zero,zero)
 	exe.addShdr("",zero,zero,zero,zero,zero,zero,zero,zero,zero)
 
 	shstrtabSize = 26
+	fmt.println(this.segNames)
 	for(seg : this.segNames){
-		fmt.println(seg)
 		# 每个字符串末尾自动加上结束符号 \0
 		shstrtabSize += std.len(seg) + 1
 
@@ -47,7 +46,7 @@ Linker::buildExe()
 			filesz = 0
 		}
 		# 添加程序头表
-		this.exe.addPhdr(int(elf.PT_LOAD),
+		exe.addPhdr(int(elf.PT_LOAD),
 			this.segLists[seg].offset,
 			this.segLists[seg].baseAddr,
 			filesz,
@@ -69,7 +68,7 @@ Linker::buildExe()
 			sh_align = 16
 		}
 		# 添加一个段表项，暂时按照4字节对齐
-		this.exe.addShdr(seg,sh_type,int(sh_flags),
+		exe.addShdr(seg,sh_type,int(sh_flags),
 			this.segLists[seg].baseAddr,
 			this.segLists[seg].offset,
 			this.segLists[seg].size,
@@ -107,7 +106,6 @@ Linker::buildExe()
 		index += std.len(i) + 1
 	}
 	exe.shstrtab = *str
-
 	exe.addShdr(".shstrtab",int(elf.SHT_STRTAB),0,0,curOff,shstrtabSize,int(elf.SHN_UNDEF),0,1,0)
 	shstrtab_idx = exe.getSegIndex(".shstrtab")
 	ehdr.e_shstrndx = *shstrtab_idx

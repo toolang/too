@@ -106,8 +106,13 @@ func main(){
     //test colsure  call ;stack is correct
     e = colsure_equal_6
     e(1,2,3,4,5,6)
-    o = colsure_over_6
-    o(1,2,3,4,5,6,7,8,"this is j")
+
+    //test if stack pop&push is right
+    a = [1,2]
+    for(i : a) {
+        o = colsure_over_6
+        o(1,2,3,4,5,6,7,8,"this is j")
+    }
 
 
 
