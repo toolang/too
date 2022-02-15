@@ -28,6 +28,16 @@ class http {
     }
 }
 
+func extern_func(){
+    return "extern_func"
+}
+http::test_memberfunc(){
+    fmt.println("test_memberfunc")
+    if this.fc() != "extern_func" {
+        os.die("should be extern_func")
+    }
+    fmt.println("test_memberfunc success",this.fc())
+}
 func main(){
     a = new http()
     a.request = "request"
@@ -35,4 +45,7 @@ func main(){
     a.test_member()
     // 成员函数参数测试
     a.test_func_arg("args")
+    //成员变量当做成员函数调用
+    a. fc = extern_func
+    a.test_memberfunc()
 }
