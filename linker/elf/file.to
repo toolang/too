@@ -70,6 +70,7 @@ File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info
 # 添加符号表
 File::addSym(st_name,s<Elf64_Sym>)
 {
+    fmt.println("File::addSym",st_name)
     sym<Elf64_Sym>    = new Elf64_Sym
     this.symTab[st_name]   = sym
     if st_name == "" {

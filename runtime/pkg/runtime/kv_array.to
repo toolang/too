@@ -32,7 +32,7 @@ func arr_get(varr<value>,index<value>){
     match index.type {
         Int : i = index.data
         String : i = string.stringlen(index.data)
-        _   : os.die("[arr_get] invalid type" + type_string(index.type))
+        _   : os.die("[arr_get] invalid type: " + type_string(index.type) )
     }
     if  i >= arr.used {
         return newobject(Null,Null)

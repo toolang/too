@@ -32,7 +32,6 @@ Linker::buildExe()
 	exe.addShdr("",zero,zero,zero,zero,zero,zero,zero,zero,zero)
 
 	shstrtabSize = 26
-	fmt.println(this.segNames)
 	for(seg : this.segNames){
 		# 每个字符串末尾自动加上结束符号 \0
 		shstrtabSize += std.len(seg) + 1
@@ -72,7 +71,7 @@ Linker::buildExe()
 			this.segLists[seg].baseAddr,
 			this.segLists[seg].offset,
 			this.segLists[seg].size,
-			elf.SHN_UNDEF,0,sh_align,0
+			int(elf.SHN_UNDEF),0,sh_align,0
 		)
 	}
 	ehdr.e_phoff = sizeof(elf.Elf64_Ehdr)
@@ -120,7 +119,7 @@ Linker::buildExe()
 
 	eas = 1 + std.len(symDef)	
 	eas *= int(sizeof(elf.Elf64_Sym))
-	exe.addShdr("symtab",int(elf.SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
+	exe.addShdr(".symtab",int(elf.SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
 	symtab<elf.Elf64_Shdr> = exe.shdrTab[".symtab"]
 	symtab.sh_link = exe.getSegIndex(".symtab") + 1
 	strtabSize = 0
@@ -131,38 +130,39 @@ Linker::buildExe()
 		name = def.name
 		strtabSize += std.len(name) + 1
 		sym<elf.Elf64_Sym> = def.prov.symTab[name]
+		ndx = null
 		if  sym.st_shndx == elf.SHN_COMMON {
-			sym.st_shndx = exe.getSegIndex(".bss")
+			ndx = exe.getSegIndex(".bss")
 		}else{
-			sym.st_shndx = exe.getSegIndex(def.prov.shdrNames[sym.st_shndx])
+			ndx = exe.getSegIndex(def.prov.shdrNames[int(sym.st_shndx)])
 		}
+		sym.st_shndx = *ndx
 		exe.addSym(name,sym)
-
-		#记录程序入口
-		start<elf.Elf64_Sym> = exe.symTab["main"]
-		ehdr.e_entry = start.st_value
-		#curOff += (1 + std.len(this.symDef)) * sizeof(elf.Elf64_Sym)
-		ts = std.len(this.symDef) + 1
-		curOff += ts * int(sizeof(elf.Elf64_Sym))
-		exe.addShdr(".strtab",int(elf.SHT_STRTAB),0,0,curOff,strtabSize,elf.SHN_UNDEF,0,1,0)
-		exe.strtabSize = strtabSize
-		index = 0
-		strIndex = {}
-		strIndex[""] = strtabSize - 1
-		for(sd : this.symDef){
-			strIndex[sd.name] = index
-			exe.strtab += sd.name + "\0"
-			index += std.len(sd.name) + 1
-		}
-		for(name,st<elf.Elf64_Sym> : exe.symTab){
-			st.st_name = strIndex[name]
-		}
-		#更新段表name
-		for(name,sh<elf.Elf64_Shdr> : exe.shdrTab){
-			sh.sh_name = shstrIndex[name]
-		}
-
 	}
+
+	#记录程序入口
+	start<elf.Elf64_Sym> = exe.symTab["main"]
+	ehdr.e_entry = start.st_value
+	#curOff += (1 + std.len(this.symDef)) * sizeof(elf.Elf64_Sym)
+	ts = std.len(this.symDef) + 1
+	curOff += ts * int(sizeof(elf.Elf64_Sym))
+	exe.addShdr(".strtab",int(elf.SHT_STRTAB),0,0,curOff,strtabSize,int(elf.SHN_UNDEF),0,1,0)
+	exe.strtabSize = strtabSize
+	index = 0
+	strIndex = {}
+	strIndex[""] = strtabSize - 1
+	for(sd : this.symDef){
+		exe.strtab += sd.name + "\0"
+		index += std.len(sd.name) + 1
+	}
+	for(kname,st<elf.Elf64_Sym> : exe.symTab){
+		st.st_name = strIndex[kname]
+	}
+	#更新段表name
+	for(sname,sh<elf.Elf64_Shdr> : exe.shdrTab){
+		sh.sh_name = shstrIndex[sname]
+	}
+
 }
 
 Linker::writeExe(out)

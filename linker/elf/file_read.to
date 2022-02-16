@@ -128,15 +128,16 @@ File::getSymIndex(symname)
 # 找到段名对应的索引位置
 File::getSegIndex(segname)
 {
+	fmt.println("File::getSegIndex",segname,this.shdrNames)
 	index = 0
 	sl = std.len(this.shdrNames)
-	for(i = 0 ; i < sl ; i += 1){
-		if   this.shdrNames[i] == segname {
-			break
+	for(i,v : this.shdrNames){
+		if v == segname {
+			return i
 		}
-		index += 1
 	}
-	return index
+	fmt.println("can't get seg index by:",segname)
+	return 0
 }
 
 File::getData(buf,offset,size)
