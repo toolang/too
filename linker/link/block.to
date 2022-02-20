@@ -8,6 +8,7 @@ func newBlock(d<i8*>,off<u32>,si<u32>){
 	r.data   = d
 	r.offset = off
 	r.size   = si
+	return r
 }
 
 class Block1 {

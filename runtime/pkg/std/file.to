@@ -32,7 +32,7 @@ func fwrite(buffer<i8*> , size<u64> , count<u64> , fd<u64*>){
 func fopen(filename<i8*> , mode<i8*>){
 	fd<i64> = -1
 	flags<i64> = 0
-	access<i64> = 700
+	access<i64> = 777
 
 	if strcmp(mode,*"w") == runtime.Zero {
 		flags |= O_WRONLY | O_CREAT | O_TRUNC

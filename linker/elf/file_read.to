@@ -11,7 +11,7 @@ File::readElf(file)
 
 	fp<i8> = io.fopen(file,"rb")
 	if fp <= 0  {
-		os.die("file invalid:" + file)
+		os.die("cann't open file, file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
 	io.rewind(fp)

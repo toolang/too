@@ -14,7 +14,7 @@ func print_help(){
 func link(){
     fmt.println("main.link")
     linker  = new link.Linker()
-    outfile = "a.out"
+    outfile = "bin"
     for(obj : os.argv){
         # 添加目标文件
         linker.addElf(obj)
@@ -27,7 +27,7 @@ func scan(){
     fmt.println("main.scan")
     linker  = new link.Linker()
 
-    outfile = "a.out" 
+    outfile = "bin" 
     # 扫描所有路径
     for(dir : os.argv){
         if !std.is_dir(dir) os.die(dir + " not exist")

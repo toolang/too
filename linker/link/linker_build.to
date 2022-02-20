@@ -167,7 +167,7 @@ Linker::buildExe()
 
 Linker::writeExe(out)
 {
-	fmt.println("write exe")
+	fmt.println("Linker::writeExe")
 	exe = this.exe
     ehdr<elf.Elf64_Ehdr> = exe.ehdr
 	offset = exe.writeHeader(out)
@@ -185,6 +185,7 @@ Linker::writeExe(out)
 			io.fwrite(fp,&pad,one)
 		}
 		#输出
+		fmt.println("segment:",seg,"offset:",offset)
 		if  seg != ".bss" {
 			old<Block> = null
 			instPad<i8*> = 0x90
@@ -205,6 +206,7 @@ Linker::writeExe(out)
 		}
 	}
 	io.fclose(fp)
+	
 	sts<elf.Elf64_Shdr> = exe.shdrTab[".shstrtab"]
 	if  offset != int(sts.sh_offset) {
 		fmt.println("ofsset")
