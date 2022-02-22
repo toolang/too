@@ -163,12 +163,14 @@ Linker::allocAddr()
 	fmt.println("Linker::allocAddr")
 	curAddr<i32> = BASE_ADDR
 	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(segNames)
+	//for reference
+	mcurOff<i32> = *curOff
 
 	for(seg : this.segNames){
 		//TODO: support chain access object.func
-		//this.segLists[seg].allocAddr(seg,&curAddr,*curOff)
+		//this.segLists[seg].allocAddr(seg,&curAddr,&mcurOff)
 		obj = this.segLists[seg]
-		obj.allocAddr(seg,&curAddr,*curOff)
+		obj.allocAddr(seg,&curAddr,&mcurOff)
 	}
 	this.bssaddr = int(curAddr)
 }
