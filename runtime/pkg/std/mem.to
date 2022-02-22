@@ -53,14 +53,14 @@ func strcat(dest<i8*> , src<i8*>){
 }
 func memcmp(vl<u64> , vr<u64>, n<u64>)
 {
-	l<i8*> = vl
-	r<i8*> = vr
+	l<u8*> = vl
+	r<u8*> = vr
 	while n  && *l == *r {
 		n -= 1
 		l += 1
 		r += 1
 	}
-	if n  {
+	if n > 0  {
 		return *l - *r	
 	}
 	return runtime.Zero
