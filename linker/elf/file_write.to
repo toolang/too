@@ -32,10 +32,10 @@ File::writeHeader(out)
 # 2. 写入符号表 + 符号字符串表
 File::writeSecSym(out) 
 {
+    fmt.println("File::writeSecSym")
     bytes = 0
     ehdr<Elf64_Ehdr> = this.ehdr
-    shstrtabSize<i32> = this.shstrtabSize
-    strtabSize<i3w>  = this.strtabSize
+    shstrtabSize<i32> = *this.shstrtabSize
 
     fp = io.fopen(out,"a+")
     bytes += int(shstrtabSize)
@@ -57,8 +57,8 @@ File::writeSecSym(out)
         io.fwrite(fp,sym,Elf64_Sym_Size)
     }
     # 字符串表: 写入所有字符串
-    bytes += int(strtabSize)
-    io.fwrite(fp,strtab,strtabSize)
+    bytes += this.shstrtabSize
+    io.fwrite(fp,strtab,shstrtabSize)
     io.fclose(fp)
     return bytes
 }
