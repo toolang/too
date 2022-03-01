@@ -35,7 +35,7 @@ Linker::linker()
 	fmt.println("Linker::linker")
 	this.segNames[] = ".text"
 	this.segNames[] = ".data"
-	this.segNames[] = ".roadata"
+	this.segNames[] = ".rodata"
 	this.segNames[] = ".data.rel.local"
 	this.segNames[] = ".bss"
 	sl = this.segLists

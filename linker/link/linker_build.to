@@ -10,13 +10,13 @@ Linker::buildExe()
 
 	ehdr<elf.Elf64_Ehdr> = exe.ehdr
 	#  获取变量的地址
-	pid<i> = &ehdr.e_ident
+	pid<i32*> = &ehdr.e_ident
 	*pid  = 0x464c457f
-	pid += 1
+	pid += 4
 	*pid = 0x010102
-	pid += 1
+	pid += 4
 	*pid = 0
-	pid += 1
+	pid += 4
 	*pid = 0
 
 	ehdr.e_type = elf.ET_EXEC
