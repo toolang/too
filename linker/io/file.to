@@ -40,7 +40,7 @@ func rewind(fd){
 	std.seek(fd,st,std.SEEK_SET)	
 }
 
-//func read(fd<i64> , buffer<u64*> , size<u64>
+//func read(fd<i64> , size<u64>
 func fread(fd<i8>,size<i64>){
 	fmt.println("fread fd:",int(fd),int(size))
 	buffer<u64*> = new size
@@ -51,6 +51,17 @@ func fread(fd<i8>,size<i64>){
 		return false
 	}
 	return buffer
+}
+//func read(fd<i64> , buffer<u64*> , size<u64>
+func fread_with_buf(fd<i8>,buf<u64*> , size<i64>){
+	fmt.println("fread fd:",int(fd),int(size))
+	read_size<i64> = std.read(fd,buf,size)
+	if read_size != size {
+		//fmt.println("fread err")
+		os.die("fread err " + int(read_size))
+		return false
+	}
+	return buf
 }
 
 //func fseek(fp<u64>,offset<i64> , set<i64>)

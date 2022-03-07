@@ -147,6 +147,6 @@ File::getData(buf,offset,size)
 	fp = io.fopen(elfdir,"rb")
 	io.fseek(fp,offset)
 	# 读取数据
-	buf<i8*> = io.fread(fp,size)
+	io.fread_with_buf(fp,buf,size)
 	io.fclose(fp)
 }	

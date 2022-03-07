@@ -40,7 +40,7 @@ File::writeSecSym(out)
     fp = io.fopen(out,"a+")
     bytes += int(shstrtabSize)
     #字符串段表: 写入所有关于段名的字符串 .shstrtab
-    io.fwrite(fp,shstrtab,shstrtabSize)
+    io.fwrite(fp,this.shstrtab,shstrtabSize)
     #段表: 写入所有段
     for(i = 0;i < std.len(this.shdrNames); i += 1)
     {
