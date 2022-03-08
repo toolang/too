@@ -80,31 +80,36 @@ Linker::buildExe()
 	ehdr.e_phnum = *segnames_len
 
 	# 初始化一段字符串内存
-	str = ""
-	#exe.shstrtab = *str
+	strsize<i32> = *shstrtabSize
+	str<u8*> = new strsize
+	strp<u8*> = str
 	exe.shstrtabSize = shstrtabSize
 
 	index = 0
 	# 段表船名于索引映射
 	shstrIndex = {}
 	shstrIndex[".shstrtab"] = index
-	str += ".shstrtab"
+	std.strcopy(strp,*".shstrtab") strp += 10
 	index += 10
+
 	shstrIndex[".symtab"] = index
-	str += ".symtab"
+	std.strcopy(strp,*".symtab")   strp += 8
 	index += 8
+
 	shstrIndex[".strtab"] = index
-	str += ".strtab"
+	std.strcopy(strp,*".strtab")   strp += 8
 	index += 8
 	shstrIndex[""] = index - 1
 
 	for(i : this.segNames){
 		shstrIndex[i] = index
-		#str += i + "\0"
-		str += i 
-		index += std.len(i) + 1
+		std.strcopy(strp,*i)
+		il = std.len(i) + 1
+		ill<i32> = *il
+		strp += ill
+		index += il
 	}
-	exe.shstrtab = *str
+	exe.shstrtab = str
 	exe.addShdr(".shstrtab",int(elf.SHT_STRTAB),0,0,curOff,shstrtabSize,int(elf.SHN_UNDEF),0,1,0)
 	shstrtab_idx = exe.getSegIndex(".shstrtab")
 	ehdr.e_shstrndx = *shstrtab_idx
