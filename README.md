@@ -27,8 +27,13 @@ tol      [options|file.o...]
   - [ ] -c  翻译指定汇编码为linux(elf),windows(pe/coff)
   - [ ] -p  批量扫描路径下的汇编
 - [ ] linker 
-  - [ ] *.o 链接指定的linux(elf),windows(pe/coff)文件生成可执行程序
-  - [ ] -p  链接指定目录生成可执行程序
+  - [x] *.o 链接指定的linux(elf) 文件生成可执行程序
+  - [ ] *.o 链接指定的windows(coff) 文件生成可执行pe程序
+  - [x] -p  链接指定目录生成可执行程序
+- [x] runtime
+  - [x] garbage collect
+  - [x] standard library
+  - [x] syscall
  
   
 ## env & install & tests 
