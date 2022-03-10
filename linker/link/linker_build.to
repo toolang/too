@@ -165,7 +165,8 @@ Linker::buildExe()
 	}
 	#更新段表name
 	for(sname,sh<elf.Elf64_Shdr> : exe.shdrTab){
-		sh.sh_name = shstrIndex[sname]
+		si = shstrIndex[sname]
+		sh.sh_name = *si
 	}
 
 }
