@@ -126,7 +126,8 @@ Linker::buildExe()
 	eas *= int(sizeof(elf.Elf64_Sym))
 	exe.addShdr(".symtab",int(elf.SHT_SYMTAB),0,0,curOff,eas,0,0,1,int(sizeof(elf.Elf64_Sym)))
 	symtab<elf.Elf64_Shdr> = exe.shdrTab[".symtab"]
-	symtab.sh_link = exe.getSegIndex(".symtab") + 1
+	symtab_idx = exe.getSegIndex(".symtab") + 1
+	symtab.sh_link = *symtab_idx
 	strtabSize = 0
 	exe.addSym("",0)
 
