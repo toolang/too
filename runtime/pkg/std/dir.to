@@ -93,7 +93,12 @@ init_dents:
     file = new dirent()
     file.type = file_type
     file.name = file_name
-    file.path = dir.path + "/" + file_name
+    //TODO: file.path = dir.path + "/" +file_name (mem.field + dynamic string)
+    dir_address<u64> = dir.path 
+    //TODO: dynmic var = mem.field => auto load(mem.field)
+    dir_path = dir_address
+    dir_path += "/" + file_name 
+    file.path = dir_path
     return file
 }
 dirent::isFile(){
