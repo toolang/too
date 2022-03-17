@@ -1,0 +1,20 @@
+use fmt
+use std
+use os
+
+func test_sub(){
+    fmt.println("test string sub")
+    arr = ["a.to","b.to","c.to","d.to"]
+    for ( a : arr){
+        if string.sub(a,std.len(a) - 3) != ".to" {
+            os.die(a + " the last 3 char should be .to")
+        }
+        fmt.println(a,string.sub(a,std.len(a) - 3 ))
+    }
+    fmt.println("test string sub success")
+}
+
+func main(){
+    #test sub
+    test_sub()
+}
