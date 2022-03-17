@@ -27,9 +27,12 @@ func scan(){
     fmt.println("main.scan")
     linker  = new link.Linker()
 
+    found = false
+
     outfile = "bin" 
     # 扫描所有路径
     for(dir : os.argv){
+        if dir == "-p" continue
         if !std.is_dir(dir) os.die(dir + " not exist")
         # 迭代目录文件
         fd = std.opendir(dir)
@@ -37,11 +40,19 @@ func scan(){
             file = std.readdir(fd)
             if !file || !file.isFile() break
             # 解析目标文件
-            linker.addElf(file.path)
+            filename = file.path
+            if string.sub(filename,std.len(filename) - 2) == ".o" {
+                linker.addElf(file.path)
+                found = true
+            }
         }
+    }
+    if !found {
+        os.die("should provide at least one .o file")
     }
     # 开始链接
     linker.link(outfile)
+    fmt.println("all generate passed")
 }
 
 
