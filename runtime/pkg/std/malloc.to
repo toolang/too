@@ -1,4 +1,5 @@
 use fmt
+use os
 
 BLOCK_FREE<u64> = 2880154539
 BLOCK_USED<u64> = 3452816845
@@ -11,7 +12,7 @@ mem heap_header {
 
 //global heap
 ghead<heap_header>
-
+gtail<u64>
 func free(ptr<u64*>)
 {
 	header<heap_header> = ptr - sizeof(heap_header)
@@ -53,6 +54,7 @@ func realloc(p<u64*>, nbytes<u64>){
 	free(p)
 	return newp
 }
+//TODO: memory expansion
 func malloc(size<u64>){
 	header<heap_header> = null
 	if size == 0 {
@@ -72,6 +74,11 @@ func malloc(size<u64>){
 		if header.size > size + headersize * 2 {
 			//split
 			next<heap_header> = header + size + headersize
+			if next > gtail {
+				fmt.vfprintf(STDOUT,*"out of memory %d %d\n",next,gtail)
+				initmalloc()
+				return malloc(size)
+			}
 			next.prev	= header
 			next.next	= header.next
 			next.type	= BLOCK_FREE
@@ -84,7 +91,9 @@ func malloc(size<u64>){
 		header = header.next
 	}
 
-	return ZERO
+	fmt.vfprintf(STDOUT,*"alloc failed h:%d e:%d\n",header,gtail)
+	initmalloc()
+	return malloc(size)
 }
 
 func initmalloc()
@@ -108,5 +117,7 @@ func initmalloc()
 	header.prev	= null
 
 	ghead = header
+	gtail = end
+
 	return Done
 }
