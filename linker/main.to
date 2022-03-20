@@ -38,7 +38,8 @@ func scan(){
         fd = std.opendir(dir)
         while true {
             file = std.readdir(fd)
-            if !file || !file.isFile() break
+            if !file break
+            if !file.isFile() continue
             # 解析目标文件
             filename = file.path
             if string.sub(filename,std.len(filename) - 2) == ".o" {
