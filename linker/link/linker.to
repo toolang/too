@@ -58,6 +58,7 @@ use runtime
 # 开始扫描文件搜集所有信息
 Linker::collectInfo()
 {
+	fmt.println("Linker::collectInfo")
 	Null<i8> = 0
 	for(e : this.elfs){
 		fmt.println("collect elf info:",e.elfdir)
@@ -74,13 +75,12 @@ Linker::collectInfo()
 			symLink = new SymLink()
 			symLink.name = name
 			if  sym.st_shndx == elf.SHN_UNDEF {
-				fmt.println(name, " 未定义 ")
+				//fmt.println(name, " 未定义 ")
 				symLink.recv = e
 				symLink.prov = null
 				this.symLinks[] = symLink
-			}
-			if  sym.st_shndx != elf.SHN_ABS {
-				fmt.println(name, " 已定义")
+			}else if  sym.st_shndx != elf.SHN_ABS {
+				//fmt.println(name, " 已定义")
 				symLink.prov = e
 				symLink.recv = null
 				this.symDef[] = symLink
@@ -103,7 +103,7 @@ Linker::symValid()
 		//for (si,sv : def.prov.symTab ) {
 		# 只支持全局符号
 		if   elf.ELF64_ST_BIND(sym.st_info)  != elf.STB_GLOBAL {
-			fmt.println(def.name + " 非全局符号")
+			//fmt.println(def.name + " 非全局符号")
 			continue
 		}
 		if  def.name == "main" {
@@ -116,8 +116,8 @@ Linker::symValid()
 			}
 			# 同名符号 有冲突
 			if  def.name == this.symDef[j].name {
-				fmt.println("符号名:%s在文件%s和文件%三种功能发生定义冲突 ",def.name,def.prov.elf_dir,
-				this.symDef[j].prov.elf_dir)
+				fmt.println("符号名:%s在文件%s和文件%三种功能发生定义冲突 ",def.name,def.prov.elfdir,
+				this.symDef[j].prov.elfdir)
 				flag = false
 			}
 		}
@@ -128,11 +128,12 @@ Linker::symValid()
 	}
 	# 遍历未定义的符号
 	for(link : this.symLinks){
-		for(def : this.symDef){
+		for(sdef : this.symDef){
 			# 同名符号
-			if  link.name == def.name {
-				link.prov = def.prov
-				def.recv = def.prov
+			if  link.name == sdef.name {
+				//fmt.println("undefine:",link.name,sdef.name)
+				link.prov = sdef.prov
+				sdef.recv = sdef.prov
 			}
 		}
 		if  link.prov == null {
@@ -154,7 +155,7 @@ Linker::symValid()
 			}
 		}
 	}
-	fmt.println("done symValid")
+	fmt.println("done symValid",flag)
 	return flag
 }
 # 分配地址空间
@@ -218,7 +219,7 @@ Linker::relocate()
 			sym<elf.Elf64_Sym> = e.symTab[symname]
 			rel<elf.Elf64_Rela> = t.rel
 			sh<elf.Elf64_Shdr> = e.shdrTab[t.segname]
-			file = e.elf_dir
+			file = e.elfdir
 			symAddr<u32> = sym.st_value + rel.r_addend
 			relAddr<u32> = sh.sh_addr + rel.r_offset
 			# 开始重定位操作
