@@ -40,7 +40,7 @@ File::readElf(file)
 		shdr<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
 		# 截取自动遇到\0停止
 		name = string.new(shstrTabData + shdr.sh_name)
-		fmt.println("read section.name:", name)
+		//fmt.println("read section.name:", name)
 		this.shdrNames[] = name
 		# map映射
 		if name != "" {
@@ -48,7 +48,7 @@ File::readElf(file)
 		}
 	}
 	# 开始读取字符串段表
-	fmt.println(this.shdrTab)
+	//fmt.println(this.shdrTab)
 	strTab<Elf64_Shdr> = this.shdrTab[".strtab"]
 	io.fseek(fp,strTab.sh_offset)
 	# 读取字符串表
@@ -66,7 +66,7 @@ File::readElf(file)
 		sym<Elf64_Sym> = io.fread(fp,sizeof(Elf64_Sym))
 		symList[] = sym
 		name = string.new(strTabData + sym.st_name)		
-		fmt.println("read symbols table.name:", name)
+		//fmt.println("read symbols table.name:", name)
 		this.symbols[] = name
 
 		if  name == "_GLOBAL_OFFSET_TABLE_" {
@@ -79,7 +79,7 @@ File::readElf(file)
 		if  sym.st_shndx != SHN_UNDEF && sym.st_name == 0 {
 			# 可能是段名
 			name = this.shdrNames[int(sym.st_shndx)]
-			fmt.println("read symbols table.name: " ,name)
+			//fmt.println("read symbols table.name: " ,name)
 			if  name != "" {
 				this.symTab[name] = sym
 			}
@@ -103,7 +103,8 @@ File::readElf(file)
 					if sym.st_shndx != SHN_UNDEF
 						name = this.shdrNames[int(sym.st_shndx)]
 				}
-				this.relTab[] = new RelItem(string.sub(k,5),rela,name)
+				rel_item = new RelItem(string.sub(k,5),rela,name)
+				this.relTab[] = rel_item
 			} 
 		}
 	}
@@ -128,7 +129,7 @@ File::getSymIndex(symname)
 # 找到段名对应的索引位置
 File::getSegIndex(segname)
 {
-	fmt.println("File::getSegIndex",segname,this.shdrNames)
+	//fmt.println("File::getSegIndex",segname,this.shdrNames)
 	index = 0
 	sl = std.len(this.shdrNames)
 	for(i,v : this.shdrNames){
@@ -142,7 +143,7 @@ File::getSegIndex(segname)
 
 File::getData(buf,offset,size)
 {
-	fmt.println("File::getData ",elfdir)
+	//fmt.println("File::getData ",elfdir)
 	# 打开 elf文件	
 	fp = io.fopen(elfdir,"rb")
 	io.fseek(fp,offset)
