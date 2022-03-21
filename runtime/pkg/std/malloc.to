@@ -107,6 +107,7 @@ func initmalloc()
 	end<u64> = base + heap_size
 	end		 = brk(end)
 	if end == null {
+		fmt.vfprintf(STDOUT,*"extend malloc failed\n")
 		return ZERO
 	}
 	header	= base
