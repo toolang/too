@@ -1,4 +1,4 @@
-use elf
+use linux
 use fmt
 
 class Seglist
@@ -54,7 +54,7 @@ Seglist::allocAddr(name,base<i32*>,off<i32*>)
 		# 对齐每个小段，按照4字节
 		ts<i32> = DISC_ALIGN - size % DISC_ALIGN
 		size += ts % DISC_ALIGN
-		seg<elf.Elf64_Shdr> = this.ownerList[i].shdrTab[name]
+		seg<linux.Elf64_Shdr> = this.ownerList[i].shdrTab[name]
 		# 读取需要合并段段数据
 		if  name != ".bss" {
 			//申请数据缓存
@@ -117,9 +117,9 @@ Seglist::relocAddr(relAddr<u32>,type<u8>,symAddr<u32>,addend<i32>)
 			}
 			*paddr = symAddr - addend
 		}
-		elf.R_X86_64_PC32  : 	*paddr = symAddr - relAddr + *paddr
-		elf.R_X86_64_PLT32 :	*paddr = symAddr - relAddr + *paddr
-		elf.R_X86_64_64    :    *paddr = symAddr - addend
+		linux.R_X86_64_PC32  : 	*paddr = symAddr - relAddr + *paddr
+		linux.R_X86_64_PLT32 :	*paddr = symAddr - relAddr + *paddr
+		linux.R_X86_64_64    :    *paddr = symAddr - addend
 		_  				   :    fmt.println("unknow rela")
 	}
 }

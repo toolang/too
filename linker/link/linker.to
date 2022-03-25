@@ -1,4 +1,4 @@
-use elf
+use linux
 use fmt
 
 #统计读写的字节数
@@ -26,7 +26,7 @@ Linker::init(){
 	this.symDef   = {}
 	this.secDef   = []
 	this.segLists = {}
-	file = new elf.File()
+	file = new linux.File()
 	this.exe = file
 
 	this.linker()
@@ -51,7 +51,7 @@ Linker::linker()
 Linker::addElf(obj)
 {
 	fmt.println("Linker::addElf add a elffile:",obj)
-	e = new elf.File()
+	e = new linux.File()
 	# 解析elf文件
 	e.readElf(obj)
 	this.elfs[] = e
@@ -73,7 +73,7 @@ Linker::collectInfo()
 			}
 		}
 		# 记录符号引用信息
-		for(name,sym<elf.Elf64_Sym> : e.symTab){
+		for(name,sym<linux.Elf64_Sym> : e.symTab){
 			symLink = new SymLink()
 			symLink.name = name
 			if sym.st_name == 0 {
@@ -81,12 +81,12 @@ Linker::collectInfo()
 				symLink.prov = e
 				symLink.recv = null
 				this.secDef[] = symLink
-			}else if  sym.st_shndx == elf.SHN_UNDEF {
+			}else if  sym.st_shndx == linux.SHN_UNDEF {
 				//fmt.println(name, " 未定义 ")
 				symLink.recv = e
 				symLink.prov = null
 				this.symLinks[] = symLink
-			}else if  sym.st_shndx != elf.SHN_ABS {
+			}else if  sym.st_shndx != linux.SHN_ABS {
 				//fmt.println(name, " 已定义")
 				symLink.prov = e
 				symLink.recv = null
@@ -122,13 +122,13 @@ Linker::symValid()
 			def.recv = def.prov
 
 		} else {
-			msym<elf.Elf64_Sym> = undefine.recv.symTab[undefine.name]
+			msym<linux.Elf64_Sym> = undefine.recv.symTab[undefine.name]
 			info<u8> = msym.st_info
 			type = ""
-			if   elf.ELF64_ST_TYPE(info)  == elf.STT_OBJECT {
+			if   linux.ELF64_ST_TYPE(info)  == linux.STT_OBJECT {
 				type = "变量"
 			}
-			if   elf.ELF64_ST_TYPE(info)  == elf.STT_FUNC {
+			if   linux.ELF64_ST_TYPE(info)  == linux.STT_FUNC {
 				type = "函数"
 			}
 			if  type == "" {
@@ -148,7 +148,7 @@ Linker::allocAddr()
 {
 	fmt.println("Linker::allocAddr")
 	curAddr<i32> = BASE_ADDR
-	curOff = int(sizeof(elf.Elf64_Ehdr)) + int(sizeof(elf.Elf64_Phdr)) * std.len(segNames)
+	curOff = int(sizeof(linux.Elf64_Ehdr)) + int(sizeof(linux.Elf64_Phdr)) * std.len(segNames)
 	//for reference
 	mcurOff<i32> = *curOff
 
@@ -166,9 +166,9 @@ Linker::symParser()
 	fmt.println("Linker::symParser")
 	fmt.println("symDef parse")
 	for(def : this.symDef){
-		sym<elf.Elf64_Sym> = def.prov.symTab[def.name]
+		sym<linux.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""
-		if  sym.st_shndx == elf.SHN_COMMON {
+		if  sym.st_shndx == linux.SHN_COMMON {
 			segName = ".bss"
 		}else{
 			segName = def.prov.shdrNames[int(sym.st_shndx)]
@@ -177,27 +177,27 @@ Linker::symParser()
 			this.bssaddr += int(sym.st_size)
 			sym.st_value = *this.bssaddr
 		}else{
-			sh<elf.Elf64_Shdr> = def.prov.shdrTab[segName]
+			sh<linux.Elf64_Shdr> = def.prov.shdrTab[segName]
 			sym.st_value = sym.st_value + sh.sh_addr
 		}
 	}
 	fmt.println("secDef parse")
 	for(sec : this.secDef){
-		sec_sym<elf.Elf64_Sym> = sec.prov.symTab[sec.name]
+		sec_sym<linux.Elf64_Sym> = sec.prov.symTab[sec.name]
 		segName = sec.prov.shdrNames[int(sec_sym.st_shndx)]
 
 		if  segName == ".bss" && def.name != ".bss" {
 			this.bssaddr += int(sec_sym.st_size)
 			sec_sym.st_value = *this.bssaddr
 		}else{
-			sec_sh<elf.Elf64_Shdr> = sec.prov.shdrTab[segName]
+			sec_sh<linux.Elf64_Shdr> = sec.prov.shdrTab[segName]
 			sec_sym.st_value = sec_sym.st_value + sec_sh.sh_addr
 		}
 	}
 	fmt.println("未定义符号解析")
 	for(syml : this.symLinks){
-		provsym<elf.Elf64_Sym> = syml.prov.symTab[syml.name]
-		recvsym<elf.Elf64_Sym> = syml.recv.symTab[syml.name]
+		provsym<linux.Elf64_Sym> = syml.prov.symTab[syml.name]
+		recvsym<linux.Elf64_Sym> = syml.recv.symTab[syml.name]
 		recvsym.st_value = provsym.st_value
 	}
 }
@@ -215,15 +215,15 @@ Linker::relocate()
 				continue
 			}
 			symname = t.relname
-			sym<elf.Elf64_Sym> = e.symTab[symname]
-			rel<elf.Elf64_Rela> = t.rel
-			sh<elf.Elf64_Shdr> = e.shdrTab[t.segname]
+			sym<linux.Elf64_Sym> = e.symTab[symname]
+			rel<linux.Elf64_Rela> = t.rel
+			sh<linux.Elf64_Shdr> = e.shdrTab[t.segname]
 			file = e.elfdir
 			symAddr<u32> = sym.st_value + rel.r_addend
 			relAddr<u32> = sh.sh_addr + rel.r_offset
 			# 开始重定位操作
 			obj = this.segLists[t.segname]
-			obj.relocAddr(relAddr,elf.ELF64_R_TYPE(rel.r_info),symAddr,rel.r_addend)
+			obj.relocAddr(relAddr,linux.ELF64_R_TYPE(rel.r_info),symAddr,rel.r_addend)
 		}
 	}
 }
