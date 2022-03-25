@@ -204,7 +204,7 @@ Linker::writeExe(out)
 			for(b<Block> : sl.blocks){
 				if  old != null {
 
-					padnum1<i32> = b.offset - old.offset + old.size
+					padnum1<i32> = b.offset - old.offset - old.size
 					offset += int(padnum1)
 					while padnum1 {
 						padnum1 -= 1
