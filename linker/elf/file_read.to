@@ -1,7 +1,7 @@
 
 use os
 use fmt
-use io
+use utils
 use string
 # 开始解析elf文件
 File::readElf(file)
@@ -9,35 +9,35 @@ File::readElf(file)
 	fmt.println("File::readElf ",file)
 	this.elfdir = file
 
-	fp<i8> = io.fopen(file,"rb")
+	fp<i8> = utils.fopen(file,"rb")
 	if fp <= 0  {
 		os.die("cann't open file, file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
-	io.rewind(fp)
+	utils.rewind(fp)
 
 	# elf文件头部
-	ehdr<Elf64_Ehdr> = io.fread(fp,sizeof(Elf64_Ehdr))
+	ehdr<Elf64_Ehdr> = utils.fread(fp,sizeof(Elf64_Ehdr))
 	if ehdr.e_type == ET_EXEC {
-		io.fseek(fp,ehdr.e_phoff)
+		utils.fseek(fp,ehdr.e_phoff)
 		for(i<i32> = 0 ; i < ehdr.e_phnum; i += 1){
-			phdr<Elf64_Phdr> = io.fread(fp,sizeof(Elf64_Phdr))
+			phdr<Elf64_Phdr> = utils.fread(fp,sizeof(Elf64_Phdr))
 			this.phdrTab[] = phdr
 		}
 	}
-	io.fseek(fp,ehdr.e_shoff + ehdr.e_shentsize * ehdr.e_shstrndx)
+	utils.fseek(fp,ehdr.e_shoff + ehdr.e_shentsize * ehdr.e_shstrndx)
 	# 开始读取段表字符串项
-	shstrTab<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
+	shstrTab<Elf64_Shdr> = utils.fread(fp,sizeof(Elf64_Shdr))
 	# 转移到段表字符串内容
-	io.fseek(fp,shstrTab.sh_offset)
+	utils.fseek(fp,shstrTab.sh_offset)
 	//读取段表字符串表
-	shstrTabData<i8*> = io.fread(fp,shstrTab.sh_size)
+	shstrTabData<i8*> = utils.fread(fp,shstrTab.sh_size)
 	fmt.println("字符串表:",string.new(shstrTabData))
 
 	# 开始读取所有的段表
-	io.fseek(fp,ehdr.e_shoff)
+	utils.fseek(fp,ehdr.e_shoff)
 	for(i<i32> = 0 ; i < ehdr.e_shnum ; i += 1){
-		shdr<Elf64_Shdr> = io.fread(fp,sizeof(Elf64_Shdr))
+		shdr<Elf64_Shdr> = utils.fread(fp,sizeof(Elf64_Shdr))
 		# 截取自动遇到\0停止
 		name = string.new(shstrTabData + shdr.sh_name)
 		//fmt.println("read section.name:", name)
@@ -50,20 +50,20 @@ File::readElf(file)
 	# 开始读取字符串段表
 	//fmt.println(this.shdrTab)
 	strTab<Elf64_Shdr> = this.shdrTab[".strtab"]
-	io.fseek(fp,strTab.sh_offset)
+	utils.fseek(fp,strTab.sh_offset)
 	# 读取字符串表
-	strTabData<i8*> = io.fread(fp,strTab.sh_size)
+	strTabData<i8*> = utils.fread(fp,strTab.sh_size)
 
 
 	# 读取符号表
 	sh_symTab<Elf64_Shdr> = this.shdrTab[".symtab"]
-	io.fseek(fp,sh_symTab.sh_offset)
+	utils.fseek(fp,sh_symTab.sh_offset)
 	symNum = sh_symTab.sh_size / sh_symTab.sh_entsize
 
 	# 记录符号表段所有符号信息，方便进行重定位
 	symList = []
 	for(i = 0 ; i < symNum ; i += 1){
-		sym<Elf64_Sym> = io.fread(fp,sizeof(Elf64_Sym))
+		sym<Elf64_Sym> = utils.fread(fp,sizeof(Elf64_Sym))
 		symList[] = sym
 		name = string.new(strTabData + sym.st_name)		
 		//fmt.println("read symbols table.name:", name)
@@ -90,10 +90,10 @@ File::readElf(file)
 	for( k,v : this.shdrTab ){
 		if  k == ".rela.text" || k == ".rela.data" {
 			relTab<Elf64_Shdr> = v
-			io.fseek(fp,relTab.sh_offset)
+			utils.fseek(fp,relTab.sh_offset)
 			relNum<i32> = relTab.sh_size / sizeof(Elf64_Rela)
 			for(j<i32> = 0 ; j < relNum ; j += 1){
-				rela<Elf64_Rela> = io.fread(fp,sizeof(Elf64_Rela))
+				rela<Elf64_Rela> = utils.fread(fp,sizeof(Elf64_Rela))
 				//fmt.println("symList index:",int(ELF64_R_SYM(rela.r_info)))
 				sym<Elf64_Sym> = symList[int(ELF64_R_SYM(rela.r_info))]
 				index<i32>          = sym.st_name
@@ -108,7 +108,7 @@ File::readElf(file)
 			} 
 		}
 	}
-	io.fclose(fp)
+	utils.fclose(fp)
 }
 
 # 找到符号名对应的索引位置
@@ -145,9 +145,9 @@ File::getData(buf,offset,size)
 {
 	//fmt.println("File::getData ",elfdir)
 	# 打开 elf文件	
-	fp = io.fopen(elfdir,"rb")
-	io.fseek(fp,offset)
+	fp = utils.fopen(elfdir,"rb")
+	utils.fseek(fp,offset)
 	# 读取数据
-	io.fread_with_buf(fp,buf,size)
-	io.fclose(fp)
+	utils.fread_with_buf(fp,buf,size)
+	utils.fclose(fp)
 }	

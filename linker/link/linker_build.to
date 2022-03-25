@@ -87,7 +87,7 @@ Linker::writeExe(out)
 	offset = exe.writeHeader(out)
 	slen = int(sizeof(elf.Elf64_Ehdr)) + std.len(exe.phdrTab) * int(sizeof(elf.Elf64_Phdr))
 	fmt.assert(offset,slen,"Linker::writeExe")
-	fp = io.fopen(out,"a+")
+	fp = utils.fopen(out,"a+")
 	pad<i8*> = 0
 	one<i8> = 1
 	for(seg : this.segNames){
@@ -96,7 +96,7 @@ Linker::writeExe(out)
 		offset += padnum
 		while padnum {
 			padnum -= 1
-			io.fwrite(fp,&pad,one)
+			utils.fwrite(fp,&pad,one)
 		}
 		#输出
 		if  seg != ".bss" {
@@ -109,16 +109,16 @@ Linker::writeExe(out)
 					offset += int(padnum1)
 					while padnum1 {
 						padnum1 -= 1
-						io.fwrite(fp,&instPad,one)
+						utils.fwrite(fp,&instPad,one)
 					}
 				}
 				old = b
 				offset += int(b.size)
-				io.fwrite(fp,b.data,b.size)
+				utils.fwrite(fp,b.data,b.size)
 			}
 		}
 	}
-	io.fclose(fp)
+	utils.fclose(fp)
 	return true
 }
 

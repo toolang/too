@@ -66,7 +66,7 @@ func fread_with_buf(fd<i8>,buf<u64*> , size<i64>){
 
 //func fseek(fp<u64>,offset<i64> , set<i64>)
 func fseek(fp,offset<i64>){
-	fmt.println("io.fseek:",int(fp),int(offset))
+	fmt.println("utils.fseek:",int(fp),int(offset))
 	std.fseek(fp,offset,std.SEEK_SET)
 	return true
 }

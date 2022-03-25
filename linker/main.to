@@ -28,8 +28,7 @@ func scan(){
     linker  = new link.Linker()
 
     found = false
-
-    outfile = "bin" 
+    outfile = "tol" 
     # 扫描所有路径
     for(dir : os.argv){
         if dir == "-p" continue
