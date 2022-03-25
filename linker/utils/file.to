@@ -15,7 +15,7 @@ func fwrite(fd<i64>,buffer<u64>,size<u64>){
 
 #func fopen(filename,mode)
 func fopen(filename,mode){
-	fmt.println("linker.io:fopen",filename,mode)
+	utils.debug("linker.io:fopen",filename,mode)
 	if filename == "" {
 		fmt.print("fopen filename is empty\n")
 		return false
@@ -25,7 +25,7 @@ func fopen(filename,mode){
 		fmt.print("fopen failed\n")
 		return false
 	}
-	fmt.println("fopen file:",int(ret))
+	utils.debug("fopen file:",int(ret))
 	return ret
 }
 //func fclose(fp<u64>)
@@ -42,11 +42,11 @@ func rewind(fd){
 
 //func read(fd<i64> , size<u64>
 func fread(fd<i8>,size<i64>){
-	//fmt.println("fread fd:",int(fd),int(size))
+	//utils.debug("fread fd:",int(fd),int(size))
 	buffer<u64*> = new size
 	read_size<i64> = std.read(fd,buffer,size)
 	if read_size != size {
-		//fmt.println("fread err")
+		//utils.debug("fread err")
 		os.die("fread err " + int(read_size))
 		return false
 	}
@@ -54,10 +54,10 @@ func fread(fd<i8>,size<i64>){
 }
 //func read(fd<i64> , buffer<u64*> , size<u64>
 func fread_with_buf(fd<i8>,buf<u64*> , size<i64>){
-	//fmt.println("fread fd:",int(fd),int(size))
+	//utils.debug("fread fd:",int(fd),int(size))
 	read_size<i64> = std.read(fd,buf,size)
 	if read_size != size {
-		//fmt.println("fread err")
+		//utils.debug("fread err")
 		os.die("fread err " + int(read_size))
 		return false
 	}
@@ -66,7 +66,7 @@ func fread_with_buf(fd<i8>,buf<u64*> , size<i64>){
 
 //func fseek(fp<u64>,offset<i64> , set<i64>)
 func fseek(fp,offset<i64>){
-	fmt.println("utils.fseek:",int(fp),int(offset))
+	utils.debug("utils.fseek:",int(fp),int(offset))
 	std.fseek(fp,offset,std.SEEK_SET)
 	return true
 }

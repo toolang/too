@@ -11,7 +11,7 @@ class Seglist
 	blocks	   # array[Block]
 }
 Seglist::init(){
-	fmt.println("init")
+	utils.debug("init")
 	#初始化数组 array[ElfFile]
 	this.ownerList = []
 	#初始化数组 array[Block]
@@ -21,7 +21,7 @@ Seglist::init(){
 	this.size 	= 0
 	this.baseAddr = 0
 	this.begin  = 0
-	fmt.println("Seglist::init",this.ownerList,this.blocks)	
+	utils.debug("Seglist::init",this.ownerList,this.blocks)	
 }
 
 # @param name string 段名	
@@ -29,7 +29,7 @@ Seglist::init(){
 # @param base 加载基地址
 Seglist::allocAddr(name,base<i32*>,off<i32*>)
 {
-	fmt.println("Seglist::allocAddr ",name,int(*off))
+	utils.debug("Seglist::allocAddr ",name,int(*off))
 	this.begin = int(*off) # 记录文件前偏移
 	# 虚拟地址对齐，让所有的段按照4k字节对其
 	if  name != ".bss" {
@@ -83,7 +83,7 @@ Seglist::allocAddr(name,base<i32*>,off<i32*>)
 # symAddr: 重定位符号的虚拟地址
 Seglist::relocAddr(relAddr<u32>,type<u8>,symAddr<u32>,addend<i32>)
 {
-	fmt.println("Seglist::relocAddr ",baseAddr)
+	utils.debug("Seglist::relocAddr ",baseAddr)
 
 	baddr<u32>     = *this.baseAddr
 	relOffset<u32> = relAddr - baddr
@@ -120,6 +120,6 @@ Seglist::relocAddr(relAddr<u32>,type<u8>,symAddr<u32>,addend<i32>)
 		linux.R_X86_64_PC32  : 	*paddr = symAddr - relAddr + *paddr
 		linux.R_X86_64_PLT32 :	*paddr = symAddr - relAddr + *paddr
 		linux.R_X86_64_64    :    *paddr = symAddr - addend
-		_  				   :    fmt.println("unknow rela")
+		_  				   :    utils.debug("unknow rela")
 	}
 }

@@ -5,7 +5,7 @@ use linux
 
 Linker::buildExe()
 {
-	fmt.println("Linker::buildExe ")
+	utils.debug("Linker::buildExe ")
 	exe = this.exe
 
 	ehdr<linux.Elf64_Ehdr> = exe.ehdr
@@ -81,7 +81,7 @@ Linker::buildExe()
 
 Linker::writeExe(out)
 {
-	fmt.println("Linker::writeExe")
+	utils.debug("Linker::writeExe")
 	exe = this.exe
     ehdr<linux.Elf64_Ehdr> = exe.ehdr
 	offset = exe.writeHeader(out)
@@ -124,7 +124,7 @@ Linker::writeExe(out)
 
 Linker::link(out)
 {
-	fmt.println("Linker::link")
+	utils.debug("Linker::link")
 	this.collectInfo()
 	if   !this.symValid() {
 		return false

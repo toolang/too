@@ -18,7 +18,7 @@ class Linker
 	bytes
 }
 Linker::init(){
-	fmt.println("Linker::init")
+	utils.debug("Linker::init")
 	this.segNames = []
 	this.bssaddr  = 0
 	this.elfs = []
@@ -34,7 +34,7 @@ Linker::init(){
 # 初始化
 Linker::linker()
 {
-	fmt.println("Linker::linker")
+	utils.debug("Linker::linker")
 	this.segNames[] = ".text"
 	this.segNames[] = ".data"
 	this.segNames[] = ".rodata"
@@ -50,7 +50,7 @@ Linker::linker()
 # 2. 追加到待链接数组中等待链接
 Linker::addElf(obj)
 {
-	fmt.println("Linker::addElf add a elffile:",obj)
+	utils.debug("Linker::addElf add a elffile:",obj)
 	e = new linux.File()
 	# 解析elf文件
 	e.readElf(obj)
@@ -60,10 +60,10 @@ use runtime
 # 开始扫描文件搜集所有信息
 Linker::collectInfo()
 {
-	fmt.println("Linker::collectInfo")
+	utils.debug("Linker::collectInfo")
 	Null<i8> = 0
 	for(e : this.elfs){
-		fmt.println("collect elf info:",e.elfdir)
+		utils.debug("collect elf info:",e.elfdir)
 		# 记录段表信息
 		for(seg : this.segNames){
 			if  e.shdrTab[seg] != runtime.Null  {
@@ -77,23 +77,23 @@ Linker::collectInfo()
 			symLink = new SymLink()
 			symLink.name = name
 			if sym.st_name == 0 {
-				//fmt.println(name, " 段符号定义 ")
+				//utils.debug(name, " 段符号定义 ")
 				symLink.prov = e
 				symLink.recv = null
 				this.secDef[] = symLink
 			}else if  sym.st_shndx == linux.SHN_UNDEF {
-				//fmt.println(name, " 未定义 ")
+				//utils.debug(name, " 未定义 ")
 				symLink.recv = e
 				symLink.prov = null
 				this.symLinks[] = symLink
 			}else if  sym.st_shndx != linux.SHN_ABS {
-				//fmt.println(name, " 已定义")
+				//utils.debug(name, " 已定义")
 				symLink.prov = e
 				symLink.recv = null
 				exist<u64> = this.symDef[symLink.name]
 				if exist != null {
 					def = this.symDef[symLink.name]
-					fmt.println("符号名定义冲突: ",symLink.name,e.elfdir,def.prov.elfdir)
+					utils.debug("符号名定义冲突: ",symLink.name,e.elfdir,def.prov.elfdir)
 					os.exit(-1)
 				}
 				this.symDef[symLink.name] = symLink
@@ -106,7 +106,7 @@ Linker::collectInfo()
 
 Linker::symValid()
 {
-	fmt.println("Linker::symValid")
+	utils.debug("Linker::symValid")
 	flag = true
 
 	exist<u64> = this.symDef["main"]
@@ -134,19 +134,19 @@ Linker::symValid()
 			if  type == "" {
 				type = "符号"
 			}
-			fmt.println("文件%s的%s名%s为定义",undefine.recv.elf_dir,type,undefine.name)
+			utils.debug("文件%s的%s名%s为定义",undefine.recv.elf_dir,type,undefine.name)
 			if  flag {
 				flag = false
 			}
 		}
 	}
-	fmt.println("done symValid",flag)
+	utils.debug("done symValid",flag)
 	return flag
 }
 # 分配地址空间
 Linker::allocAddr()
 {
-	fmt.println("Linker::allocAddr")
+	utils.debug("Linker::allocAddr")
 	curAddr<i32> = BASE_ADDR
 	curOff = int(sizeof(linux.Elf64_Ehdr)) + int(sizeof(linux.Elf64_Phdr)) * std.len(segNames)
 	//for reference
@@ -163,8 +163,8 @@ Linker::allocAddr()
 
 Linker::symParser()
 {
-	fmt.println("Linker::symParser")
-	fmt.println("symDef parse")
+	utils.debug("Linker::symParser")
+	utils.debug("symDef parse")
 	for(def : this.symDef){
 		sym<linux.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""
@@ -181,7 +181,7 @@ Linker::symParser()
 			sym.st_value = sym.st_value + sh.sh_addr
 		}
 	}
-	fmt.println("secDef parse")
+	utils.debug("secDef parse")
 	for(sec : this.secDef){
 		sec_sym<linux.Elf64_Sym> = sec.prov.symTab[sec.name]
 		segName = sec.prov.shdrNames[int(sec_sym.st_shndx)]
@@ -194,7 +194,7 @@ Linker::symParser()
 			sec_sym.st_value = sec_sym.st_value + sec_sh.sh_addr
 		}
 	}
-	fmt.println("未定义符号解析")
+	utils.debug("未定义符号解析")
 	for(syml : this.symLinks){
 		provsym<linux.Elf64_Sym> = syml.prov.symTab[syml.name]
 		recvsym<linux.Elf64_Sym> = syml.recv.symTab[syml.name]
@@ -205,12 +205,12 @@ Linker::symParser()
 # 重定位
 Linker::relocate()
 {
-	fmt.println("Linker::relocate")
+	utils.debug("Linker::relocate")
 	for(e : this.elfs){
 		//TODO: copy on write
 		tab = e.relTab
 		for(t : tab){
-			fmt.println(t,t.relname)
+			utils.debug(t,t.relname)
 			if  t.relname == "" {
 				continue
 			}

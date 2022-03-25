@@ -18,7 +18,7 @@ class File {
     strtabsize  # 字符串表数据长度
 }
 File::init(){
-    fmt.println("File::init")
+    utils.debug("File::init")
     # header头
     this.ehdr    = new Elf64_Ehdr
     this.phdrTab = [] # [Elf64_Phdr]
@@ -33,7 +33,7 @@ File::init(){
 # 添加程序表头
 File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 {
-    fmt.println("File::addPhdr")
+    utils.debug("File::addPhdr")
 	ph<Elf64_Phdr> = new Elf64_Phdr
 	ph.p_type = *type	
 	ph.p_offset = *off
@@ -49,7 +49,7 @@ File::addPhdr(type,off,vaddr,filesz,memsz,flags,align)
 # 添加一个段表项
 File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info,sh_addralign,sh_entsize)
 {
-    fmt.println("File::addShdr",sh_name)
+    utils.debug("File::addShdr",sh_name)
     sh<Elf64_Shdr>    = new Elf64_Shdr
 
     sh.sh_name      = 0
@@ -70,7 +70,7 @@ File::addShdr(sh_name,sh_type,sh_flags,sh_addr,sh_offset,sh_size,sh_link,sh_info
 # 添加符号表
 File::addSym(st_name,s<Elf64_Sym>)
 {
-    fmt.println("File::addSym",st_name)
+    utils.debug("File::addSym",st_name)
     sym<Elf64_Sym>    = new Elf64_Sym
     this.symTab[st_name]   = sym
     if st_name == "" {

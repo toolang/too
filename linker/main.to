@@ -3,6 +3,7 @@ use fmt
 use link
 use os 
 use std
+use utils
 
 func print_help(){
     fmt.println("usage: ./cld [options|file.o...]\n" +
@@ -12,7 +13,7 @@ func print_help(){
 }
 
 func link(){
-    fmt.println("main.link")
+    utils.debug("main.link")
     linker  = new link.Linker()
     outfile = "bin"
     for(obj : os.argv){
@@ -24,7 +25,7 @@ func link(){
 }
 
 func scan(){
-    fmt.println("main.scan")
+    utils.debug("main.scan")
     linker  = new link.Linker()
 
     found = false
@@ -52,7 +53,7 @@ func scan(){
     }
     # 开始链接
     linker.link(outfile)
-    fmt.println("all generate passed")
+    utils.debug("all generate passed")
 }
 
 
