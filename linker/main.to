@@ -71,7 +71,7 @@ func scan(){
 func command() {
     scan_dirs = []
     scan_files = []
-    out = "tol"
+    out = "a.out"
     i = 0
     while i < std.len(os.argv)  {
         match os.argv[i] {

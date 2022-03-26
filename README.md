@@ -26,9 +26,10 @@ tol      [options|file.o...]
 - [ ] asmer 
   - [ ] -c  翻译指定汇编码为linux(elf),windows(pe/coff)
   - [ ] -p  批量扫描路径下的汇编
-- [ ] linker 
+- [x] [linker](./linker) 
   - [x] *.o 链接指定的linux(elf) 文件生成可执行程序
-  - [ ] *.o 链接指定的windows(coff) 文件生成可执行pe程序
+  - [ ] *.o 链接指定的windows(pe) 文件生成可执行pe程序
+  - [ ] *.o 链接指定的mac(MachO) 文件生成可执行pe程序
   - [x] -p  链接指定目录生成可执行程序
 - [x] runtime
   - [x] garbage collect
