@@ -1,25 +1,25 @@
+基于toolang自举实现的tol链接器,0依赖glibc,目前已支持任意amd64-linux下的编译执行，见:`linker/bin/amd64_bin`
+- [x] amd64
+    - [x] linux
+    - [ ] mac
+    - [ ] windows
 
-生成 elf 可重定位 对象文件
+# 链接测试demo
+因为compiler和asmer还未自举完成，目前需要靠gcc生成elf对象文件
 ```
 $ cd linker/demo
 $ gcc -c *.s -static -nostdlib -e main
 ```
-通过tol链接器进行连接生成可执行文件
+链接生成可执行文件生成可执行文件
 ```
 $ cd linker
-$ ./bin/tol -p ./demo
-[ 1/2] Reading elf object info ./demo//init.o
-[ 2/2] Reading elf object info ./demo//main.o
-[ 30%] Collecting object info
-[ 40%] Checking symbol valid
-[ 50%] Allocing address 
-[ 60%] Relocating symbol
-[ 80%] Relocating address
-[ 90%] Building executable binary
-[ 100%] Generating executable binary
-[ 100%] Generate tol Passed
+$ ./bin/amd64_linux -p ./demo
 $ chmod 777 a.out
 
 $ ./a.out
 > hello toolang!
 ```
+![image](./asserts/linker-demo.png#w50)
+
+# 自举测试
+![image](./asserts/linker-compile.png#w50)
