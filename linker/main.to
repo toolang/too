@@ -38,8 +38,6 @@ func scan(){
     utils.debug("main.scan")
     linker  = new link.Linker()
 
-    found = false
-    # 扫描所有路径
     for(dir : scan_dirs){
         if !std.is_dir(dir) os.die(dir + " not exist")
         # 迭代目录文件
@@ -51,17 +49,23 @@ func scan(){
             # 解析目标文件
             filename = file.path
             if string.sub(filename,std.len(filename) - 2) == ".o" {
-                linker.addElf(file.path)
-                found = true
+                scan_files[] = file.path
             }
         }
     }
-    if !found {
-        os.die("should provide at least one .o file")
+    total = std.len(scan_files)
+    if total <= 0 utils.error("please provide at lease one .o file")
+
+    i = 1
+    //FIXME: for(file : scan_files)
+    for(f : scan_files){
+	    utils.smsg("[ " + i + "/" + total +"]","Reading elf object info " + f)
+        linker.addElf(f)
+        i += 1
     }
     # 开始链接
     linker.link(out)
-    utils.debug("all generate passed")
+    utils.msg(100,"Generate " + out + " Passed")
 }
 
 func command() {

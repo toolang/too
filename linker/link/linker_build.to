@@ -5,7 +5,7 @@ use linux
 
 Linker::buildExe()
 {
-	utils.debug("Linker::buildExe ")
+	utils.msg(90,"Building executable binary")
 	exe = this.exe
 
 	ehdr<linux.Elf64_Ehdr> = exe.ehdr
@@ -81,7 +81,7 @@ Linker::buildExe()
 
 Linker::writeExe(out)
 {
-	utils.debug("Linker::writeExe")
+	utils.msg(100,"Generating executable binary")
 	exe = this.exe
     ehdr<linux.Elf64_Ehdr> = exe.ehdr
 	offset = exe.writeHeader(out)

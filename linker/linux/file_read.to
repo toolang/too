@@ -3,15 +3,16 @@ use os
 use fmt
 use utils
 use string
+use std
 # 开始解析elf文件
 File::readElf(file)
 {
-	utils.debug("File::readElf ",file)
+	utils.debug("Reading elf object info " ,file)
 	this.elfdir = file
 
 	fp<i8> = utils.fopen(file,"rb")
 	if fp <= 0  {
-		os.die("cann't open file, file invalid:" + file)
+		utils.error("can't open file, file invalid:" + file)
 	}
 	# 设置游标 开始从头开始读取
 	utils.rewind(fp)

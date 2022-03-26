@@ -60,10 +60,10 @@ use runtime
 # 开始扫描文件搜集所有信息
 Linker::collectInfo()
 {
-	utils.debug("Linker::collectInfo")
+	utils.msg(30,"Collecting object info")
 	Null<i8> = 0
 	for(e : this.elfs){
-		utils.debug("collect elf info:",e.elfdir)
+		utils.debug("Collect object info " + e.elfdir)
 		# 记录段表信息
 		for(seg : this.segNames){
 			if  e.shdrTab[seg] != runtime.Null  {
@@ -106,7 +106,7 @@ Linker::collectInfo()
 
 Linker::symValid()
 {
-	utils.debug("Linker::symValid")
+	utils.msg(40,"Checking symbol valid")
 	flag = true
 
 	exist<u64> = this.symDef["main"]
@@ -146,7 +146,7 @@ Linker::symValid()
 # 分配地址空间
 Linker::allocAddr()
 {
-	utils.debug("Linker::allocAddr")
+	utils.msg(50,"Allocing address ")
 	curAddr<i32> = BASE_ADDR
 	curOff = int(sizeof(linux.Elf64_Ehdr)) + int(sizeof(linux.Elf64_Phdr)) * std.len(segNames)
 	//for reference
@@ -163,8 +163,7 @@ Linker::allocAddr()
 
 Linker::symParser()
 {
-	utils.debug("Linker::symParser")
-	utils.debug("symDef parse")
+	utils.msg(60,"Relocating symbol")
 	for(def : this.symDef){
 		sym<linux.Elf64_Sym> = def.prov.symTab[def.name]
 		segName = ""
@@ -205,7 +204,7 @@ Linker::symParser()
 # 重定位
 Linker::relocate()
 {
-	utils.debug("Linker::relocate")
+	utils.msg(80,"Relocating address")
 	for(e : this.elfs){
 		//TODO: copy on write
 		tab = e.relTab
