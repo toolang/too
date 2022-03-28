@@ -4,3 +4,16 @@ use runtime
 func len(v){
 	return runtime.len(v)
 }
+func exist(v,key){
+	type<i8> = v.type
+	data<i8> = v.data
+	match type {
+		Array : fmt.println("[warn] unsupport exist(array)")
+		Map   : {
+			has<i32> = runtime.map_find(v,key)
+			if has == null return true
+		}
+		_     : fmt.println("[warn] exist(unknow type)")
+	}
+	return false
+}
