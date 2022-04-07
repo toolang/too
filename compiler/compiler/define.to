@@ -18,12 +18,8 @@ args32  # 32bit
 args64  # 64bit
 
 
-class Compiler {
-    ctx # arr[Context*,Context*..]
-}
-
 func init() {
-    utils.debug(")
+    utils.debug("init")
     # init registers
     args8  = ["%dil" , "%sil" , "%dl"  , "%cl"  , "%r8b" , "%r9b"]
     args16 = ["%di"  , "%si"  , "%dx"  , "%cx"  , "%r8w" , "%r9w"]
@@ -35,4 +31,6 @@ func init() {
     current_func = null
     out = null
     parser = null
+
+    init_cast()
 }

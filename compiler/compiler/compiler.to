@@ -3,6 +3,10 @@ use parser
 use os 
 use internal
 
+class Compiler {
+    ctx # arr[Context*,Context*..]
+}
+
 Compiler::init(filename) 
 {
     utils.debug("Compiler::init:",filename)
