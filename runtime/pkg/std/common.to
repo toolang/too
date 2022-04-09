@@ -4,3 +4,6 @@ use runtime
 func len(v){
 	return runtime.len(v)
 }
+func pop(v){
+	return runtime.pop(v)	
+}

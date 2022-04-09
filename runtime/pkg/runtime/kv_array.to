@@ -110,6 +110,23 @@ func array_create(n<u32>,size<u64>){
 func array_destroy(a<array>){
     gc.gc_free(a)
 }
+func array_pop(arr<array>){
+    if  arr == null os.die("[arr_pop] not array_type")
+
+    if arr.used <= 0 {
+        fmt.println("[warn] array_pop for empty array")
+        return newobject(Null,Null)
+    }
+
+    var<u64*> = arr.addr
+    //pop one 
+    arr.used -= 1
+
+    offset<i64> = arr.used * arr.size
+    var += offset
+
+    return *var
+}
 func array_push(a<array>){
     size<u64> =  0
     newp<u64*> = null

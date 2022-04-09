@@ -42,3 +42,12 @@ func len(v<value>){
 	}
 	return 0
 }
+
+func pop(v<value>){
+	type<i8> = v.type
+	match type {
+		Array  : return array_pop(v.data)
+		_      : return null
+	}
+	return null
+}
