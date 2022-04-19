@@ -41,7 +41,7 @@ Compiler::execute()
     }
     //register package
     for(p : parser.packages){
-        p.asmgen()
+        p.compile()
     }
 }
 Compiler::link() 

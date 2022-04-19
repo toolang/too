@@ -27,7 +27,7 @@ func llvmgen(){
     //c.outIR()
     //c.genBinary()
 }
-func asmgen(){
+func compile(){
     utils.debug("assembly generate")
     codegen = new asm.AsmGen(code_file)
     codegen.compile()
@@ -52,14 +52,14 @@ func main() {
         match os.argv[i] {
             "run" : {
                 run = true
-                return asmgen()
+                return compile()
             }
             "-d" : {
                 utils.debug_mode = 1          # debug mode
                 i += 1
             }
             "-s" : {
-                return asmgen()
+                return compile()
                 i += 2
             }
             _ : {

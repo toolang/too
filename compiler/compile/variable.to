@@ -1,0 +1,35 @@
+Compiler::registerStrings()
+{
+    for(&var:parser.strs){
+        r = "L" + ast.incr_compileridx() 
+        var.name = r
+        CreateGlobalString(var)
+    }
+}
+Compiler::registerVars()
+{
+    for(name,v : parser.gvars){
+        gname = parser.getpkgname() + "_" + name
+        writeln("    .global %s",gname)
+        writeln("%s:",gname)
+        if !v.structtype {
+            writeln("    .quad   8")
+            continue
+        }
+        mt = "byte"
+        value = v.ivalue == "" ? "0" : v.ivalue
+        //TODO: support `|` multi condition match
+        match v.type {
+            I8  | U8  :  mt = "byte"
+            I16 | U16 :  mt = "value"
+            I32 | U32 :  mt = "long"
+            I64 | U64 :  mt = "quad"
+        }
+        writeln("    .%s   %s",mt,value)
+    }
+}
+Compiler::CreateGlobalString(StringExpr *var)
+{
+    writeln("%s:", var.name)
+    writeln("    .\"%s\"",var.literal)
+}
