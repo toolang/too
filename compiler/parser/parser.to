@@ -1,0 +1,71 @@
+
+# count = 1
+count
+
+Parser::init(filepath,pkg,package,full_package) {
+    this.pkg = pkg
+    this.currentFunc = null
+    this.package = package
+    this.filepath = filepath
+
+    //FIXME: not support find_last_of
+    fullname = string.sub(filepath,filepath.find_last_of('/')+1)
+    filename = string.sub(fullname,0,std.len(fullname) - 3)
+    asmfile  = filename + ".s"
+    if package != "main"
+        asmfile  = "co_" + package + "_" + asmfile
+    this.full_package = full_package
+    
+    scanner = new Scanner(filepath,this)
+    
+    import[package] = full_package
+    
+    import[""]  = full_package
+}
+
+
+Parser::parse()
+{
+    scanner.scan()
+
+    while true 
+    {
+        match scanner.curToken 
+        {
+            FUNC : {
+                f = parseFuncDef()
+                this.addFunc(f.name,f)
+            }
+            EXTERN : {
+                f = parseExternDef()
+                this.addFunc(f.name, f)
+            }
+            EXTRA : parseExtra()
+            USE   : parseImportDef()
+            CLASS : parseClassDef()
+            MEM   : parseStructDef()
+            ENUM  : parseEnumDef()
+            _     : parseGlobalDef()
+            END   : return null
+        }
+    }
+}
+Parser::getpkgname()
+{
+    return this.full_package
+}
+Parser::panic(err){
+    this.check(false,err)
+}
+Parser::check(check , err)
+{
+    if check return  null
+    parse_err("parse: found token error token:%d:%s \n"
+              "msg:%s\n"
+              "line:%d column:%d file:%s\n",
+              scanner.curToken,getTokenString(scanner.curToken),
+              err,
+              scanner.line,scanner.column,filepath)
+    os.exit(-1)
+}
+

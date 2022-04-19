@@ -1,0 +1,70 @@
+use fmt
+use os 
+use std
+use utils
+use asm
+
+# origin file
+code_file
+
+# executable file name
+out
+
+# need asm compile and linker to generate executable file
+run
+
+func print_help(){
+    fmt.println("usage: ./toc [options|file.to...]\n" +
+            "  run      编译成汇编后进行链接生成二进制可执行文件直接运行\n" +
+            "  -s       编译为linux-amd64汇编文件\n" + 
+    )
+}
+
+//TODO: support llvm codgen
+func llvmgen(){
+    //c = new Compiler()
+    //c.generate()
+    //c.outIR()
+    //c.genBinary()
+}
+func compile(){
+    utils.debug("assembly generate")
+    codegen = new asm.AsmGen(code_file)
+    codegen.compile()
+
+    if run {
+        codegen.link() # link automaticlly
+        os.shell("rm *.s")
+        args = "./a.out"
+        os.shell(args)
+    }
+}
+func debug(){
+    parser = parser.Parser()
+    parser.print()
+}
+
+func main() {
+    if os.argc < 3 return print_help() 
+
+    i = 0
+    while i < std.len(os.argv)  {
+        match os.argv[i] {
+            "run" : {
+                run = true
+                return compile()
+            }
+            "-d" : {
+                utils.debug_mode = 1          # debug mode
+                i += 1
+            }
+            "-s" : {
+                return compile()
+                i += 2
+            }
+            _ : {
+                os.die("args invalid",os.argv[i])
+            }
+        }
+    }
+}

@@ -1,0 +1,214 @@
+Parser::parseStatement()
+{
+    node
+    match scanner.curToken{
+        IF: {
+            scanner.scan()
+            node = parseIfStmt()
+        }
+        FOR: {
+            scanner.scan()
+            node = parseForStmt()
+        }
+        WHILE: {
+            scanner.scan()
+            node = parseWhileStmt()
+        }
+        RETURN: {
+            scanner.scan()
+            node = parseReturnStmt()
+        }
+        BREAK: {
+            scanner.scan()
+            node = new BreakStmt(line,column)
+        }
+        GOTO: {
+            scanner.scan()
+            node = new GotoStmt(scanner.curLex,line,column)
+            scanner.scan()
+        }
+        CONTINUE: {
+            scanner.scan()
+            node = new ContinueStmt(line,column)
+        }
+        MATCH: {
+            scanner.scan()
+            node = parseMatchSmt()
+        }
+        _ : node = parseExpressionStmt()
+    }
+    return node
+}
+Parser::parseIfStmt()
+{
+    node = new IfStmt(line,column)
+    
+    ifCase = new IfCaseExpr(line,column)
+    ifCase.cond = parseExpression()
+    
+    if scanner.curToken == LBRACE{
+        ifCase.block = parseBlock()
+    }else{
+        ifCase.block = new Block()
+        ifCase.block.stmts[] = parseStatement()
+    }
+    node.cases[] = ifCase
+    
+    while scanner.curToken == ELSE {
+        ice = new IfCaseExpr(line,column)
+        scanner.scan()
+        if scanner.curToken == IF{
+            scanner.scan()
+            ice.cond = parseExpression()
+            if scanner.curToken == LBRACE{
+                ice.block = parseBlock()
+            }else {
+                ice.block = new Block()
+                ice.block.stmts[] = parseStatement();
+            }
+            node.cases[] = ice
+        
+        }else{
+            if scanner.curToken == LBRACE{
+                ice.block = parseBlock()
+            }else {
+                ice.block = new Block()
+                ice.block.stmts[] = parseStatement()
+            }
+            node.elseCase = ice
+        }
+    }
+    return node
+}
+Parser::parseForStmt()
+{
+    node = new ForStmt(line,column)
+    
+    scanner.scan()
+    
+    check(scanner.curToken == VAR)
+
+    Scanner::tx tx = scanner.transaction()
+    {
+        key = null
+        value = parseExpression()
+        obj = null
+        
+        if type(value) == type(VarExpr) && (scanner.curToken == COMMA || scanner.curToken == COLON)){
+            node.range = true
+            
+            if scanner.curToken == COMMA{
+                key = value
+                scanner.scan()
+                value = parseExpression()
+                check(type(value) == type(VarExpr) 
+            }
+            check(scanner.curToken == COLON)
+            scanner.scan()
+            obj = parseExpression()
+            check(obj != null)
+            node.key   = key ?   key : null
+            node.value = value ? value : null
+            node.obj   = obj  ?  obj : null
+            
+            if std.len(node.key && !currentFunc.params_var,node.key.varname && !currentFunc.locals.count(node.key.varname))
+                currentFunc.locals[node.key.varname] = node.key
+            if std.len(node.value && !currentFunc.params_var,node.value.varname && !currentFunc.locals.count(node.value.varname))
+                currentFunc.locals[node.value.varname] = node.value
+            
+            assert(scanner.curToken == RPAREN)
+            scanner.scan()
+            
+            node.block = parseBlock()
+            return node
+        }
+        
+        scanner.rollback(tx)
+    }
+    node.init = parseExpression()
+    check(scanner.curToken == SEMICOLON)
+    scanner.scan()
+
+    node.cond = parseExpression()
+    assert(scanner.curToken == SEMICOLON)
+    scanner.scan()
+    
+    node.after = parseExpression()
+    assert(scanner.curToken == RPAREN)
+    scanner.scan()
+    
+    node.block = parseBlock()
+    return node
+}
+Parser::parseMatchSmt(){
+    ms = new MatchStmt(line,column)
+    ms.cond = parseExpression()
+    check(scanner.curToken == LBRACE)
+    scanner.scan()
+    while scanner.curToken != RBRACE {
+        cs = parseMatchCase()
+        cs.matchCond = ms.cond
+        if cs.defaultCase{
+            ms.defaultCase = cs
+            continue
+        }
+        ms.cases[] = cs
+    }
+    scanner.scan()
+    return ms
+}
+Parser::parseMatchCase()
+{
+    cs = new MatchCaseExpr(line,column)
+    
+    cs.cond  = parseExpression()
+    cs.block = null
+    
+    if type(cs.cond == type(VarExpr) {
+        cond = cs.cond
+        
+        if cond.varname == "_"{
+            cs.defaultCase = true
+        }
+    }
+    check(scanner.curToken == COLON)
+    scanner.scan()
+    if scanner.curToken == LBRACE {
+        cs.block = parseBlock(); 
+    }else{
+        cs.block = new Block()
+        cs.block.stmts[] = parseStatement()
+    }
+    return cs
+}
+Parser::parseWhileStmt() {
+    node = new WhileStmt(line, column)
+    
+    if scanner.curToken == LPAREN{
+        scanner.scan()
+    }
+    
+    node.cond = parseExpression()
+    
+    if scanner.curToken == RPAREN{
+        scanner.scan()
+    }
+    
+    
+    
+    node.block = parseBlock()
+    return node
+}
+Parser::parseReturnStmt() {
+    node = new ReturnStmt(line, column)
+    
+    node.ret = parseExpression()
+    return node
+}
+Parser::parseExpressionStmt()
+{
+    node = null
+    if p = parseExpression( ; p != null)
+        node = new ExpressionStmt(p,line,column)
+    return node
+}
