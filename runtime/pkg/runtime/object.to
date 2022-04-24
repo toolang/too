@@ -26,7 +26,19 @@ func newobject(type<i32> , data<u64*>)
     } 
     return ret
 }
+func newinherit_object(father<value>){
+    ret<value> = new value
+    ret.type   = Object
 
+    //new default object
+    obj<object> = object_create()
+    //save father
+    obj.father  = father.data
+
+    ret.data = obj
+
+    return ret
+}
 func get_object_value(obj<value>){
     if obj == null {
         fmt.println("[get obj] null")

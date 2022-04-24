@@ -16,6 +16,7 @@ mem value  {
 mem object { 
 	rbtree* members
 	rbtree* funcs
+	object* father
 }
 
 func type_string(t<i8>){
