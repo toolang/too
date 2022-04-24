@@ -128,6 +128,7 @@ func object_create(size<i32>){
 
     c.members = members
     c.funcs   = funcs
+    c.father  = null
 
     return c
 }
@@ -171,21 +172,29 @@ func object_func_add(obj<value>,k<u32>,addr<u64*>){
     c<object> = obj.data
     member_insert(c.funcs,key,addr)
 }
+func get_member_func_addr(obj<object>,key<value>){
+    funcaddr<u64*> = member_find(obj.funcs,key)
+    if  funcaddr == null {
+        funcaddr = member_find(obj.members,key)
+
+        //need find it form father class
+        if funcaddr == null && obj.father != null {
+            funcaddr = get_member_func_addr(obj.father,key)
+        }
+    }
+    //not find finally
+    if funcaddr == null {
+        fmt.println("[object-func] func not exist in func table and members table ",key)
+    }
+    return funcaddr
+}
 func object_func_addr(obj<value>,k<u32>){
     if  obj.type != Object {
         fmt.println("[object_func_addr] invalid obj type :",runtime.type_string(obj.type))
         os.exit(-1)
     }
     key<value> = int(k)
-    c<object>   = obj.data
-    funcaddr<u64*> = member_find(c.funcs,key)
-    if  funcaddr == null {
-        funcaddr = member_find(c.members,key)
-        if funcaddr == null {
-            fmt.println("[object-func] func not exist in func table and members table ",key)
-        }
-    }
-    return funcaddr
+    return get_member_func_addr(obj.data,key)
 }
 
 
