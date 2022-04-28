@@ -1,7 +1,7 @@
 use std
 use string
 
-func value_string_plus(lhs<value>,rhs<value>)
+func value_string_plus(lhs<Value>,rhs<Value>)
 {
     tmstr<i8*> = string.stringempty()
     match lhs.type 
@@ -19,7 +19,7 @@ func value_string_plus(lhs<value>,rhs<value>)
     return tmstr
 }
 
-func value_string_minus(lhs<value>,rhs<value>)
+func value_string_minus(lhs<Value>,rhs<Value>)
 {
     //字符串的所有相加减直接返回原字符串
     match lhs.type {
@@ -28,7 +28,7 @@ func value_string_minus(lhs<value>,rhs<value>)
     }
 }
 
-func value_string_mul(lhs<value>,rhs<value>)
+func value_string_mul(lhs<Value>,rhs<Value>)
 {
     //如果两个都是字母则返回相加的那部分
     if lhs.type == String && rhs.type == String {
@@ -44,7 +44,7 @@ func value_string_mul(lhs<value>,rhs<value>)
         _   : count = rhs.data
     }
 
-    srcv<value> = null
+    srcv<Value> = null
     if lhs.type == String srcv = lhs
     else srcv = rhs
 
@@ -57,22 +57,22 @@ func value_string_mul(lhs<value>,rhs<value>)
     }
     return tmstr
 }
-func value_string_div(lhs<value>,rhs<value>){
+func value_string_div(lhs<Value>,rhs<Value>){
     return Null
 }
-func value_string_bitand(lhs<value>,rhs<value>){
+func value_string_bitand(lhs<Value>,rhs<Value>){
     return Null
 }
-func value_string_bitor(lhs<value>,rhs<value>){
+func value_string_bitor(lhs<Value>,rhs<Value>){
     return Null
 }
-func value_string_shift_left(lhs<value>,rhs<value>){
+func value_string_shift_left(lhs<Value>,rhs<Value>){
     return Null
 }
-func value_string_shift_right(lhs<value>,rhs<value>){
+func value_string_shift_right(lhs<Value>,rhs<Value>){
     return Null
 }
-func value_string_equal(lhs<value>,rhs<value>,equal<i32>){
+func value_string_equal(lhs<Value>,rhs<Value>,equal<i32>){
     //必须为两个string 才能比较
     if lhs.type != String || rhs.type != String {
         // == 就返回false
@@ -93,7 +93,7 @@ func value_string_equal(lhs<value>,rhs<value>,equal<i32>){
 
 }
 //< <=
-func value_string_lowerthan(lhs<value>,rhs<value>,equal<i32>){
+func value_string_lowerthan(lhs<Value>,rhs<Value>,equal<i32>){
     //必须为两个string 才能比较
     if lhs.type != String || rhs.type != String {
         return False
@@ -105,7 +105,7 @@ func value_string_lowerthan(lhs<value>,rhs<value>,equal<i32>){
     return eq < 0
 }
 //> >=
-func value_string_greaterthan(lhs<value>,rhs<value>,equal<i32>){
+func value_string_greaterthan(lhs<Value>,rhs<Value>,equal<i32>){
     //必须为两个string 才能比较
     if lhs.type != String || rhs.type != String {
         return False

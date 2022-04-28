@@ -5,17 +5,17 @@ use runtime.gc
 use std
 use string
 
-mem array {
+mem Array {
     u64*     addr
     u32   	 used
     u64   	 size
     u32      total
 }
-mem array_iter {
+mem Array_iter {
 	u64* addr
 	u64* cur
 }
-func arr_get(varr<value>,index<value>){
+func arr_get(varr<Value>,index<Value>){
     if  varr.type != Array {
         fmt.println("[arr_get] not array type")
         os.exit(-1)
@@ -26,7 +26,7 @@ func arr_get(varr<value>,index<value>){
         os.exit(-1)
     }
 
-    arr<array> = varr.data
+    arr<Array> = varr.data
     // 计算索引
     i<i64> = 0
     match index.type {
@@ -47,22 +47,22 @@ func arr_get(varr<value>,index<value>){
 }
 
 
-func arr_pushone(varr<value>,var<value>){
+func arr_pushone(varr<Value>,var<Value>){
     if  varr == null || varr.data == null || var == null {
         fmt.println("[arr_pushone] arr or var is null ,probably something wrong\n")
         return Null
     }
-    arr<array> = varr.data
+    arr<Array> = varr.data
     //FIXME: insert<u8*>= ... (>= 连起来解析错误)
     insert<u64*> = array_push(arr)
     *insert    = var
 }
-func arr_updateone(varr<value>,index<value>,var<value>){
+func arr_updateone(varr<Value>,index<Value>,var<Value>){
     if  varr == null || varr.data == null || index == null || var == null {
         fmt.println("[arr_updateone] arr or var or index is null ,probably something wrong\n")
         return Null
     }
-    arr<array> = varr.data
+    arr<Array> = varr.data
     i<i64> = 0
 
     match index.type {
@@ -81,7 +81,7 @@ func arr_updateone(varr<value>,index<value>,var<value>){
     pp += i * 8
     *pp = var
 }
-func array_init(arr<array>,n<u32>,size<u64>){
+func array_init(arr<Array>,n<u32>,size<u64>){
     arr.used = 0
     arr.size = size
     arr.total = n
@@ -96,7 +96,7 @@ func array_init(arr<array>,n<u32>,size<u64>){
 }
 func array_create(n<u32>,size<u64>){
 
-    a<array> = new array
+    a<Array> = new Array
     if  a == null {
         fmt.println("[arr_create] failed to create\n")
         return Null
@@ -107,10 +107,10 @@ func array_create(n<u32>,size<u64>){
     }
     return a
 }
-func array_destroy(a<array>){
+func array_destroy(a<Array>){
     gc.gc_free(a)
 }
-func array_pop(arr<array>){
+func array_pop(arr<Array>){
     if  arr == null os.die("[arr_pop] not array_type")
 
     if arr.used <= 0 {
@@ -127,7 +127,7 @@ func array_pop(arr<array>){
 
     return *var
 }
-func array_push(a<array>){
+func array_push(a<Array>){
     size<u64> =  0
     newp<u64*> = null
     elt<u64*> = null
@@ -152,7 +152,7 @@ func array_push(a<array>){
     return elt
 }
 
-func array_push_n(a<array>,n<u32>)
+func array_push_n(a<Array>,n<u32>)
 {
     elt<u64*>  = null
     newp<u64*> = null
@@ -182,17 +182,17 @@ func array_push_n(a<array>,n<u32>)
 
     return elt
 }
-func arr_tostring(varr<value>)
+func arr_tostring(varr<Value>)
 {
     ret<i8*>   = string.stringempty()
-    arr<array> = varr.data
+    arr<Array> = varr.data
     orr<u64*>  = arr.addr
 
     ret = string.stringcat(ret,*"[")
 
     for (i<i32> = 0 ; i < arr.used ; i += 1) {
         p<u64*>  = orr + i * PointerSize
-        v<value> = *p
+        v<Value> = *p
         //String
         if v.type == String {
             ret = string.stringcat(ret,v.data)

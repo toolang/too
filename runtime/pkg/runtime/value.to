@@ -9,10 +9,10 @@ use string
  // @param lhs
  // @param rhs
  // @return value
-func value_plus(lhs<value>,rhs<value>) {
-	result<value> = new value
+func value_plus(lhs<Value>,rhs<Value>) {
+	result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //有字符串就最终类型是字符串
@@ -33,10 +33,10 @@ func value_plus(lhs<value>,rhs<value>) {
  // @param lhs
  // @param rhs
  // @return
-func value_minus(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_minus(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //有字符串就最终类型是字符串
@@ -57,10 +57,10 @@ func value_minus(lhs<value>,rhs<value>) {
  // @param lhs
  // @param rhs
  // @return
-func value_mul(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_mul(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //有字符串就最终类型是字符串
@@ -81,10 +81,10 @@ func value_mul(lhs<value>,rhs<value>) {
  // @param lhs
  // @param rhs
  // @return
-func value_div(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_div(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //字符串的触发运算全部返回0
@@ -105,10 +105,10 @@ func value_div(lhs<value>,rhs<value>) {
  // @param lhs
  // @param rhs
  // @return
-func value_bitand(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_bitand(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //字符串的触发运算全部返回0
@@ -129,10 +129,10 @@ func value_bitand(lhs<value>,rhs<value>) {
  // @param lhs
  // @param rhs
  // @return
-func value_bitor(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_bitor(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //字符串的触发运算全部返回0
@@ -155,10 +155,10 @@ func value_bitor(lhs<value>,rhs<value>) {
  // @param rhs
  // @return
  
-func value_shift_left(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_shift_left(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //字符串的触发运算全部返回0
@@ -181,10 +181,10 @@ func value_shift_left(lhs<value>,rhs<value>) {
  // @param rhs
  // @return
  
-func value_shift_right(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_shift_right(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     if lhs == null {
-        std.memcpy(result,rhs, sizeof(value))
+        std.memcpy(result,rhs, sizeof(Value))
         return result
     }
     //字符串的触发运算全部返回0
@@ -205,10 +205,10 @@ func value_shift_right(lhs<value>,rhs<value>) {
  // == operator
  // @param lhs
  // @param rhs
- // @return value*
+ // @return Value*
  
-func value_equal(lhs<value>,rhs<value>,equal<i32>) {
-    result<value> = new value
+func value_equal(lhs<Value>,rhs<Value>,equal<i32>) {
+    result<Value> = new Value
     result.type = Bool
     result.data = 0
     // 如果有string则直接进行string比较
@@ -226,10 +226,10 @@ func value_equal(lhs<value>,rhs<value>,equal<i32>) {
 // < operator
 // @param lhs
 // @param rhs
-// @return value*
-func value_lowerthan(lhs<value>,rhs<value>,equal<i32>)
+// @return Value*
+func value_lowerthan(lhs<Value>,rhs<Value>,equal<i32>)
 {
-    result<value> = new value
+    result<Value> = new Value
     result.type = Bool
     //默认为true  小于
     result.data = 1
@@ -248,10 +248,10 @@ func value_lowerthan(lhs<value>,rhs<value>,equal<i32>)
  // > operator
  // @param lhs
  // @param rhs
- // @return value*
-func value_greaterthan(lhs<value>,rhs<value>,equal<i32>)
+ // @return Value*
+func value_greaterthan(lhs<Value>,rhs<Value>,equal<i32>)
 {
-    result<value> = new value
+    result<Value> = new Value
     result.type = Bool
     //默认为true  大于
     result.data = 1
@@ -272,8 +272,8 @@ func value_greaterthan(lhs<value>,rhs<value>,equal<i32>)
 // @param lhs
 // @param rhs
 // @return value
-func value_logand(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_logand(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     result.type = Bool
     result.data = False
     if isTrue(lhs) == True && isTrue(rhs) == True {
@@ -281,8 +281,8 @@ func value_logand(lhs<value>,rhs<value>) {
     }
     return result
 }
-func value_logor(lhs<value>,rhs<value>) {
-    result<value> = new value
+func value_logor(lhs<Value>,rhs<Value>) {
+    result<Value> = new Value
     result.type = Bool
     result.data = False
     //FIXME: || 两边都是函数调用，导致这个会进行动态计算（但是两边是mem类型）
@@ -291,14 +291,14 @@ func value_logor(lhs<value>,rhs<value>) {
     }
     return result
 }
-func value_lognot(lhs<value>) {
-    result<value> = new value
+func value_lognot(lhs<Value>) {
+    result<Value> = new Value
     result.type = Bool
     result.data = !lhs.data
     return result
 }
-func value_bitnot(lhs<value>){
-    result<value> = new value
+func value_bitnot(lhs<Value>){
+    result<Value> = new Value
     result.type = Int
     result.data = ~lhs.data
     return result
@@ -307,7 +307,7 @@ func value_bitnot(lhs<value>){
 // tell if itstrue
 // @param cond
 // @return bool
-func isTrue(cond<value>){
+func isTrue(cond<Value>){
     if cond == False {
         fmt.println("isTrue: cond is null ,something wrong  probably")
         return False
@@ -328,14 +328,14 @@ func isTrue(cond<value>){
 // @param opt
 // @param lhs
 // @param rhs
-func operator_switch(opt<i32>,lhs<value>,rhs<value>){
+func operator_switch(opt<i32>,lhs<Value>,rhs<Value>){
     if rhs == null {
         if opt != LOGNOT && opt != BITNOT {
             fmt.vfprintf(std.STDOUT,*"[operator] only !,~ at unary expression,not:%d\n",opt)
             os.exit(-1)
         }
     }
-    ret<value> = null
+    ret<Value> = null
     match opt {
         ASSIGN:         ret =  rhs
         ADD_ASSIGN:     ret =  value_plus(lhs,rhs)
@@ -377,15 +377,15 @@ func operator_switch(opt<i32>,lhs<value>,rhs<value>){
 // @param lhs
 // @param rhs
 // @return
-func unary_operator(opt<i32>,lhs<u64*>,rhs<value>)
+func unary_operator(opt<i32>,lhs<u64*>,rhs<Value>)
 {
-    //lhs == value**
+    //lhs == Value**
     if lhs == null || rhs == null {
         fmt.println("[unary-op] probably wrong at there!")
         return Null
     }
-    ret<value> = operator_switch(opt,*lhs,rhs)
-    //*(value**)lhs = ret
+    ret<Value> = operator_switch(opt,*lhs,rhs)
+    //*(Value**)lhs = ret
     *lhs = ret
 }
 
@@ -394,13 +394,13 @@ func unary_operator(opt<i32>,lhs<u64*>,rhs<value>)
 // @param opt
 // @param lhs
 // @param rhs
-func binary_operator(opt<i32>, lhs<value>, rhs<value>)
+func binary_operator(opt<i32>, lhs<Value>, rhs<Value>)
 {
     if lhs == null {
         fmt.println("[binary-op] probably wrong at there!")
         return null
     }
-    ret<value> = operator_switch(opt,lhs,rhs)
+    ret<Value> = operator_switch(opt,lhs,rhs)
     if ret.data == 1 && ret.type == String 
         fmt.println("[binaryop] something error") 
     

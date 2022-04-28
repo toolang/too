@@ -9,9 +9,9 @@ func fatal(size,args...){
    os.exit(-1)
 }
 //format
-func println(count<runtime.value>,args...){
+func println(count<runtime.Value>,args...){
 	total<i32> = count.data
-	var<runtime.value> = null
+	var<runtime.Value> = null
 
 	p<u64*> = &args
 	stack<i32> = 5
@@ -43,9 +43,9 @@ func println(count<runtime.value>,args...){
     }
     vfprintf(std.STDOUT,*"\n")
 }
-func print(count<runtime.value> , args...){
+func print(count<runtime.Value> , args...){
 	total<i32> = count.data
-	var<runtime.value> = null
+	var<runtime.Value> = null
 
 	p<u64*> = &args
 	stack<i32> = 5

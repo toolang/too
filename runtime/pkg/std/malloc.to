@@ -3,19 +3,19 @@ use os
 
 BLOCK_FREE<u64> = 2880154539
 BLOCK_USED<u64> = 3452816845
-mem heap_header {
+mem Heap_header {
 	i32 		 type
 	u64 		 size
-	heap_header* next
-	heap_header* prev
+	Heap_header* next
+	Heap_header* prev
 }
 
 //global heap
-ghead<heap_header>
+ghead<Heap_header>
 gtail<u64>
 func free(ptr<u64*>)
 {
-	header<heap_header> = ptr - sizeof(heap_header)
+	header<Heap_header> = ptr - sizeof(Heap_header)
 	if header.type != BLOCK_USED return ZERO
 
 	header.type	= BLOCK_FREE
@@ -56,12 +56,12 @@ func realloc(p<u64*>, nbytes<u64>){
 }
 //TODO: memory expansion
 func malloc(size<u64>){
-	header<heap_header> = null
+	header<Heap_header> = null
 	if size == 0 {
 		return ZERO
 	}
 	header	= ghead
-	headersize<i64> = sizeof(heap_header)
+	headersize<i64> = sizeof(Heap_header)
 	while header != null	{
 		if header.type == BLOCK_USED {
 			header = header.next
@@ -73,7 +73,7 @@ func malloc(size<u64>){
 		
 		if header.size > size + headersize * 2 {
 			//split
-			next<heap_header> = header + size + headersize
+			next<Heap_header> = header + size + headersize
 			if next > gtail {
 				fmt.vfprintf(STDOUT,*"out of memory %d %d\n",next,gtail)
 				initmalloc()
@@ -99,7 +99,7 @@ func malloc(size<u64>){
 func initmalloc()
 {
 	base<u64> = 0
-	header<heap_header> = null
+	header<Heap_header> = null
 	//32MB heap size
 	heap_size<u64> = 33554432
 

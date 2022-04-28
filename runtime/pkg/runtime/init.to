@@ -12,7 +12,7 @@ func args_init(argc<u64> argv<u64*>){
 		if *argv == null {
 			break
 		}
-		str<value> = new value
+		str<Value> = new Value
 		str.type = String
 		str.data = string.stringnew(*argv)
 		arr_pushone(arr,str)

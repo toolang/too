@@ -1,6 +1,6 @@
 
 
-mem ip
+mem Ip
 {
 	u8  version:4
 	u8  lhl:4

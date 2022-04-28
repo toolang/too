@@ -8,7 +8,7 @@ use parser
 // @return Expression
 ArrayExpr::compile(ctx){
     record()
-    //new array & push array
+    //new Array & push array
     internal.newobject(ast.Array, 0)
 
     this.obj.push()

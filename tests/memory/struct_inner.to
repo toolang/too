@@ -3,29 +3,29 @@ use fmt
 use os
 use net
 
-mem data {
+mem Data {
 	i8 a,b,c,d
 }
 // 1.结构体嵌套
-mem innerDirect{
+mem InnerDirect{
 	i8    a
-	data  inner
+	Data  inner
 }
 // 2.内嵌结构体指针
-mem innerPointer{
+mem InnerPointer{
 	i8     a
-	data*  inner
+	Data*  inner
 }
 func test_inner_direct(){
 	fmt.println("test_direct")
-	var<innerDirect> = new innerDirect
-	var2<data> = var.inner
+	var<InnerDirect> = new InnerDirect
+	var2<Data> = var.inner
 	var2.a = 10
 	var2.b = 20
 	var2.c = 30
 	var2.d = 40
 	// 内嵌结构体字段的访问：引用与无引用都是读取的地址
-	p<data> = &var.inner
+	p<Data> = &var.inner
 	if  p.a != 10 || p.b != 20 || p.c != 30 || p.d != 40 {
 		fmt.println("test inner1 failed")
 		os.exit(-1)
@@ -40,8 +40,8 @@ func test_inner_direct(){
 
 func test_inner_pointer(){
 	fmt.println("test_pointer")
-	var<innerPointer> = new innerPointer
-	var2<data> = new data
+	var<InnerPointer> = new InnerPointer
+	var2<Data> = new Data
 	var.inner = var2
 	if  var.inner != var2 {
 		fmt.println("var.inner != var2 ")
@@ -51,7 +51,7 @@ func test_inner_pointer(){
 	var2.b = 20
 	var2.c = 30
 	var2.d = 40
-	p<data> = var.inner
+	p<Data> = var.inner
 	if  p.a != 10 || p.b != 20 || p.c != 30 || p.d != 40 {
 		fmt.println("test pointer failed")
 		os.exit(-1)
@@ -74,25 +74,25 @@ func main(){
 }
 
 // 3.结构体嵌套
-mem externDirect{
+mem ExternDirect{
 	i8    	  a
-	net.data  inner
+	net.Data  inner
 }
 // 4.内嵌结构体指针
-mem externPointer{
+mem ExternPointer{
 	i8     a
-	net.data*  inner
+	net.Data*  inner
 }
 func test_extern_direct(){
 	fmt.println("test_extern_direct")
-	var<externDirect> = new externDirect
-	var2<net.data> = var.inner
+	var<ExternDirect> = new ExternDirect
+	var2<net.Data> = var.inner
 	var2.a = 10
 	var2.b = 20
 	var2.c = 30
 	var2.d = 40
 	// 内嵌结构体字段的访问：引用与无引用都是读取的地址
-	p<net.data> = &var.inner
+	p<net.Data> = &var.inner
 	if  p.a != 10 || p.b != 20 || p.c != 30 || p.d != 40 {
 		fmt.println("test inner1 failed")
 		os.exit(-1)
@@ -106,8 +106,8 @@ func test_extern_direct(){
 }
 func test_extern_pointer(){
 	fmt.println("test_extern_pointer")
-	var<externPointer> = new externPointer
-	var2<net.data> = new net.data
+	var<ExternPointer> = new ExternPointer
+	var2<net.Data> = new net.Data
 	var.inner = var2
 	if  var.inner != var2 {
 		fmt.println("var.inner != var2 ")
@@ -117,7 +117,7 @@ func test_extern_pointer(){
 	var2.b = 20
 	var2.c = 30
 	var2.d = 40
-	p<net.data> = var.inner
+	p<net.Data> = var.inner
 	if  p.a != 10 || p.b != 20 || p.c != 30 || p.d != 40 {
 		fmt.println("test pointer failed")
 		os.exit(-1)

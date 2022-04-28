@@ -14,7 +14,7 @@ func hash_key(data<u8*>,len<u64>){
     return key
 }
 
-func get_hash_key(key<value>){
+func get_hash_key(key<Value>){
     if  key.type == Bool || key.type == Int {
 		return key.data
 	}

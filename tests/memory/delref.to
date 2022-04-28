@@ -34,13 +34,13 @@ func test_var(){
     }
     fmt.println("test del ref  var success")
 }
-mem t{
+mem T {
     i8* a
     u64 b
 }
 // FIXME: 当变量名为 mem 名时要优化异常处理
 func test_memeory(){
-    var<t> = new t 
+    var<T> = new T
     var.a = &var.b
 
     var.b = -100
@@ -50,14 +50,14 @@ func test_memeory(){
     }
     fmt.println("test memory del ref success")
 }
-mem t2{
+mem T2{
     u64* a
     i8* b
     i8* c
     i64 d
 }
 func test_multi(){
-    var<t2> = new t2
+    var<T2> = new T2
     var.a = &var.b
     var.b = &var.c
     var.c = &var.d

@@ -2,7 +2,7 @@
 use fmt
 use os
 
-mem header{
+mem Header{
 	i8*  a
 	u8   b
 	i16* c
@@ -13,7 +13,7 @@ mem header{
 	u64  h
 }
 // 测试一下指针的读写
-func test_assign(p<header>)
+func test_assign(p<Header>)
 {
 	fmt.println("test mem pointer member assign")
 	p.a = &p.b
@@ -44,7 +44,7 @@ func test_assign(p<header>)
 	}
 	fmt.println("test mem pointer member success")
 }
-func test_read(p<header>){
+func test_read(p<Header>){
 	fmt.println("test mem pointer member read")
 
 	if   int(*p.a)  != 100 {
@@ -65,7 +65,7 @@ func test_read(p<header>){
 	}
 	fmt.println("test mem pointer member read success")
 }
-func test_var(p<header>)
+func test_var(p<Header>)
 {
 	// a,c,e,g
 	p.h = -100
@@ -83,7 +83,7 @@ func test_var(p<header>)
 	fmt.println("test var del ref  cast success")
 }
 func main(){
-	p<header> = new header
+	p<Header> = new Header
 	test_assign(p)
 	test_read(p)
 	test_var(p)

@@ -1,6 +1,6 @@
 use fmt
 
-mem pointer{
+mem Pointer{
 	i8 up
 }
 // i8测试
@@ -19,7 +19,7 @@ func i8_test(){
 	fmt.println("i8 var test success")
 
 	// member test
-	p<pointer> = new pointer
+	p<Pointer> = new Pointer
 	p.up = 8
 	p.up /= 10
 	fmt.assert(int(p.up),0,"8 != 8")
@@ -35,7 +35,7 @@ func i8_test(){
 	fmt.println("i8 test success")
 }
 
-mem pu8{
+mem Pu8{
 	u8 p
 }
 func u8_test(){
@@ -51,7 +51,7 @@ func u8_test(){
 	t = t / 200
 	fmt.assert(int(t),1)
 
-	t2<pu8> = new pu8
+	t2<Pu8> = new Pu8
 
 	t2.p = 200
 	t2.p /= 200

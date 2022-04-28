@@ -2,7 +2,7 @@
 use fmt
 use os
 
-class http {
+class Http {
     // 可以不必显示定义成员变量
     // 可以动态定义变量
     request
@@ -21,7 +21,7 @@ func main(){
 
 func test_member_unary_operator_undefine(){
     fmt.println("[object] test undefine member unary operator")
-    b  = new http()
+    b  = new Http()
 
     b.undefine_int1 += 1
     if  b.undefine_int1 != 1 {
@@ -67,7 +67,7 @@ func test_member_unary_operator_undefine(){
 }
 func test_member_unary_operator(){
     fmt.println("[object] test  member unary operator")
-    b  = new http()
+    b  = new Http()
 
     b.request = 9
     b.request += 1

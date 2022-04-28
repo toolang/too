@@ -8,19 +8,19 @@ func stringlen(s<u8*>) {
     match flags & LSTRING_TYPE_MASK {
         LSTRING_TYPE_5: return LSTRING_TYPE_5_LEN(flags)
         LSTRING_TYPE_8:{
-            sh8<stringhdr8> = LSTRING_HDR(LSTRING_TYPE_8,s)
+            sh8<Stringhdr8> = LSTRING_HDR(LSTRING_TYPE_8,s)
             return sh8.len
         }
         LSTRING_TYPE_16:{
-            sh16<stringhdr16> = LSTRING_HDR(LSTRING_TYPE_16,s)
+            sh16<Stringhdr16> = LSTRING_HDR(LSTRING_TYPE_16,s)
             return sh16.len
         }
         LSTRING_TYPE_32:{
-            sh32<stringhdr32> = LSTRING_HDR(LSTRING_TYPE_32,s)
+            sh32<Stringhdr32> = LSTRING_HDR(LSTRING_TYPE_32,s)
             return sh32.len
         }
         LSTRING_TYPE_64:{
-            sh64<stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
+            sh64<Stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
             return sh64.len
         }
     }
@@ -29,11 +29,11 @@ func stringlen(s<u8*>) {
 
 func stringHdrSize(type<i8>) {
     match type & LSTRING_TYPE_MASK {
-        LSTRING_TYPE_5: return sizeof(stringhdr5)
-        LSTRING_TYPE_8: return sizeof(stringhdr8)
-        LSTRING_TYPE_16:return sizeof(stringhdr16)
-        LSTRING_TYPE_32:return sizeof(stringhdr32)
-        LSTRING_TYPE_64:return sizeof(stringhdr64)
+        LSTRING_TYPE_5: return sizeof(Stringhdr5)
+        LSTRING_TYPE_8: return sizeof(Stringhdr8)
+        LSTRING_TYPE_16:return sizeof(Stringhdr16)
+        LSTRING_TYPE_32:return sizeof(Stringhdr32)
+        LSTRING_TYPE_64:return sizeof(Stringhdr64)
     }
     return runtime.Null
 }
@@ -84,25 +84,25 @@ func stringnewlen(init<u64*>, initlen<u64>) {
     match type {
         LSTRING_TYPE_5: *fp = type | initlen << LSTRING_TYPE_BITS
         LSTRING_TYPE_8: {
-            sh8<stringhdr8> = LSTRING_HDR(LSTRING_TYPE_8,s)
+            sh8<Stringhdr8> = LSTRING_HDR(LSTRING_TYPE_8,s)
             sh8.len = initlen
             sh8.alloc = initlen
             *fp = type
         }
         LSTRING_TYPE_16: {
-            sh16<stringhdr16> = LSTRING_HDR(LSTRING_TYPE_16,s)
+            sh16<Stringhdr16> = LSTRING_HDR(LSTRING_TYPE_16,s)
             sh16.len = initlen
             sh16.alloc = initlen
             *fp = type
         }
         LSTRING_TYPE_32: {
-            sh32<stringhdr32> = LSTRING_HDR(LSTRING_TYPE_32,s)
+            sh32<Stringhdr32> = LSTRING_HDR(LSTRING_TYPE_32,s)
             sh32.len = initlen
             sh32.alloc = initlen
             *fp = type
         }
         LSTRING_TYPE_64: {
-            sh64<stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
+            sh64<Stringhdr64> = LSTRING_HDR(LSTRING_TYPE_64,s)
             sh64.len = initlen
             sh64.alloc = initlen
             *fp = type

@@ -24,10 +24,10 @@ mem Dir{
     i32     counts
     i32     pos
     i32     init
-    runtime.value* path
+    runtime.Value* path
 }
 //for user space
-class dirent {}
+class Dirent {}
 //dirent::init(type,name){
 //    fmt.println(type,name)
 //    this.type = type
@@ -43,7 +43,7 @@ mem Dirent{
 //opendir
 //@param  dir_path
 //@return Dir
-func opendir(dir_path<runtime.value>){
+func opendir(dir_path<runtime.Value>){
      fd<i32> = open(dir_path.data,O_RDONLY | O_DIRECTORY)
      if fd == -1 {
 	    fmt.vfprintf(STDOUT,*"opendir failed\n")
@@ -124,7 +124,7 @@ func dirtype(t<i8>){
     }
 }
 
-func is_dir(filepath<runtime.value>){
+func is_dir(filepath<runtime.Value>){
     s<Stat> = new Stat
     ret<i8> = stat(filepath.data,s)
     if ret != 0 return false
@@ -134,7 +134,7 @@ func is_dir(filepath<runtime.value>){
     }
     return false
 }
-func is_file(filepath<runtime.value>){
+func is_file(filepath<runtime.Value>){
     s<Stat> = new Stat
     ret<i8> = stat(filepath.data,s)
     if ret != 0 return false

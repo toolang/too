@@ -7,7 +7,7 @@ use string
 
 func newobject(type<i32> , data<u64*>)
 {
-    ret<value> = new value
+    ret<Value> = new Value
     ret.type   = type
     match type {
         Int:    ret.data = data
@@ -26,12 +26,12 @@ func newobject(type<i32> , data<u64*>)
     } 
     return ret
 }
-func newinherit_object(father<value>){
-    ret<value> = new value
+func newinherit_object(father<Value>){
+    ret<Value> = new Value
     ret.type   = Object
 
     //new default object
-    obj<object> = object_create()
+    obj<Object> = object_create()
     //save father
     obj.father  = father.data
 
@@ -39,7 +39,7 @@ func newinherit_object(father<value>){
 
     return ret
 }
-func get_object_value(obj<value>){
+func get_object_value(obj<Value>){
     if obj == null {
         fmt.println("[get obj] null")
         return Null
@@ -47,9 +47,9 @@ func get_object_value(obj<value>){
     return obj.data
 }
 
-func member_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtree_node>)
+func member_insert_or_update(temp<Rbtree_node>, node<Rbtree_node>,sentinel<Rbtree_node>)
 {
-	// rbtree_node **
+	// Rbtree_node **
 	p<u64*> = null
 
 	while True {
@@ -75,10 +75,10 @@ func member_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtre
     node.right = sentinel
     red(node)
 }
-func member_find(tree<rbtree>,key<value>){
+func member_find(tree<Rbtree>,key<Value>){
 
-	node<rbtree_node> = null
-	sentinel<rbtree_node> = null
+	node<Rbtree_node> = null
+	sentinel<Rbtree_node> = null
 
     hk<u64> = get_hash_key(key)
 
@@ -101,10 +101,10 @@ func member_find(tree<rbtree>,key<value>){
     }
     return Null
 }
-func member_insert(tree<rbtree>, k<value>,v<value>)
+func member_insert(tree<Rbtree>, k<Value>,v<Value>)
 {
 
-	node<rbtree_node> = new rbtree_node
+	node<Rbtree_node> = new Rbtree_node
 	hk<u64> = get_hash_key(k)
     node.key   = hk
     node.k     = k
@@ -113,17 +113,17 @@ func member_insert(tree<rbtree>, k<value>,v<value>)
 }
 // return object
 func object_create(size<i32>){
-    c<object> = new object
+    c<Object> = new Object
     if  c == null  {
         fmt.println("[object_create] failed to create")
         return Null
     }
-    members<rbtree> = new rbtree
-    members_sentinel<rbtree_node> = new rbtree_node
+    members<Rbtree> = new Rbtree
+    members_sentinel<Rbtree_node> = new Rbtree_node
     rbtree_init(members,members_sentinel,member_insert_or_update)
 
-    funcs<rbtree> = new rbtree
-    funcs_sentinel<rbtree_node> = new rbtree_node
+    funcs<Rbtree> = new Rbtree
+    funcs_sentinel<Rbtree_node> = new Rbtree_node
     rbtree_init(funcs,funcs_sentinel,member_insert_or_update)
 
     c.members = members
@@ -133,46 +133,46 @@ func object_create(size<i32>){
     return c
 }
 // return value
-func object_member_update(obj<value>,k<u32>,v<value>){
-    key<value> = int(k)
+func object_member_update(obj<Value>,k<u32>,v<Value>){
+    key<Value> = int(k)
     if  obj.type != Object {
         fmt.println("[object_membe_update] invalid obj type")
         os.exit(-1)
     }
-    c<object> = obj.data
+    c<Object> = obj.data
     member_insert(c.members,key,v)
 }
 // return value
-func object_member_get(obj<value>, k<u32>){
-    key<value> = int(k)
+func object_member_get(obj<Value>, k<u32>){
+    key<Value> = int(k)
     if  obj.type != Object {
         fmt.println("[object_membe_get] invalid obj type :",runtime.type_string(obj.type))
         os.exit(-1)
     }
-    c<object> = obj.data 
-    v<value> = member_find(c.members,key)
+    c<Object> = obj.data 
+    v<Value> = member_find(c.members,key)
     if  v == null {
         //fmt.println("object_get] not find the memeber:%d value\n",key)
         return null
     }
     return v
 }
-func object_unary_operator(opt<i32>,obj<value>,k<u32>,v<value>){
+func object_unary_operator(opt<i32>,obj<Value>,k<u32>,v<Value>){
     if   obj == null || v == null  {
         fmt.println(" [object-uop] probably wrong at there! object:%p rhs:%p\n",obj,int(v))
         return Null
     }
-    key<value> = object_member_get(obj,k)
-    ret<value> = operator_switch(opt,key,v)
+    key<Value> = object_member_get(obj,k)
+    ret<Value> = operator_switch(opt,key,v)
     object_member_update(obj,k,ret)
 }
-func object_func_add(obj<value>,k<u32>,addr<u64*>){
+func object_func_add(obj<Value>,k<u32>,addr<u64*>){
 
-    key<value> = int(k)
-    c<object> = obj.data
+    key<Value> = int(k)
+    c<Object> = obj.data
     member_insert(c.funcs,key,addr)
 }
-func get_member_func_addr(obj<object>,key<value>){
+func get_member_func_addr(obj<Object>,key<Value>){
     funcaddr<u64*> = member_find(obj.funcs,key)
     if  funcaddr == null {
         funcaddr = member_find(obj.members,key)
@@ -188,12 +188,12 @@ func get_member_func_addr(obj<object>,key<value>){
     }
     return funcaddr
 }
-func object_func_addr(obj<value>,k<u32>){
+func object_func_addr(obj<Value>,k<u32>){
     if  obj.type != Object {
         fmt.println("[object_func_addr] invalid obj type :",runtime.type_string(obj.type))
         os.exit(-1)
     }
-    key<value> = int(k)
+    key<Value> = int(k)
     return get_member_func_addr(obj.data,key)
 }
 

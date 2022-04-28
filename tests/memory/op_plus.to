@@ -1,16 +1,16 @@
 use fmt
 
-mem test{
+mem Test{
 	i8 a,b,c,d,e,f,g,h
 }
-mem pointer{
+mem Pointer{
 	i8* up
 }
 // i8测试
 func i8_test(){
-	p<test> = new test
-	member = func(p<test>){
-		pp<pointer> = new pointer
+	p<Test> = new Test
+	member = func(p<Test>){
+		pp<Pointer> = new Pointer
 		pp.up = p
 		for(i = 1 ; i <= 8 ; i += 1 ){
 			fmt.assert(int(*pp.up),i)
@@ -19,7 +19,7 @@ func i8_test(){
 		fmt.println("test member pointer + success")
 	}
 	// 测试 变量指针 +
-	var = func(p<test>){
+	var = func(p<Test>){
 		p.a = 1 p.b = 2 p.c = 3 p.d = 4 p.e = 5 p.f = 6 p.g = 7 p.h = 8
 		pp<i8*> = p
 		for(i = 1 ; i <= 8 ; i += 1 ){
@@ -32,14 +32,14 @@ func i8_test(){
 	member(p)
 }
 
-mem testu8{
+mem Testu8{
 	u8 a,b,c,d,e,f,g,h
 }
-mem pu8{
+mem Pu8{
 	u8* p
 }
 func u8_test(){
-	p<testu8> = new testu8
+	p<Testu8> = new Testu8
 	// 初始化值 u8 范围为 0 - 255
 	pp<u8*> = p
 	for(i = 220 ; i <= 228 ; i += 1){ 
@@ -47,9 +47,9 @@ func u8_test(){
 		pp += 1
 	}
 	//FIXME: segfault
-	member = func(p<testu8>){
+	member = func(p<Testu8>){
 		fmt.println("test member pointer")
-		pp<pu8> = new pu8
+		pp<Pu8> = new Pu8
 		pp.p = p
 		for(i = 220 ; i <= 228 ; i += 1 ){
 			fmt.assert(int(*pp.p),i)
@@ -58,7 +58,7 @@ func u8_test(){
 		fmt.println("test member pointer + success")
 	}
 	// 测试 变量指针 +
-	var = func(p<testu8>){
+	var = func(p<Testu8>){
 		pp<u8*> = p
 		for(i = 220 ; i < 228 ; i += 1 ){
 			//FIXME: gc bug

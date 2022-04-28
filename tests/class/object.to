@@ -2,7 +2,7 @@
 use fmt
 use os
 
-class http {
+class Http {
     // 可以不必显示定义成员变量
     // 可以动态定义变量
     request
@@ -20,7 +20,7 @@ func main(){
 func test_member_get_or_update(){
     fmt.println("[object] test member get and update")
 
-    b  = new http()
+    b  = new Http()
     b.request = 1
     if  b.request != 1 {
         fmt.println("test member failed b.request:" + b.request + " != 1")

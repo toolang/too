@@ -2,23 +2,23 @@
 use fmt
 use os
 
-mem info {
+mem Info {
 	i8  a
 	u8  b
 	i8* c
 }
-mem user {
+mem User {
 	i8    a
-	info* i
+	Info* i
 }
-mem base {
+mem Base {
 	i8    a
-	user* u
+	User* u
 }
-func newbase(){
-	var<base> = new base
-	var.u = new user
-	var.u.i = new info
+func newBase(){
+	var<Base> = new Base
+	var.u = new User
+	var.u.i = new Info
 	return var
 }
 // 1. 函数传参数测试
@@ -35,7 +35,7 @@ func test_args(){
 		}
 		fmt.println(int(a),int(b))
 	}
-	var<base> = newbase()
+	var<Base> = newBase()
 	var.u.a = 10
 	var.u.i.a = 20
 	// push args
@@ -47,7 +47,7 @@ func test_args(){
 func test_op(){
 	fmt.println("test operator")
 
-	var<base> = newbase()
+	var<Base> = newBase()
 	var.u.a = 10	
 	var.u.i.a = 20
 	if  var.u.a != 10 {
@@ -69,7 +69,7 @@ func test_op(){
 //3. builtin-func 参数返回值也需要测试
 func test_builtinfunc(){
 	fmt.println("test builtinnfunc")
-	var<base> = newbase()
+	var<Base> = newBase()
 
 	var.u.i.a = 100
 	fmt.println(int(var.u.i.a))
@@ -84,12 +84,12 @@ func test_builtinfunc(){
 func test_return(){
 	fmt.println("test return")
 	
-	f = func(var<base>){
+	f = func(var<Base>){
 		var.u.a = 99
 		var.u.i.a = 99
 		return var.u.a
 	}
-	var<base> = newbase()
+	var<Base> = newBase()
 	ret<i16> = f(var)
 	if  var.u.a != var.u.i.a {
 		fmt.println("var.u.a should eq var.u.i.a")
@@ -104,7 +104,7 @@ func test_return(){
 // 5. delref 解除引用的测试
 func test_delref(){
 	fmt.println("test delref")
-	var<base> = newbase()
+	var<Base> = newBase()
 	var.u.i.c = new 8
 	*var.u.i.c = 100
 	if  *var.u.i.c != 100 {
@@ -116,7 +116,7 @@ func test_delref(){
 // 6. &引用测试
 func test_ref(){
 	fmt.println("test ref")
-	var<base> = newbase()
+	var<Base> = newBase()
 	// 测试内嵌结构体指针访问的时候 &与不&都是不相等的
 	l<u64> = var.u.i
 	r<u64> = &var.u.i

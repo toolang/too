@@ -2,7 +2,7 @@
 use fmt
 use os
 
-class http {
+class Http {
     request
     response
     func test_member(){
@@ -31,7 +31,7 @@ class http {
 func extern_func(){
     return "extern_func"
 }
-http::test_memberfunc(){
+Http::test_memberfunc(){
     fmt.println("test_memberfunc")
     if this.fc() != "extern_func" {
         os.die("should be extern_func")
@@ -39,7 +39,7 @@ http::test_memberfunc(){
     fmt.println("test_memberfunc success",this.fc())
 }
 func main(){
-    a = new http()
+    a = new Http()
     a.request = "request"
     // 成员函数调用测试
     a.test_member()

@@ -38,14 +38,14 @@ func test_while(){
 		b += 1
 	}
 }
-mem t1 {
+mem T1 {
 	i8 a
 	i32 b
 }
 func test_new(){
 	fmt.println("test new expression")
 	// 1. new struct
-	a<t1> = new t1
+	a<T1> = new T1
 	a.b = 1000
 	if  a.b != 1000 {
 		fmt.println("test new mem failed")

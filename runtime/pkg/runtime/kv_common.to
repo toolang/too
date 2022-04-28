@@ -16,19 +16,19 @@ func len_string(v<u8*>){
 	//return len
 }
 
-mem array_t {
+mem Array_t {
 	u8* 	 addr
 	u8		 used		
     i64      size
 	u8		 total
 }
-func len_array(arr<array_t>){
+func len_array(arr<Array_t>){
 	return int(arr.used)
 }
-func cap_array(arr<array_t>){
+func cap_array(arr<Array_t>){
 	return int(arr.total)
 }
-func len(v<value>){
+func len(v<Value>){
 	type<i8> = v.type
 	data<i8> = v.data
 	match type {
@@ -43,7 +43,7 @@ func len(v<value>){
 	return 0
 }
 
-func pop(v<value>){
+func pop(v<Value>){
 	type<i8> = v.type
 	match type {
 		Array  : return array_pop(v.data)

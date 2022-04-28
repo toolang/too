@@ -27,7 +27,7 @@ pools<u64*>
 maxarenas<u32>
 arenas<u64*>
 unused_arena_objects<u64*>
-usable_arenas<arena>
+usable_arenas<Arena>
 narenas_currently_allocated<u64*>
 spstart<u64*>
 
@@ -56,32 +56,32 @@ False<i32> = 0
 Null<i32> = 0
 
 
-mem block {
+mem Block {
 	i32 flags
 	i32 mask
 	u64* addr
 }
 
-mem pool {
+mem Pool {
 	u8* 		ref # _padding,count
-	block*  	freeblock
-	pool* 		nextpool
-	pool* 		prevpool
+	Block*  	freeblock
+	Pool* 		nextpool
+	Pool* 		prevpool
 	u32			arenaindex
 	u32			szidx
 	u32 		nextoffset
 	u32			maxnextoffset
 } 
-mem arena {
+mem Arena {
 	u64 	address
 	u8*		first_address
 	u8* 	pool_address
 	u32 	nfreepools
 	u32 	ntotalpools
 
-	pool* 	freepools
-	arena*	nextarena
-	arena*	prevarena
+	Pool* 	freepools
+	Arena*	nextarena
+	Arena*	prevarena
 }
 func index2size(i<u32>){
 	ret<u32> = i + 1
@@ -105,21 +105,21 @@ func pta(x<i32>){
 	p 	  -= 16
 	return p
 }
-func in_heap(p<u64>,po<pool>){
-	areobj<arena> = arenas + po.arenaindex * 8
+func in_heap(p<u64>,po<Pool>){
+	areobj<Arena> = arenas + po.arenaindex * 8
 	adr<u64> = areobj.address
 	return po.arenaindex < maxarenas && p - adr < ARENA_SIZE && adr != null
 }
 
 FLAG_ALLOC<i8> = 1
 FLAG_MARK<i8>  = 2
-func flag_set(b<block>,f<u64>){
+func flag_set(b<Block>,f<u64>){
 	b.flags |= f
 }
-func flag_unset(b<block>,f<u64>){
+func flag_unset(b<Block>,f<u64>){
 	b.flags &= ~f
 }
-func flag_test(b<block>,f<u64>){
+func flag_test(b<Block>,f<u64>){
 	return b.flags & f
 }
 func is_marked(p<u64>){
@@ -137,7 +137,7 @@ func getpool(i<i32>){
 	return *p
 }
 func getarena(i<i32>){
-	return arenas + i * sizeof(arena)
+	return arenas + i * sizeof(Arena)
 }
 func assert(ret<i8>,str<i8*>){
     if ret return True

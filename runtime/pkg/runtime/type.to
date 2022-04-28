@@ -10,13 +10,13 @@ Zero<i32>			= 0
 Positive1<i32>		= 1
 Negative1<i32> 		= -1
 
-mem value  { 
+mem Value  { 
 	u64 type,data 
 }
-mem object { 
-	rbtree* members
-	rbtree* funcs
-	object* father
+mem Object { 
+	Rbtree* members
+	Rbtree* funcs
+	Object* father
 }
 
 func type_string(t<i8>){
@@ -33,13 +33,13 @@ func type_string(t<i8>){
 		_    : return "unknown type:" + int(t)
 	}
 }
-func is_map(map<value>){
+func is_map(map<Value>){
 	if  map.type == Map {
 		return true
 	}
 	return false
 }
-func is_array(arr<value>){
+func is_array(arr<Value>){
 	if  arr.type == Array {
 		return true
 	}

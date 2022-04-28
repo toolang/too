@@ -1,39 +1,39 @@
 use string
 
-mem rbtree {
-    rbtree_node* root
-    rbtree_node* sentinel
+mem Rbtree {
+    Rbtree_node* root
+    Rbtree_node* sentinel
 	u64          insert
 }
 
-mem rbtree_node {
+mem Rbtree_node {
     u64  key
 
-    rbtree_node* left
-    rbtree_node* right
-    rbtree_node* parent
+    Rbtree_node* left
+    Rbtree_node* right
+    Rbtree_node* parent
 
-    value* k
-    value* v
+    Value* k
+    Value* v
     u8   color
 }
 
-func rbtree_min(node<rbtree_node>,sentinel<rbtree_node>){
+func rbtree_min(node<Rbtree_node>,sentinel<Rbtree_node>){
     while node.left != sentinel {
         node = node.left
     }
     return node
 }
-func rbtree_next(tree<rbtree>,node<rbtree_node>){
+func rbtree_next(tree<Rbtree>,node<Rbtree_node>){
 
-    sentinel<rbtree_node> = tree.sentinel
+    sentinel<Rbtree_node> = tree.sentinel
 
     if  node.right != sentinel  {
         return rbtree_min(node.right, sentinel)
     }
 
-    root<rbtree_node> = tree.root
-    parent<rbtree_node> = 0
+    root<Rbtree_node> = tree.root
+    parent<Rbtree_node> = 0
     while true {
         parent = node.parent
         if  node == root  
@@ -44,11 +44,11 @@ func rbtree_next(tree<rbtree>,node<rbtree_node>){
         node = parent
     }
 }
-func map_find(map<value>, key<value>){
+func map_find(map<Value>, key<Value>){
 
-    tree<rbtree>          = map.data
-    node<rbtree_node>     = null
-    sentinel<rbtree_node> = null
+    tree<Rbtree>          = map.data
+    node<Rbtree_node>     = null
+    sentinel<Rbtree_node> = null
 
     hk<u64> = 0
     match key.type {
@@ -76,7 +76,7 @@ func map_find(map<value>, key<value>){
     }
     return Null
 }
-func map_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtree_node>)
+func map_insert_or_update(temp<Rbtree_node>, node<Rbtree_node>,sentinel<Rbtree_node>)
 {
     // **p
     // FIXME: p<rebtree_node*> parser报错
@@ -108,11 +108,11 @@ func map_insert_or_update(temp<rbtree_node>, node<rbtree_node>,sentinel<rbtree_n
     // make red
     node.color = 1
 }
-func map_insert(map<value>, k<value>,v<value>)
+func map_insert(map<Value>, k<Value>,v<Value>)
 {
 
-    tree<rbtree> = map.data
-    node<rbtree_node> = new rbtree_node
+    tree<Rbtree> = map.data
+    node<Rbtree_node> = new Rbtree_node
     hk<u64> = 0
     if  k.type == Bool || k.type == Int {
         hk = k.data
@@ -126,24 +126,24 @@ func map_insert(map<value>, k<value>,v<value>)
     rbtree_insert(tree,node)
 }
 
-func rbtree_init(tree<rbtree>, s<u64>, i<u64>){
+func rbtree_init(tree<Rbtree>, s<u64>, i<u64>){
     rbtree_sentinel_init(s)
     tree.root = s
     tree.sentinel = s
     tree.insert = i
 }
 func map_create(){
-    tree<rbtree> = new rbtree
-    sentinel<rbtree_node> = new rbtree_node
+    tree<Rbtree> = new Rbtree
+    sentinel<Rbtree_node> = new Rbtree_node
 
     rbtree_init(tree,sentinel,map_insert_or_update)
     return tree
 }
 
 
-func rbtree_left_rotate(root<u64*>, sentinel<rbtree_node>,node<rbtree_node>)
+func rbtree_left_rotate(root<u64*>, sentinel<Rbtree_node>,node<Rbtree_node>)
 {
-    temp<rbtree_node> = node.right
+    temp<Rbtree_node> = node.right
     node.right = temp.left
 
     if  temp.left != sentinel  {
@@ -164,9 +164,9 @@ func rbtree_left_rotate(root<u64*>, sentinel<rbtree_node>,node<rbtree_node>)
 }
 
 
-func rbtree_right_rotate(root<u64*>, sentinel<rbtree_node>,node<rbtree_node>)
+func rbtree_right_rotate(root<u64*>, sentinel<Rbtree_node>,node<Rbtree_node>)
 {
-    temp<rbtree_node> = node.left
+    temp<Rbtree_node> = node.left
 
     node.left = temp.right
 
@@ -185,11 +185,11 @@ func rbtree_right_rotate(root<u64*>, sentinel<rbtree_node>,node<rbtree_node>)
     temp.right = node
     node.parent = temp
 }
-func rbtree_insert(tree<rbtree>, node<rbtree_node>)
+func rbtree_insert(tree<Rbtree>, node<Rbtree_node>)
 {
     root<u64*> = null
-    temp<rbtree_node> = null
-    sentinel<rbtree_node> = null
+    temp<Rbtree_node> = null
+    sentinel<Rbtree_node> = null
     //a binary tree insert 
 
     root = &tree.root

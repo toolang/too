@@ -16,8 +16,8 @@ func gc_mark(ptr<u64*>)
 {
     if ptr == Null return True
 
-    po<pool>  = pool_addr(ptr)
-    areobj<arena> = arenas
+    po<Pool>  = pool_addr(ptr)
+    areobj<Arena> = arenas
     if po < areobj.address || areobj.address + ARENA_SIZE < po{
         // mark(&Hugmem,ptr)
         return NOT_STACK
@@ -29,7 +29,7 @@ func gc_mark(ptr<u64*>)
 
     size<i32> = index2size(po.szidx)
 
-    hdr<block> = ptr - 8
+    hdr<Block> = ptr - 8
     if hdr.mask == BLOCK_MASK {
         if hdr.flags < 1 || hdr.flags > 3     return True
         if flag_test(hdr,FLAG_ALLOC) == False return True
@@ -46,18 +46,18 @@ func gc_mark(ptr<u64*>)
 func gc_sweep()
 {
 
-    area<arena> = arenas 
+    area<Arena> = arenas 
     
     for (p<u64> = area.first_address ; p < area.pool_address ; p += POOL_SIZE)
     {
-        po<pool> = p
+        po<Pool> = p
 
         size<i32> = index2size(po.szidx)
         start_addr<u64> = p + POOL_OVERHEAD
         end_addr<u64>   = p + POOL_SIZE
         for (pp<u64> = start_addr ; pp < end_addr ; pp += size)
         {
-            obj<block> = pp
+            obj<Block> = pp
             if obj.mask != BLOCK_MASK {
                 continue
             }
@@ -104,10 +104,10 @@ func scan_stack(){
     ai<i32> = 0
     for ( cur_sp ;cur_sp < spstart ; cur_sp += 2){
         ptr<u64> = *cur_sp
-        v<runtime.value> = ptr
-        hdr<block> = ptr - 8
-        po<pool> = pool_addr(ptr)
-        areobj<arena> = getarena(ai) 
+        v<runtime.Value> = ptr
+        hdr<Block> = ptr - 8
+        po<Pool> = pool_addr(ptr)
+        areobj<Arena> = getarena(ai) 
         #FIXME: po(-4191910998841462784) > 140577428357136 should be false
         if po < areobj.address || areobj.address + ARENA_SIZE < po {
             continue
@@ -121,7 +121,7 @@ func scan_stack(){
         }
         if v.type == runtime.String {
             //TODO: fix 会有 type=string data=1的情况
-            temp_po<pool> = pool_addr(v.data)
+            temp_po<Pool> = pool_addr(v.data)
             if temp_po < areobj.address || areobj.address + ARENA_SIZE < temp_po {
             }else{
                 string.stringmark(v.data)

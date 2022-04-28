@@ -2,7 +2,7 @@
 use fmt
 use os
 
-mem byte{
+mem Byte{
 	i8 a1:1,a2:1,a3:1,a4:1,a5:1,a6:1,a7:1,a8:1
 }
 func assert(a,b,str){
@@ -11,7 +11,7 @@ func assert(a,b,str){
 		os.exit(-1)
 	}
 }
-func byte_assign(b<byte>){
+func byte_assign(b<Byte>){
 	fmt.println("byte_assign test")
 	a<u8*> = b
 	// 1 0 0 0 0 0 0 0 => 1
@@ -49,7 +49,7 @@ func byte_assign(b<byte>){
 	fmt.println("test byte read write success")
 }
 
-func test_unsigned(b<byte>){
+func test_unsigned(b<Byte>){
 	a<u8*> = b
 	assert(255,int(*a),"test failed u8 != 255")
 
@@ -59,7 +59,7 @@ func test_unsigned(b<byte>){
 	fmt.println("test byte unsigned success")
 }
 func main(){
-	b<byte> = new byte
+	b<Byte> = new Byte
 	byte_assign(b)
 	test_unsigned(b)
 

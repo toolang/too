@@ -1,8 +1,8 @@
-mem obj {
+mem Obj {
 	i8   a,b
-	obj* next
+	Obj* next
 }
-t<obj>
+t<Obj>
 use runtime.gc
 
 func test_speed()
@@ -16,10 +16,10 @@ func test_speed()
 }
 func test_logic(){
 	fmt.println("test_logic")
-	p1<obj> = gc.gc_malloc(sizeof(obj))
+	p1<Obj> = gc.gc_malloc(sizeof(Obj))
     p1.a = 10
     p1.b = 20
-	hdr<gc.block> = p1 - 8
+	hdr<gc.Block> = p1 - 8
     gc.gc()
 	if p1.a != 10 {
 		os.die("p1.a != 10")
@@ -27,7 +27,7 @@ func test_logic(){
 	if p1.b != 20 {
 		os.die("p1.b != 20")
 	}
-    p1.next = gc.gc_malloc(sizeof(obj))
+    p1.next = gc.gc_malloc(sizeof(Obj))
 	if p1.next == null {
 		os.die("p1.next == null")
 	}

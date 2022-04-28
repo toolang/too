@@ -57,14 +57,14 @@ tol      [options|file.o...]
 - [ ] float
 ```
 use fmt
-class http{
+class Http{
     # member
     request
     func handler(){
         fmt.println("hello world!",request,this.request)
     }
 }
-http::closure(){
+Http::closure(){
     return func(){
         return ["arr1","arr2",3,4]
     }
@@ -78,7 +78,7 @@ func main(){
     fmt.print(a[0],a[1],a[2],a[3],a[4]) #or fmt.print(a)
     b = {"sdfds":"sdfsd",1:2,"sdfds":3,"a":a} #map
     fmt.print(b["a"],b["sdfds"])
-    obj = new http() #object
+    obj = new Http() #object
     obj.request = {"method":"POST"}
     obj.handler()
     cfunc = obj.closure() #closure

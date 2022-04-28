@@ -3,11 +3,11 @@ use std
 use string
 use os
 
-class con{
+class Con {
   arr
   map
 }
-con::test_inner(){
+Con::test_inner(){
   fmt.println("test_inner")
   if this.arr[1] != 23 os.die("this.arr[1] should eq 23")
   if this.map["sec"] != 24 os.die("this.map[sec] should eq 24")
@@ -24,7 +24,7 @@ func test_local(obj){
 }
 
 func main(){
-  obj = new con() 
+  obj = new Con() 
   obj.arr = [1,23]
   obj.map = {"fir":23,"sec":24,"arr":obj.arr}
   test_local(obj)

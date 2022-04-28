@@ -1,6 +1,6 @@
 
 
-func cap(v<value>){
+func cap(v<Value>){
 	type<i8> = v.type
 	data<i8> = v.data
 
@@ -11,7 +11,7 @@ func cap(v<value>){
 	return 0
 }
 
-func kv_update(root<value>,index<value>,var<value>)
+func kv_update(root<Value>,index<Value>,var<Value>)
 {
     match root.type {
         Array : return arr_updateone(root,index,var)
@@ -20,7 +20,7 @@ func kv_update(root<value>,index<value>,var<value>)
     }
 }
 
-func kv_get(root<value>,index<value>){
+func kv_get(root<Value>,index<Value>){
     match root.type {
         Array : return arr_get(root,index)
         Map   : return map_find(root,index)

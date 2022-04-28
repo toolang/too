@@ -7,7 +7,7 @@ test_memory:
 
 check: install test
 
-test:
+test: install
 	sh tests_compiler.sh
 	sh tests_linker.sh
 	sh tests_asmer.sh

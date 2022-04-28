@@ -5,7 +5,7 @@ use fmt
 use std
 
 func newarena(){
-	arenaobj<arena> = null
+	arenaobj<Arena> = null
 	excess<u32> = null
 	if unused_arena_objects == null {
 		i<u32> = 0
@@ -19,7 +19,7 @@ func newarena(){
 		if  numarenas <= maxarenas 
 			return Null	
 
-		nbytes = numarenas * sizeof(arena)
+		nbytes = numarenas * sizeof(Arena)
 
 		arenaobj = std.realloc(arenas, nbytes)
 		if  arenaobj == Null return Null
@@ -29,16 +29,16 @@ func newarena(){
 
 		for (i = maxarenas ; i < numarenas ; i += 1) 
 		{
-			areobj<arena> = arenas + i * sizeof(arena)
+			areobj<Arena> = arenas + i * sizeof(Arena)
 			areobj.address = 0
 			if i < numarenas - 1 {
 				ii<i32> = i + 1
-				areobj.nextarena = arenas + ii * sizeof(arena)
+				areobj.nextarena = arenas + ii * sizeof(Arena)
 			} else {
 				areobj.nextarena = Null
 			}
 		}
-		unused_arena_objects = arenas + maxarenas * sizeof(arena)
+		unused_arena_objects = arenas + maxarenas * sizeof(Arena)
 		maxarenas = numarenas
 	}
 	if unused_arena_objects == Null {
@@ -79,9 +79,9 @@ func malloc(nbytes<u64>)
 {
 	//gc alloc is is unstable right now
 	//return std.malloc(nbytes)
-	bp<block>  = null
-	po<pool>   = null
-	next<pool> = null
+	bp<Block>  = null
+	po<Pool>   = null
+	next<Pool> = null
 	size<u32>  = null
 
 	if nbytes > runtime.I32_MAX {
@@ -205,18 +205,18 @@ expend_pool:
 redirect:
 	if nbytes == 0
 		nbytes = 1
-	ret<block> = std.malloc(nbytes)
+	ret<Block> = std.malloc(nbytes)
 	push(hugmem,&ret.addr,nbytes)
 	return ret
 }
-func free(p<block>)
+func free(p<Block>)
 {
 	//gc is unstable right now
 	return p
-	po<pool> = null
-	lastfree<block> = null
-	next<pool> = null
-	prev<pool> = null
+	po<Pool> = null
+	lastfree<Block> = null
+	next<Pool> = null
+	prev<Pool> = null
 	size<u32> = null
 
 	if p == null	
@@ -235,7 +235,7 @@ func free(p<block>)
 		p.addr = lastfree
 		po.freeblock = p
 		if lastfree != null{
-			ao<arena> = null
+			ao<Arena> = null
 			nf<u32>   = null
 			po.ref -= 1
 			if po.ref != 0 {
@@ -312,7 +312,7 @@ func free(p<block>)
 func gc_malloc(nbytes<u64>)
 {
 	return std.malloc(nbytes)
-	hdr<block> = malloc(nbytes + 8)
+	hdr<Block> = malloc(nbytes + 8)
 	std.memset(hdr,Null,nbytes+8)
 	hdr.mask = BLOCK_MASK
 	flag_set(hdr,FLAG_ALLOC)

@@ -39,13 +39,13 @@ func arr_arr(){
 	}
 	fmt.println("test arr[][] success!",re)
 }
-class v
+class V
 {
 	var
 }
 func call_var(){
 	ca =  func(){
-		obj = new v() 
+		obj = new V() 
 		obj.var = "obj"
 		return obj
 	}
@@ -63,7 +63,7 @@ func all(){
 			arr = ["all"]
 			return arr
 		}
-		obj = new v()
+		obj = new V()
 		obj.p = fn1
 		arr = [obj]
 		return arr
