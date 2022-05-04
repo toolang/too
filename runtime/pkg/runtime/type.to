@@ -19,6 +19,27 @@ mem Object {
 	Object* father
 	i32		typeid
 }
+func type(v<Value>, obj<i8>){
+	if obj == 1 {
+		match v.type {
+			Null : return 0
+			Int  : return 1
+			Float : return 2
+			String : return 3
+			Bool : return 4
+			Char : return 5
+			Array : return 6
+			Map  : return 7
+			Object : {
+				o<Object> = v.data
+				return int(o.typeid)
+			}
+			_    : return "type: unknown type:" + int(v.type)				
+		}
+	}else {
+		return int(v)
+	}
+}
 
 func type_string(t<i8>){
 	match t {
