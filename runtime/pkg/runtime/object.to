@@ -26,7 +26,7 @@ func newobject(type<i32> , data<u64*>)
     } 
     return ret
 }
-func newinherit_object(father<Value>){
+func newinherit_object(father<Value>,typeid<i32>){
     ret<Value> = new Value
     ret.type   = Object
 
@@ -34,7 +34,8 @@ func newinherit_object(father<Value>){
     obj<Object> = object_create()
     //save father
     obj.father  = father.data
-
+    //save type id
+    obj.typeid = typeid
     ret.data = obj
 
     return ret
@@ -112,12 +113,13 @@ func member_insert(tree<Rbtree>, k<Value>,v<Value>)
     rbtree_insert(tree,node)
 }
 // return object
-func object_create(size<i32>){
+func object_create(typeid<i32>){
     c<Object> = new Object
     if  c == null  {
         fmt.println("[object_create] failed to create")
         return Null
     }
+    c.typeid = typeid
     members<Rbtree> = new Rbtree
     members_sentinel<Rbtree_node> = new Rbtree_node
     rbtree_init(members,members_sentinel,member_insert_or_update)

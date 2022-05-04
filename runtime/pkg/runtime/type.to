@@ -17,6 +17,7 @@ mem Object {
 	Rbtree* members
 	Rbtree* funcs
 	Object* father
+	i32		typeid
 }
 
 func type_string(t<i8>){
