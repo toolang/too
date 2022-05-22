@@ -118,3 +118,10 @@ std_lstat:
      mov $6 , %rax
      syscall
      retq
+
+.globl std_execve
+std_execve:
+     mov $59 , %rax
+     syscall
+     retq
+
