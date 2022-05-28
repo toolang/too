@@ -2,16 +2,16 @@ use fmt
 use os 
 use std
 use utils
-use asm
+use compile
 
 # origin file
 code_file
 
-# executable file name
-out
-
 # need asm compile and linker to generate executable file
 run
+
+# pass args to binary executor
+args
 
 func print_help(){
     fmt.println("usage: ./toc [options|file.to...]\n" +
@@ -29,7 +29,7 @@ func llvmgen(){
 }
 func compile(){
     utils.debug("assembly generate")
-    codegen = new asm.AsmGen(code_file)
+    codegen = new compile.Compiler(code_file)
     codegen.compile()
 
     if run {
@@ -39,32 +39,34 @@ func compile(){
         os.shell(args)
     }
 }
+//TODO: 
 func debug(){
     parser = parser.Parser()
     parser.print()
 }
-
+func init(){
+    code_file = ""
+    args      = []
+    run       = false
+}
 func main() {
     if os.argc < 3 return print_help() 
+    code_file = ""
 
     i = 0
     while i < std.len(os.argv)  {
         match os.argv[i] {
-            "run" : {
-                run = true
-                return compile()
-            }
-            "-d" : {
-                utils.debug_mode = 1          # debug mode
+            "run" : run = true
+            "-d"  : utils.debug_mode = 1          # debug mode
+            _     : args[] = os.argv[i]
+            "-s"  : {
+                code_file = os.argv[i + 1]
                 i += 1
             }
-            "-s" : {
-                return compile()
-                i += 2
-            }
-            _ : {
-                os.die("args invalid",os.argv[i])
-            }
         }
+        i += 1
+    }
+    if code_file != "" {
+        return compile()
     }
 }

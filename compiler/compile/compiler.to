@@ -30,7 +30,7 @@ Compiler::init(filename)
     }
 }
 
-Compiler::execute()
+Compiler::compile()
 {
     //compute structs
     for(pkg : parser.packages){

@@ -1,4 +1,28 @@
 
+class Parser{
+    gvars # map[string]VarExpr global vars
+
+    //stor all global function
+    funcs        # map[string]Function
+    extern_funcs # map[string]Function
+
+    strs          # [StringExpr]  all static string
+    
+    links         # [string] ld link args
+
+    line column fileno
+
+    pkg # Package*
+    full_package # package name
+    package      
+    filename
+    asmfile
+    filepath
+
+    //currently scanner
+    scanner #Scanner*
+    import  # map[string]string    full package path => user use path
+}
 # count = 1
 count
 
