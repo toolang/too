@@ -13,8 +13,26 @@ func test_sub(){
     }
     fmt.println("test string sub success")
 }
+func test_split(){
+    fmt.println("test string split")
+    str = "/home/user/toolang/too"
+    arr = string.split(str,"/")
+    right = ["","home","user","toolang","too"]
+    for (k,v : arr){
+        fmt.println(v)
+        if right[k] != v {
+            os.die("test_split: assert failed ",right[k],v)
+        }
+    }
+
+    fmt.println("test string split success")
+}
+
+
+
 
 func main(){
     #test sub
     test_sub()
+    test_split()
 }
