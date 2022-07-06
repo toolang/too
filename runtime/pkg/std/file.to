@@ -1,4 +1,6 @@
 use runtime
+use fmt
+use string
 
 //open syscall; implement by asm
 func open(filename<i8*> , flags<i64> , mode<i64>)
@@ -65,4 +67,46 @@ func fseek(fp<u64>,offset<i64> , set<i64>){
 	return seek(fp,offset,set)
 }
 
+class File {
+	fd
+	open 
+	size
+	func init(filepath){
+		this.open = false
+		em<i64> = filepath
+		if em == null {
+			fmt.println("File::init null filepath")
+			return null
+		}
+		if filepath == "" {
+			fmt.println("File::init empty filepath")
+			return null
+		}	
+		ret<i8> = fopen(*filepath,*"r")
+		if ret == null {
+			fmt.print("fopen failed\n")
+			return null
+		}
+		this.size = fseek(ret,runtime.Null,SEEK_END)
+		fseek(ret,runtime.Null,SEEK_SET)
+		this.open = true
+		this.fd = ret
+	}
+	func IsOpen() {
+		return this.open
+	}
+	func Size(){
+		return int(this.size)
+	}
+	func ReadAll(){
+		s<i32> = this.size
+		buf<u64*> = new s
+		read_size<i64> = read(this.fd,buf,s)
+		if read_size != s {
+			fmt.println("fread err,",int(read_size))
+			return ""
+		}
+		return string.new(buf)
+	}
+}
 
