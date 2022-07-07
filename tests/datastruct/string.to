@@ -31,8 +31,20 @@ func test_string_int(num,str){
     }
     fmt.print("success num + str == ",nstr)
 }
-
+func test_index(){
+    fmt.println("test string index")
+    str = "abcde"
+    if str[0] != 'a' os.die("stro[0] should be a")
+    if str[1] != 'b' os.die("stro[1] should be b")
+    if str[2] != 'c' os.die("stro[2] should be c")
+    if str[3] != 'd' os.die("stro[3] should be d")
+    if str[4] != 'e' os.die("stro[4] should be e")
+    //out
+    if str[5] != 0   os.die("stro[5] should be outbound")
+    fmt.println("test string index success")
+}
 func main(){
     test_string()
     test_string_int(99,"test")
+    test_index()
 }
