@@ -52,3 +52,25 @@ func split(s<runtime.Value> , se<runtime.Value>) {
 	tokens[] = newlen(sp + start, len - start)
 	return tokens
 }
+func index_get(v<runtime.Value>,index<runtime.Value>){
+	if  v.type != runtime.String {
+        fmt.println("warn: string index not string type")
+        os.exit(-1)
+    }
+
+    if  v == null || v.data == null || index == null {
+        fmt.println("warn: string index is null ,probably something wrong\n")
+        os.exit(-1)
+    }
+
+	str<i8*> = v.data
+	l<i32> = index.data
+	if l >= stringlen(str) {
+		fmt.println("warn: string index out of bound ")
+		return 0
+	}
+
+	str += l
+	cn<i8> = *str
+	return int(cn)
+}

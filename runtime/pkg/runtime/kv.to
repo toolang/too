@@ -1,4 +1,5 @@
 
+use string
 
 func cap(v<Value>){
 	type<i8> = v.type
@@ -24,6 +25,7 @@ func kv_get(root<Value>,index<Value>){
     match root.type {
         Array : return arr_get(root,index)
         Map   : return map_find(root,index)
+        String: return string.index_get(root,index)
         _     : fmt.println("[kv_get] arr or map is invalid ,probably something wrong\n")
     }
 }
