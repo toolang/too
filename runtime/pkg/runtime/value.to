@@ -217,7 +217,7 @@ func value_equal(lhs<Value>,rhs<Value>,equal<i32>) {
         return result
     }
     //有int类型就进行int类型相加
-    if lhs.type == Int || rhs.type == Int {
+    if lhs.type == Int || rhs.type == Int || lhs.type == Char {
         result.data = value_int_equal(lhs,rhs,equal)
     }
     return result
