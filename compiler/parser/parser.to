@@ -1,3 +1,4 @@
+use string
 
 class Parser{
     gvars # map[string]VarExpr global vars
@@ -27,13 +28,13 @@ class Parser{
 count
 
 Parser::init(filepath,pkg,package,full_package) {
+    //init default env
     this.pkg = pkg
     this.currentFunc = null
     this.package = package
     this.filepath = filepath
 
-    //FIXME: not support find_last_of
-    fullname = string.sub(filepath,filepath.find_last_of('/')+1)
+    fullname = std.pop(string.split(filepath,"/"))
     filename = string.sub(fullname,0,std.len(fullname) - 3)
     asmfile  = filename + ".s"
     if package != "main"
@@ -42,9 +43,9 @@ Parser::init(filepath,pkg,package,full_package) {
     
     scanner = new Scanner(filepath,this)
     
-    import[package] = full_package
+    this.import[package] = full_package
     
-    import[""]  = full_package
+    this.import[""]  = full_package
 }
 
 

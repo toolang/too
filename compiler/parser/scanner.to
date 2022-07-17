@@ -1,17 +1,46 @@
+class Scanner{
+    fs      // std.File
+    buffer  // file body
+    pos     //file offset
+
+    // token
+    prevToken 
+    prevLex
+    curToken
+    curLex
+
+    parser //Parser*
+
+    line
+    column 
+
+}
+
+class Tx {
+    txpos 
+    txtk
+    txlex
+    func init(pos,tk,lex){
+        this.txpos = pos
+        this.txtk = tk
+        this.txlex = lex
+    }
+}
+
 Scanner::init(filepath,parser){
-    this.fs = std.open(filepath)
+    this.fs = new std.File(filepath)
     this.pos = 0
 
-    if !fs.is_open() {
+    if !fs.IsOpen() {
         os.die("error opening file :" + filepath )
     }
     this.parser = parser
     //TODO:
-    this.buffer = this.fs.readall()
+    this.buffer = this.fs.ReadAll()
 }
 Scanner::transaction()
 {
-    return new tx(this.pos,this.curToken,this.curLex)
+    return new Tx(this.pos,this.curToken,this.curLex)
 }
 Scanner::rollback(x)
 {
@@ -20,29 +49,30 @@ Scanner::rollback(x)
     this.curLex = x.txlex
 }
 Scanner::next() {
-    if pos >= std.len(buffer) {
+    if pos >= std.len(this.buffer) {
         return EOF
     }
-    column += 1
-	ret = string.pos(buffer,pos)
-    pos += 1
+    this.column += 1
+    ret = this.buffer[pos]
+    this.pos += 1
     return ret
 }
 Scanner::peek() {
     if pos >= std.len(buffer) {
         return EOF
     }
-    column += 1
-	return string.pos(buffer,pos)
+    this.column += 1
+	return this.buffer[pos]
 }
 Scanner::emptyline(){
-    tx t = transaction()
-    c
-    while c = next() && c != EOF && c != '\n' && c !='#' && c !='/'  {
+    tx = this.transaction()
+    c = next()
+    while c != EOF && c != '\n' && c !='#' && c !='/'  {
         if c != ' ' {
             rollback(t)
             return false
         }
+        c = next()
     }
     rollback(t)
     return true
@@ -52,10 +82,11 @@ Scanner::emptyline(){
  */
 Scanner::consumeLine()
 {
-    c
+    c = next()
     ret
-    while c = next() && c != EOF && c != '\n' ){
+    while c != EOF && c != '\n' ){
         ret += c
+        c = next()
     }
     return ret
 }
@@ -76,7 +107,7 @@ Scanner::parseNumber(first)
         return token(INT,lexeme)
     }
     
-    
+
     while (cn >= '0' && cn <= '9') || (!isDouble && cn == '.') {
         if c == '.'
             isDouble = true
@@ -84,8 +115,8 @@ Scanner::parseNumber(first)
         cn = peek()
         lexeme += c
     }
-    return !isDouble ? token(INT,lexeme)
-                     : token(FLOAT,lexeme)
+    if isDouble return token(INT,lexeme)
+    else        return token(FLOAT,lexeme)
 }
 Scanner::parseKeyword(c)
 {
@@ -94,42 +125,40 @@ Scanner::parseKeyword(c)
 
     cn = peek()
     while((cn >= 'a' && cn <= 'z') || (cn >= 'A' && cn <= 'Z') || cn == '_' || (cn >= '0' && cn <= '9')){
+
         c = next()
         lexeme += c
         cn = peek()
     }
     
-    
-    
-    
-    
     if lexeme == "new" && cn == '('{
         return token(VAR,lexeme)
     }
-    result = keywords.find(lexeme)
-    return result != keywords.end()
-           ? token(result.second,lexeme)
-           : token(VAR,      lexeme)
-}
+    if std.exist(keywords,lexeme){
+        return token(keywords[lexeme],lexeme)
+    } 
+    if std.exist(lexeme) && peek() == '(' {
+        return token(BUILTIN,lexeme)
+    }
 
+    return token(VAR,lexeme)
+}
 
 Scanner::parseMulOrDelref(c)
 {
     cn = peek()
     
-    if (cn == '=') {
+    if cn == '='  {
         c = next()
         return token(MUL_ASSIGN, "*=")
     }
-    
     
     if (cn >= 'a' && cn <= 'z' || (cn >= 'A' && cn <= 'Z')){
         return token(DELREF, "*")
     }
     
-    if cn == '\"'{
+    if cn == '\"'                  
         return token(DELREF, "*")
-    }
     return token(MUL, "*")
 }
 
@@ -165,7 +194,8 @@ Scanner::get_next() {
         if c == EOF
             return token(END,"")
     }
-    if c == '#' || ( c == '/' && peek( == '/')){
+    //TODO: support /*
+    if c == '#' || ( c == '/' && peek() == '/') {
         cn = peek()
         if c == '/'{
             c = next()
@@ -194,7 +224,7 @@ Scanner::get_next() {
     if c >= '0' && c <= '9'{
         return parseNumber(c)
     }
-    if  (c >= 'a' && c <= 'z' || (c >= 'A' && c <= 'Z') || c == '_'){
+    if  c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z' || c == '_'){
         return parseKeyword(c)
     }
     if c == '.'{

@@ -3,7 +3,10 @@ use fmt
 keywords
 typesize
 
+//FXIME: EOF
+EOF
 func init(){
+	EOF = -1
 	keywords = {
 	 	"if" 	: IF,     "else"   : ELSE,   "else"    : ELSE,
 		"while" : WHILE,   "for"   : FOR,    "false"   : BOOL,
@@ -21,4 +24,7 @@ func init(){
 		U8:1 , U16:2 , U32:4, U64:8,
 	}
 	packages = {}
+	
+	//Parser::count = 1
+	count = 1
 }
