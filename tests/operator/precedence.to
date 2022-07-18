@@ -1,6 +1,8 @@
 use fmt
 use os
-
+func gen100(){
+	return 100
+}
 func test_base(){
 	fmt.println("test base")
 	a = 3 b = 4
@@ -14,6 +16,12 @@ func test_base(){
 	//d = ( (3+4)*5) * ( (10 - 3) * 4)) 
 	//d = ( 35) * 28 = 980 
 	fmt.assert(d , 980,"d should be 980")
+
+	if (a = gen100()) && a == 100 {
+
+	}else{
+		os.die("a should be 100")
+	}
 
 	fmt.println("test base successfully")
 }
