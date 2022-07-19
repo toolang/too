@@ -1,37 +1,39 @@
+use ast
+
 Parser::parseStatement()
 {
-    node
-    match scanner.curToken{
-        IF: {
+    node = null
+    match scanner.curToken {
+        ast.IF: {
             scanner.scan()
             node = parseIfStmt()
         }
-        FOR: {
+        ast.FOR: {
             scanner.scan()
             node = parseForStmt()
         }
-        WHILE: {
+        ast.WHILE: {
             scanner.scan()
             node = parseWhileStmt()
         }
-        RETURN: {
+        ast.RETURN: {
             scanner.scan()
             node = parseReturnStmt()
         }
-        BREAK: {
+        ast.BREAK: {
             scanner.scan()
             node = new BreakStmt(line,column)
         }
-        GOTO: {
+        ast.GOTO: {
             scanner.scan()
             node = new GotoStmt(scanner.curLex,line,column)
             scanner.scan()
         }
-        CONTINUE: {
+        ast.CONTINUE: {
             scanner.scan()
             node = new ContinueStmt(line,column)
         }
-        MATCH: {
+        ast.MATCH: {
             scanner.scan()
             node = parseMatchSmt()
         }

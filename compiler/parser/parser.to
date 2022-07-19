@@ -1,4 +1,17 @@
 use string
+typesize
+
+//FXIME: EOF
+EOF
+func init(){
+	EOF = -1
+	typesize = {
+		I8:1 , I16:2 , I32:4, I64:8,
+		U8:1 , U16:2 , U32:4, U64:8,
+	}
+	//Parser::count = 1
+	count = 1
+}
 
 class Parser{
     gvars # map[string]VarExpr global vars

@@ -2,6 +2,7 @@ use std
 
 # map{name: Package}
 packages
+func init(){ packages = {} }
 
 Package::init(name , path , multi) {
     this.package      = name
