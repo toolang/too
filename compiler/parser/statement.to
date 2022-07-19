@@ -43,12 +43,12 @@ Parser::parseStatement()
 }
 Parser::parseIfStmt()
 {
-    node = new IfStmt(line,column)
+    node = new ast.IfStmt(line,column)
     
-    ifCase = new IfCaseExpr(line,column)
+    ifCase = new ast.IfCaseExpr(line,column)
     ifCase.cond = parseExpression()
     
-    if scanner.curToken == LBRACE{
+    if scanner.curToken == ast.LBRACE {
         ifCase.block = parseBlock()
     }else{
         ifCase.block = new Block()
@@ -56,13 +56,13 @@ Parser::parseIfStmt()
     }
     node.cases[] = ifCase
     
-    while scanner.curToken == ELSE {
-        ice = new IfCaseExpr(line,column)
+    while scanner.curToken == ast.ELSE {
+        ice = new ast.IfCaseExpr(line,column)
         scanner.scan()
         if scanner.curToken == IF{
             scanner.scan()
             ice.cond = parseExpression()
-            if scanner.curToken == LBRACE{
+            if scanner.curToken == ast.LBRACE {
                 ice.block = parseBlock()
             }else {
                 ice.block = new Block()
@@ -71,7 +71,7 @@ Parser::parseIfStmt()
             node.cases[] = ice
         
         }else{
-            if scanner.curToken == LBRACE{
+            if scanner.curToken == ast.LBRACE {
                 ice.block = parseBlock()
             }else {
                 ice.block = new Block()
@@ -88,37 +88,46 @@ Parser::parseForStmt()
     
     scanner.scan()
     
-    check(scanner.curToken == VAR)
+    check(scanner.curToken == ast.VAR)
 
-    Scanner::tx tx = scanner.transaction()
+    tx = scanner.transaction()
     {
         key = null
         value = parseExpression()
         obj = null
         
-        if type(value) == type(VarExpr) && (scanner.curToken == COMMA || scanner.curToken == COLON)){
+        if type(value) == type(ast.VarExpr) && (scanner.curToken == ast.COMMA || scanner.curToken == ast.COLON) {
             node.range = true
             
-            if scanner.curToken == COMMA{
+            if scanner.curToken == ast.COMMA {
                 key = value
                 scanner.scan()
                 value = parseExpression()
-                check(type(value) == type(VarExpr) 
+                check(type(value) == type(ast.VarExpr) 
             }
-            check(scanner.curToken == COLON)
+            check(scanner.curToken == ast.COLON)
             scanner.scan()
             obj = parseExpression()
             check(obj != null)
-            node.key   = key ?   key : null
-            node.value = value ? value : null
-            node.obj   = obj  ?  obj : null
-            
-            if std.len(node.key && !currentFunc.params_var,node.key.varname && !currentFunc.locals.count(node.key.varname))
+
+            node.key = null  
+            node.value = null 
+            node.obj = null
+            if key != null   node.key   = key
+            if value != null node.value = value
+            if obj != null   node.obj   = obj
+
+            if node.key != null 
+               && !std.exist(currentFunc.params_var,node.key.varname) 
+               && !std.exist(currentFunc.locals,node.key.varname)
                 currentFunc.locals[node.key.varname] = node.key
-            if std.len(node.value && !currentFunc.params_var,node.value.varname && !currentFunc.locals.count(node.value.varname))
+
+            if node.value != null 
+               && !std.exist(currentFunc.params_var,node.value.varname)
+               && !std.exist(currentFunc.locals,node.value.varname)
                 currentFunc.locals[node.value.varname] = node.value
             
-            assert(scanner.curToken == RPAREN)
+            fmt.assert(scanner.curToken == ast.RPAREN)
             scanner.scan()
             
             node.block = parseBlock()
@@ -128,15 +137,15 @@ Parser::parseForStmt()
         scanner.rollback(tx)
     }
     node.init = parseExpression()
-    check(scanner.curToken == SEMICOLON)
+    check(scanner.curToken == ast.SEMICOLON)
     scanner.scan()
 
     node.cond = parseExpression()
-    assert(scanner.curToken == SEMICOLON)
+    assert(scanner.curToken == ast.SEMICOLON)
     scanner.scan()
     
     node.after = parseExpression()
-    assert(scanner.curToken == RPAREN)
+    assert(scanner.curToken == ast.RPAREN)
     scanner.scan()
     
     node.block = parseBlock()
@@ -145,12 +154,12 @@ Parser::parseForStmt()
 Parser::parseMatchSmt(){
     ms = new MatchStmt(line,column)
     ms.cond = parseExpression()
-    check(scanner.curToken == LBRACE)
+    check(scanner.curToken == ast.LBRACE)
     scanner.scan()
-    while scanner.curToken != RBRACE {
+    while scanner.curToken != ast.RBRACE {
         cs = parseMatchCase()
         cs.matchCond = ms.cond
-        if cs.defaultCase{
+        if cs.defaultCase {
             ms.defaultCase = cs
             continue
         }
@@ -161,21 +170,21 @@ Parser::parseMatchSmt(){
 }
 Parser::parseMatchCase()
 {
-    cs = new MatchCaseExpr(line,column)
+    cs = new ast.MatchCaseExpr(line,column)
     
     cs.cond  = parseExpression()
     cs.block = null
     
-    if type(cs.cond == type(VarExpr) {
+    if type(cs.cond == type(ast.VarExpr) {
         cond = cs.cond
         
         if cond.varname == "_"{
             cs.defaultCase = true
         }
     }
-    check(scanner.curToken == COLON)
+    check(scanner.curToken == ast.COLON)
     scanner.scan()
-    if scanner.curToken == LBRACE {
+    if scanner.curToken == ast.LBRACE {
         cs.block = parseBlock(); 
     }else{
         cs.block = new Block()
@@ -186,17 +195,15 @@ Parser::parseMatchCase()
 Parser::parseWhileStmt() {
     node = new WhileStmt(line, column)
     
-    if scanner.curToken == LPAREN{
+    if scanner.curToken == ast.LPAREN {
         scanner.scan()
     }
     
     node.cond = parseExpression()
     
-    if scanner.curToken == RPAREN{
+    if scanner.curToken == ast.RPAREN {
         scanner.scan()
     }
-    
-    
     
     node.block = parseBlock()
     return node
@@ -209,8 +216,8 @@ Parser::parseReturnStmt() {
 }
 Parser::parseExpressionStmt()
 {
-    node = null
-    if p = parseExpression( ; p != null)
-        node = new ExpressionStmt(p,line,column)
-    return node
+    p = parseExpression()
+    if p != null
+        return new ExpressionStmt(p,line,column)
+    return null
 }
