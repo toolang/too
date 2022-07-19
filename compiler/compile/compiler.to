@@ -126,7 +126,7 @@ Compiler::assign_offsets(fn)
         } else{
             top = ALIGN_UP(top, 8)
             var.offset = top
-            if var.structtype && !var.pointer && var.type <= U64 && var.type >= I8 {
+            if var.structtype && !var.pointer && var.type <= ast.U64 && var.type >= ast.I8 {
                 top += var.size
             }else{
                 top += 8
@@ -140,7 +140,7 @@ Compiler::assign_offsets(fn)
         if var.stack {
             bottom += var.size * var.stacksize
         }
-        else if var.structtype && !var.pointer && var.type <= U64 && var.type >= I8 {
+        else if var.structtype && !var.pointer && var.type <= ast.U64 && var.type >= ast.I8 {
             bottom += var.size
         }else{
             bottom += 8

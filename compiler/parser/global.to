@@ -2,22 +2,22 @@ Parser::parseEnumDef(){
     
     scanner.scan()
     
-    check(scanner.curToken == LBRACE)
+    check(scanner.curToken == ast.LBRACE)
     
     scanner.scan()
     defaulte = 0
-    while scanner.curToken != RBRACE {
+    while scanner.curToken != ast.RBRACE {
         gv = new VarExpr(scanner.curLex,line,column)
         gv.structtype = true
         gv.ivalue = defaulte ++;        
         gvars[gv.varname] = gv
         gv.is_local = false
         gv.package  = this.package
-        gv.type = I32
+        gv.type = ast.I32
         gv.size = 4
 
         scanner.scan()
-        if scanner.curToken == COMMA
+        if scanner.curToken == ast.COMMA
             scanner.scan()
     }
     scanner.scan()
@@ -32,7 +32,7 @@ Parser::parseStructVar(varname)
     if scanner.curToken == ASSIGN{
         
         scanner.scan()
-        check(scanner.curToken == INT)
+        check(scanner.curToken == ast.INT)
         varexpr.ivalue = scanner.curLex
         
         scanner.scan()
@@ -50,12 +50,12 @@ Parser::parseFlatVar(var){
 }
 
 Parser::parseClassFunc(var){
-    check(scanner.curToken == COLON)
+    check(scanner.curToken ==  ast.COLON)
     
     scanner.scan()
-    assert(scanner.curToken == COLON)
+    assert(scanner.curToken ==  ast.COLON)
     
-    scanner.curToken  = FUNC
+    scanner.curToken  = ast.FUNC
     
     f = parseFuncDef(true)
     assert(f != null)
@@ -68,14 +68,14 @@ Parser::parseClassFunc(var){
 }
 Parser::parseGlobalDef()
 {
-    if scanner.curToken != VAR
+    if scanner.curToken != ast.VAR
         panic("SyntaxError: global var define invalid token:" + getTokenString(scanner.curToken))
     var = scanner.curLex
     
     scanner.scan()
     match scanner.curToken{
         LT: return parseStructVar(var)
-        COLON: return parseClassFunc(var)
+         ast.COLON: return parseClassFunc(var)
         _ : return parseFlatVar(var)
     }
 }

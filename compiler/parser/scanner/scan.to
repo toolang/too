@@ -243,7 +243,7 @@ Scanner::get_next() {
     if c == ';'{
         lexeme
         lexeme += c
-        return token(ast.SEMICOLON,lexeme)
+        return token(ast.SEMI ast.COLON,lexeme)
     }
     
     if (c == '\'') {
@@ -401,7 +401,7 @@ Scanner::precedence(Token op)
         LOGAND: return 2
         EQ  | NE  | GT | GE | LT | LE:        return 3
         ADD | SUB | BITOR:                    return 4
-        MUL | MOD | DIV | BITAND | SHL | SHR: return 5
+        ast.MUL | MOD | DIV | BITAND | SHL | SHR: return 5
         _ :     return 0
     }
 

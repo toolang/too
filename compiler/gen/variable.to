@@ -106,7 +106,7 @@ VarExpr::compile(ctx){
         Var_Local : { 
             Compiler::GenAddr(ret)
             
-            if ret.structtype && !ret.pointer && ret.type <= U64 && ret.type >= I8    
+            if ret.structtype && !ret.pointer && ret.type <= ast.U64 && ret.type >= ast.I8    
                 Compiler::Load(ret.size,ret.isunsigned)
             else                                    
                 Compiler::Load()

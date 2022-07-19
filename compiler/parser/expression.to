@@ -29,7 +29,7 @@ Parser::parseChainExpr(first){
     
     while std.exist(scanner.curToken,[DOT,LPAREN,LBRACKET]) {
         match scanner.curToken {
-            DOT : {
+            ast.DOT : {
                 scanner.scan()
                 me = new MemberExpr(line,column)
                 me.membername = scanner.curLex
@@ -37,8 +37,8 @@ Parser::parseChainExpr(first){
                 
                 scanner.scan()
             }
-            LPAREN :   chainExpr.fields[] = parseFuncallExpr("")
-            LBRACKET : chainExpr.fields[] = parseIndexExpr("")
+            ast.LPAREN :   chainExpr.fields[] = parseFuncallExpr("")
+            ast.LBRACKET : chainExpr.fields[] = parseIndexExpr("")
         }
     }
     check(std.len(chainExpr.fields),"parse chain expression,need at least 2 field")
@@ -96,7 +96,7 @@ Parser::parseExpression(oldPrecedence)
     
     while std.exist(scanner.curToken,[SHL,SHR,BITOR, BITAND, BITNOT, LOGOR,
                   LOGAND, LOGNOT, EQ, NE, GT, GE, LT,
-                  LE, ADD, SUB, MOD, MUL, DIV])
+                  LE, ADD, SUB, MOD, ast.MUL, DIV])
     {
         currentPrecedence = scanner.precedence(scanner.curToken)
         if (oldPrecedence > currentPrecedence)
@@ -122,7 +122,7 @@ Parser::parseUnaryExpr()
         val.lhs = parseUnaryExpr()
         return val
     }else if std.exist(scanner.curToken,[FLOAT,INT,CHAR,STRING,VAR,FUNC,LPAREN,LBRACKET,
-                    LBRACE,RBRACE,BOOL,EMPTY,NEW,DOT,DELREF,BITAND,BUILTIN]){
+                    ast.LBRACE,RBRACE,BOOL,EMPTY,NEW,DOT,DELREF,BITAND,BUILTIN]){
         return parsePrimaryExpr()
     }
     utils.debug("parseUnaryExpr: not found token:%d-%s file:%s line:%d",scanner.curToken,scanner.curLex,filepath,line)
@@ -136,16 +136,16 @@ Parser::parsePrimaryExpr()
     
     if tk == BUILTIN {
         BuiltinFuncExpr* builtinfunc = new BuiltinFuncExpr(scanner.curLex,scanner.line,scanner.column)
-        check(scanner.scan() == LPAREN)
+        check(scanner.scan() == ast.LPAREN)
         scanner.scan()
         
-        if scanner.curToken == MUL{
+        if scanner.curToken == ast.MUL{
             builtinfunc.expr = parsePrimaryExpr()
         }else{
             builtinfunc.expr = parseExpression()
         }
 
-        check(scanner.curToken == RPAREN)
+        check(scanner.curToken == ast.RPAREN)
         scanner.scan()
         return builtinfunc
     }
@@ -153,20 +153,20 @@ Parser::parsePrimaryExpr()
     if tk == BITAND {
         addr = new AddrExpr(scanner.line,scanner.column)
         tk = scanner.scan()
-        if tk == VAR{
+        if tk == ast.VAR{
             addr.varname = scanner.curLex
         }
         tk = scanner.scan()
-        if tk == DOT{
+        if tk == ast.DOT{
             addr.package = addr.varname
             scanner.scan()
-            assert(scanner.curToken == VAR)
+            assert(scanner.curToken == ast.VAR)
             addr.varname = scanner.curLex
             scanner.scan()
         }
         return addr
     }
-    if tk == DELREF || tk == MUL{
+    if tk == DELREF || tk == ast.MUL{
         utils.debug("find token delref")
         
         scanner.scan()
@@ -176,25 +176,25 @@ Parser::parsePrimaryExpr()
         delref.expr = p
         return delref
     
-    }else if tk == DOT{
+    }else if tk == ast.DOT{
         scanner.scan()
-        assert(scanner.curToken == VAR)
+        assert(scanner.curToken == ast.VAR)
         me = new MemberExpr(line,column)
         me.membername = scanner.curLex
         
         scanner.scan()
         return me
-    }else if tk == LPAREN{
+    }else if tk == ast.LPAREN{
         scanner.scan()
         val = parseExpression()
-        assert(scanner.curToken == RPAREN)
+        assert(scanner.curToken == ast.RPAREN)
         
         scanner.scan()
         return val
-    }else if tk == LBRACKET && (prev == RBRACKET || prev == RPAREN) {
+    }else if tk == ast.LBRACKET && (prev == ast.RBRACKET || prev == ast.RPAREN) {
         return parseIndexExpr("")
     }
-    else if tk == FUNC
+    else if tk == ast.FUNC
     {
         prev    = currentFunc
         closure = parseFuncDef(false,true)
@@ -205,12 +205,12 @@ Parser::parsePrimaryExpr()
         
         currentFunc = prev
         return var
-    }else if tk == VAR
+    }else if tk == ast.VAR
     {
         var = scanner.curLex
         scanner.scan()
         return parseVarExpr(var)
-    }else if tk == INT
+    }else if tk == ast.INT
     {
         ret = new IntExpr(line,column)
         ret.literal = scanner.curLex
@@ -252,38 +252,38 @@ Parser::parsePrimaryExpr()
     {
         scanner.scan()
         return new NullExpr(line,column)
-    }else if tk == LBRACKET
+    }else if tk == ast.LBRACKET
     {
         scanner.scan()
         ret = new ArrayExpr(line,column)
-        if scanner.curToken != RBRACKET{
-            while(scanner.curToken != RBRACKET) {
+        if scanner.curToken != ast.RBRACKET{
+            while(scanner.curToken != ast.RBRACKET) {
                 ret.literal[] = parseExpression()
-                if scanner.curToken == COMMA
+                if scanner.curToken == ast.COMMA
                     scanner.scan()
             }
-            assert(scanner.curToken == RBRACKET)
+            assert(scanner.curToken == ast.RBRACKET)
             scanner.scan()
             return ret
         }
         scanner.scan()
         return ret
-    }else if tk == LBRACE
+    }else if tk == ast.LBRACE
     {
         scanner.scan()
         ret = new MapExpr(line,column)
-        if scanner.curToken != RBRACE{
-            while(scanner.curToken != RBRACE) {
+        if scanner.curToken != ast.RBRACE{
+            while(scanner.curToken != ast.RBRACE) {
                 KVExpr* kv = new KVExpr(line,column)
                 kv.key    = parseExpression()
-                check(scanner.curToken == COLON)
+                check(scanner.curToken ==  ast.COLON)
                 scanner.scan()
                 kv.value  = parseExpression()
                 ret.literal[] = kv
-                if scanner.curToken == COMMA
+                if scanner.curToken == ast.COMMA
                     scanner.scan()
             }
-            assert(scanner.curToken == RBRACE)
+            assert(scanner.curToken == ast.RBRACE)
             scanner.scan()
             return ret
         }
@@ -300,7 +300,7 @@ Parser::parsePrimaryExpr()
 
 Parser::parseNewExpr()
 {
-    if scanner.curToken == INT {
+    if scanner.curToken == ast.INT {
         ret = new NewExpr(line,column)
         ret.len = atoi(scanner.curLex)
         scanner.scan()
@@ -310,14 +310,14 @@ Parser::parseNewExpr()
     name    = scanner.curLex
     
     scanner.scan()
-    if scanner.curToken == DOT{
+    if scanner.curToken == ast.DOT{
         scanner.scan()
-        assert(scanner.curToken == VAR)
+        assert(scanner.curToken == ast.VAR)
         package = name
         name = scanner.curLex
         scanner.scan()
     }
-    if scanner.curToken != LPAREN {
+    if scanner.curToken != ast.LPAREN {
         ret = new NewExpr(line,column)
         ret.package = package
         ret.name    = name
@@ -328,14 +328,14 @@ Parser::parseNewExpr()
     ret.name = name
     scanner.scan()
     
-    while scanner.curToken != RPAREN {
+    while scanner.curToken != ast.RPAREN {
         ret.args[] = parseExpression()
         
-        if scanner.curToken == COMMA
+        if scanner.curToken == ast.COMMA
             scanner.scan()
     }
     
-    assert(scanner.curToken == RPAREN)
+    assert(scanner.curToken == ast.RPAREN)
     scanner.scan()
     return ret
 }
@@ -346,13 +346,13 @@ Parser::parseVarExpr(var)
         package = import[var]
     }
     match scanner.curToken{
-        DOT : {
+        ast.DOT : {
             scanner.scan()
-            check(scanner.curToken == VAR)
+            check(scanner.curToken == ast.VAR)
             pfuncname = scanner.curLex
             
             scanner.scan()
-            if  scanner.curToken == LPAREN
+            if  scanner.curToken == ast.LPAREN
             {
                 call = parseFuncallExpr(pfuncname)
                 call.is_pkgcall  = true
@@ -375,7 +375,7 @@ Parser::parseVarExpr(var)
                     call.args.insert(call.args.end(),params.begin(),params.end())
                 }
                 return call
-            }else if scanner.curToken == LBRACKET{
+            }else if scanner.curToken == ast.LBRACKET{
                 IndexExpr* index = parseIndexExpr(pfuncname)
                 index.is_pkgcall  = true
                 index.package = package
@@ -403,26 +403,26 @@ Parser::parseVarExpr(var)
                 return gvar
             }
         }
-        LPAREN:     return parseFuncallExpr(var)
-        LBRACKET:   return parseIndexExpr(var)
+        ast.LPAREN:     return parseFuncallExpr(var)
+        ast.LBRACKET:   return parseIndexExpr(var)
         LT : {
             Scanner::tx tx = scanner.transaction()
 
             expr = new VarExpr(var,line,column)
             varexpr = new VarExpr(var,line,column)
             expr.structtype = true
-            expr.type = U64
+            expr.type = ast.U64
             expr.size = 8
             expr.isunsigned = true
             scanner.scan()
             
-            if scanner.curToken == VAR{
+            if scanner.curToken == ast.VAR{
                 sname = scanner.curLex
                 expr.structname = sname
                 scanner.scan()
-                if scanner.curToken == DOT{
+                if scanner.curToken == ast.DOT{
                     scanner.scan()
-                    assert(scanner.curToken == VAR)
+                    assert(scanner.curToken == ast.VAR)
                     expr.package = sname
                     expr.structname = scanner.curLex
                     scanner.scan()
@@ -435,25 +435,25 @@ Parser::parseVarExpr(var)
                 scanner.scan()
 
                 return expr
-            }else if scanner.curToken <= U64 && scanner.curToken >= I8{
+            }else if scanner.curToken <= ast.U64 && scanner.curToken >= ast.I8{
             
             
                 expr.size = typesize[scanner.curToken]
                 expr.type = scanner.curToken
                 expr.isunsigned = false
-                if scanner.curToken >= U8 && scanner.curToken <= U64
+                if scanner.curToken >= ast.U8 && scanner.curToken <= ast.U64
                     expr.isunsigned = true
                 scanner.scan()
-                if scanner.curToken == MUL{
+                if scanner.curToken == ast.MUL{
                     expr.pointer = true
                     scanner.scan()
                 }
                 
                 
                 
-                if ( scanner.curToken == COLON){
+                if ( scanner.curToken ==  ast.COLON){
                     scanner.scan()
-                    check(scanner.curToken == INT,"mut be (var<i8:-int-)")
+                    check(scanner.curToken == ast.INT,"mut be (var<i8:-int-)")
                     expr.stack = true
                     expr.stacksize = atoi(scanner.curLex)
                     scanner.scan()
@@ -466,7 +466,7 @@ Parser::parseVarExpr(var)
             scanner.rollback(tx)
             return varexpr
         }
-        COLON : {
+         ast.COLON : {
             if scanner.emptyline(){
                 scanner.scan()
                 return new LabelExpr(var,line,column)
@@ -486,14 +486,14 @@ Parser::parseFuncallExpr(callname)
     val = new FunCallExpr(line,column)
     val.funcname = callname
 
-    while scanner.curToken != RPAREN {
+    while scanner.curToken != ast.RPAREN {
         val.args[] = parseExpression()
         
-        if scanner.curToken == COMMA
+        if scanner.curToken == ast.COMMA
             scanner.scan()
     }
     
-    assert(scanner.curToken == RPAREN)
+    assert(scanner.curToken == ast.RPAREN)
     scanner.scan()
     return val;  
 }
@@ -503,7 +503,7 @@ Parser::parseIndexExpr(varname){
     val = new IndexExpr(line,column)
     val.varname = varname
     val.index = parseExpression()
-    assert(scanner.curToken == RBRACKET)
+    assert(scanner.curToken == ast.RBRACKET)
     
     scanner.scan()
     return val

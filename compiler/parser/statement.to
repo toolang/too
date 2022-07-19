@@ -137,11 +137,11 @@ Parser::parseForStmt()
         scanner.rollback(tx)
     }
     node.init = parseExpression()
-    check(scanner.curToken == ast.SEMICOLON)
+    check(scanner.curToken == ast.SEMI ast.COLON)
     scanner.scan()
 
     node.cond = parseExpression()
-    assert(scanner.curToken == ast.SEMICOLON)
+    assert(scanner.curToken == ast.SEMI ast.COLON)
     scanner.scan()
     
     node.after = parseExpression()

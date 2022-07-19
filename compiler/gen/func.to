@@ -38,7 +38,7 @@ BuiltinFuncExpr::compile(ctx){
 	ret = this.expr.compile(ctx)
 
 	//获取到 数据类型
-	Token tk = I64
+	Token tk = ast.I64
 	if (ret == null){
 	}
 	else if  type(ret) == type(VarExpr) {

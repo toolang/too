@@ -95,7 +95,7 @@ OperatorHelper::binary()
 	tke += "\n"
 	tke += lhs.toString() + "\n"
 	tke += rhs.toString() + "\n"
-	this.lhs.check(base >= I8 && base <= U64,tke)
+	this.lhs.check(base >= ast.I8 && base <= ast.U64,tke)
 	
 	if opt == ASSIGN return null
 	
@@ -107,7 +107,7 @@ OperatorHelper::binary()
 	match opt{
 		ADD_ASSIGN | ADD:	Compiler::writeln("	add %s, %s", di, ax)
 		SUB_ASSIGN | SUB:	Compiler::writeln("	sub %s,%s",di,ax)
-		MUL_ASSIGN | MUL:	Compiler::writeln("	imul %s,%s",di,ax)
+		MUL_ASSIGN | ast.MUL:	Compiler::writeln("	imul %s,%s",di,ax)
 		BITAND | BITAND_ASSIGN:	Compiler::writeln("	and %s,%s",di,ax)
 		BITOR  | BITOR_ASSIGN:	Compiler::writeln("	or %s,%s",di,ax)
 
@@ -207,7 +207,7 @@ OperatorHelper::genLeft()
 				if m.pointer Compiler::Load()
 				lmember = m
 				tk = m.type
-				if m.isclass tk = U64
+				if m.isclass tk = ast.U64
 				initcond(true,m.pointer ? 8 : m.size,m.size,tk,m.isunsigned,m.pointer)
 				return ce
 			}
@@ -228,7 +228,7 @@ OperatorHelper::genLeft()
 			lmember = m
 			
 			tk = m.type
-			if m.isclass tk = U64
+			if m.isclass tk = ast.U64
 			initcond(true,m.pointer ? 8 : m.size,m.size,tk,m.isunsigned,m.pointer)
 			return ce
 		}
@@ -274,7 +274,7 @@ OperatorHelper::genRight(isleft,expr)
 			Token t = expr.getType(ctx)
 			size = typesize[t]
 			iu = false
-			if t == U8 || t == U16 || t == U32 || t == U64
+			if t == ast.U8 || t == ast.U16 || t == ast.U32 || t == ast.U64
 				iu = true
 			initcond(isleft,size,size,t,iu,false)
 			return ret
@@ -319,7 +319,7 @@ OperatorHelper::genRight(isleft,expr)
 		m = ret
 		v = m.ret
 		tk = v.type
-		if v.isclass tk = U64
+		if v.isclass tk = ast.U64
 		initcond(isleft,v.pointer ? 8 : v.size,v.size,tk,v.isunsigned,v.pointer)
 		
 		if type(expr) == type(ast.AddrExpr) {
@@ -343,7 +343,7 @@ OperatorHelper::initcond(left,typesize,varsize,Token type,isunsigned,ispointer)
 		ltoken    = type
 		lisunsigned = isunsigned
 		lispointer  = ispointer
-		if ispointer ltoken = U64
+		if ispointer ltoken = ast.U64
 		return null
 	}
 	rtypesize = typesize
@@ -351,6 +351,6 @@ OperatorHelper::initcond(left,typesize,varsize,Token type,isunsigned,ispointer)
 	rtoken    = type
 	risunsigned = isunsigned
 	rispointer  = ispointer
-	if ispointer rtoken = U64
+	if ispointer rtoken = ast.U64
 
 }
